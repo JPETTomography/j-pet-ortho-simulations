@@ -3,8 +3,13 @@
 //ClassImp(PsDecay);
 //#endif
 #include <typeinfo>
-PsDecay::PsDecay(int noOfGammas)
+PsDecay::PsDecay(int noOfGammas, float R, float L)
 {
+    fR_ = R;
+    fL_ = L;
+    fAcceptedNo_ = 0;
+    double hypotenuse = sqrt(fR_*fR_+fL_*fL_/4.0);
+    fMinCos_ = fL_/2.0/hypotenuse;
     if(noOfGammas==3)
     {
         fH_12_23_ = new TH2F("fH_12_23_","fH_12_23_", 50,0, 3.15, 50,0,3.15);
@@ -71,21 +76,47 @@ PsDecay::~PsDecay()
 
 void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3)
 {
-        if(fNoOfDecayProducts_==2)
+        bool pass1, pass2, pass3 = false;
+        if(AddCuts_(gamma1))
+        {
+            pass1 = true;
+            // CZY TU POWINIENEM UZYWAC WAG???
+            fH_en_->Fill(gamma1->Energy());
+            fH_p_->Fill(gamma1->P());
+            fH_phi_->Fill(gamma1->Phi());
+            fH_cosTheta_->Fill(gamma1->CosTheta());
+        }
+        if(AddCuts_(gamma2))
+        {
+            pass2 = true;
+            // CZY TU POWINIENEM UZYWAC WAG???
+            fH_en_->Fill(gamma2->Energy());
+            fH_p_->Fill(gamma2->P());
+            fH_phi_->Fill(gamma2->Phi());
+            fH_cosTheta_->Fill(gamma2->CosTheta());
+        }
+        if(AddCuts_(gamma3))
+        {
+            pass3 = true;
+            // CZY TU POWINIENEM UZYWAC WAG???
+            fH_en_->Fill(gamma3->Energy());
+            fH_p_->Fill(gamma3->P());
+            fH_phi_->Fill(gamma3->Phi());
+            fH_cosTheta_->Fill(gamma3->CosTheta());
+        }
+
+        if(fNoOfDecayProducts_==2 && pass1 && pass2)
         {
             fH_12_->Fill(gamma1->Angle((gamma2)->Vect()), weight);
+            fAcceptedNo_++;
         }
-        else if(fNoOfDecayProducts_==3)
+        else if(fNoOfDecayProducts_==3 && pass1 && pass2 && pass3)
         {
             fH_12_23_->Fill(gamma1->Angle(gamma2->Vect()), gamma2->Angle(gamma3->Vect()), weight);
             fH_12_31_->Fill(gamma1->Angle(gamma2->Vect()), gamma3->Angle(gamma1->Vect()), weight);
             fH_23_31_->Fill(gamma2->Angle(gamma3->Vect()), gamma3->Angle(gamma1->Vect()), weight);
+            fAcceptedNo_++;
         }
-        // CZY TU POWINIENEM UZYWAC WAG???
-        fH_en_->Fill(gamma1->Energy());
-        fH_p_->Fill(gamma1->P());
-        fH_phi_->Fill(gamma1->Phi());
-        fH_cosTheta_->Fill(TMath::Cos(gamma1->Theta()));
 
 }
 
@@ -94,7 +125,7 @@ void PsDecay::DrawHistograms(std::string prefix)
     TCanvas* c = new TCanvas("c", "Simulation results", 1200, 800);
     c->Divide(fNoOfDecayProducts_+1, 2);
     c->cd(1);
-//    std::cout<<"ile gamm="<<fNoOfDecayProducts_<<std::endl;
+
     std::string outFile;
     if(fNoOfDecayProducts_==3)
     {
@@ -127,3 +158,16 @@ void PsDecay::DrawHistograms(std::string prefix)
     img->WriteImage(outFile.c_str());
 }
 
+int PsDecay::GetAcceptedNo() {return fAcceptedNo_;}
+
+bool PsDecay::AddCuts_(TLorentzVector* gamma)
+{
+    if(!gamma)
+        return false;
+    return GeometricalAcceptance_(gamma);
+}
+
+bool PsDecay::GeometricalAcceptance_(TLorentzVector *gamma)
+{
+    return gamma->CosTheta() < fMinCos_;
+}

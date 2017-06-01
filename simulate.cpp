@@ -1,6 +1,7 @@
 #include "psdecay.h"
 //#include <iostream>
 #include "TGenPhaseSpace.h"
+#include <iomanip>
 
 static int noOfGammasToSimulate = 0;
 
@@ -55,7 +56,7 @@ PsDecay* simulateDecayTo2(TLorentzVector Ps, Int_t simSteps=1000000)
 void simulate()//int noOfGammas)
 {
    int noOfGammas = noOfGammasToSimulate;
-   TLorentzVector Ps(0.0, 0.0, 0.0001, 1.022); //zrodlo
+   TLorentzVector Ps(0.000001, 0.00001, 0.000001, 1.022); //zrodlo
    Int_t simSteps = 1000000;
    PsDecay* decayTo2;
    PsDecay* decayTo3;
@@ -81,10 +82,18 @@ void simulate()//int noOfGammas)
    if(decayTo2)
    {
         decayTo2->DrawHistograms();
+        std::cout << std::fixed;
+        std::cout << std::setprecision(2);
+        std::cout<<"[INFO] fraction of accepted 2-gamma decays: "<<decayTo2->GetAcceptedNo()<<"/"<<simSteps<<"="<<\
+                   decayTo2->GetAcceptedNo()/(float)simSteps*100<<"%"<<std::endl;
    }
    if(decayTo3)
    {
        decayTo3->DrawHistograms();
+       std::cout << std::fixed;
+       std::cout << std::setprecision(2);
+       std::cout<<"[INFO] fraction of accepted 3-gamma decays: "<<decayTo3->GetAcceptedNo()<<"/"<<simSteps<<"="<<\
+                  decayTo3->GetAcceptedNo()/(float)simSteps*100<<"%"<<std::endl;
    }
 
 }
