@@ -1,8 +1,18 @@
+/// @file psdecay.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 01.06.2017
 #include "psdecay.h"
 //#ifndef __CINT__
 //ClassImp(PsDecay);
 //#endif
 #include <typeinfo>
+
+///
+/// \brief PsDecay::PsDecay The main constructor of PsDecay class. Assigns some fields; creates histograms and sets their names and labels.
+/// \param noOfGammas How many gammas are created in a decay (2 or 3 must be provided).
+/// \param R Radius of the detector in cm.
+/// \param L Length of the detector in cm.
+///
 PsDecay::PsDecay(int noOfGammas, float R, float L)
 {
     fR_ = R;
@@ -57,7 +67,9 @@ PsDecay::PsDecay(int noOfGammas, float R, float L)
         fMasses_.push_back(0.0);
 }
 
-
+///
+/// \brief PsDecay::~PsDecay Destructor, deletes all histograms.
+///
 PsDecay::~PsDecay()
 {
     if(fH_12_23_)
@@ -73,7 +85,13 @@ PsDecay::~PsDecay()
     if(fH_cosTheta_) delete fH_cosTheta_;
 }
 
-
+///
+/// \brief PsDecay::AddEvent Checks whether a particle passes all cuts and fills histograms.
+/// \param weight Event's weight from the generator.
+/// \param gamma1 Four vector of the first gamma.
+/// \param gamma2 Four vector of the second gamma.
+/// \param gamma3 Four vector of the third gamma.
+///
 void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3)
 {
         bool pass1, pass2, pass3 = false;
@@ -120,6 +138,10 @@ void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector*
 
 }
 
+///
+/// \brief PsDecay::DrawHistograms
+/// \param prefix Prefix of the output file name. The number indicating type of decay and ".png" extension will be added afterwards.
+///
 void PsDecay::DrawHistograms(std::string prefix)
 {
     TCanvas* c = new TCanvas("c", "Simulation results", 1200, 800);
@@ -158,8 +180,17 @@ void PsDecay::DrawHistograms(std::string prefix)
     img->WriteImage(outFile.c_str());
 }
 
+///
+/// \brief PsDecay::GetAcceptedNo Indicates how many events passed were accepted after adding cuts.
+/// \return The number of accepted events.
+///
 int PsDecay::GetAcceptedNo() {return fAcceptedNo_;}
 
+///
+/// \brief PsDecay::AddCuts_ Applies all cuts to a particle.
+/// \param gamma Four vector of a particle (gamma quant).
+/// \return True if particle passed through all cuts, false if it did not.
+///
 bool PsDecay::AddCuts_(TLorentzVector* gamma)
 {
     if(!gamma)
@@ -167,6 +198,11 @@ bool PsDecay::AddCuts_(TLorentzVector* gamma)
     return GeometricalAcceptance_(gamma);
 }
 
+///
+/// \brief PsDecay::GeometricalAcceptance_ Applies geometrical acceptance cut to a particle.
+/// \param gamma Four vector of a particle (gamma quant).
+/// \return True if particle passed through the cut, false if it was rejected.
+///
 bool PsDecay::GeometricalAcceptance_(TLorentzVector *gamma)
 {
     return gamma->CosTheta() < fMinCos_;

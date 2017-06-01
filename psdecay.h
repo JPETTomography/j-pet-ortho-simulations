@@ -1,3 +1,7 @@
+/// @file psdecay.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 01.06.2017
+///
 #ifndef PSDECAY_H
 #define PSDECAY_H
 
@@ -11,7 +15,9 @@
 #include <string>
 #include <cmath>
 
-
+///
+/// \brief The PsDecay class Contains all information about simulation of a certain type of decay.
+///
 class PsDecay
 {
     public:

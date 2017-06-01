@@ -1,3 +1,15 @@
+/// @file simulate.cpp
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 01.06.2017
+/// @version 1.0
+///
+/// @section DESCRIPTION
+/// Simple simulation of positronium decay to 2 or 3 gammas.
+///
+/// @section USAGE
+/// To use, compile using Makefile, then run. Passing 2 or 3 as argument you specify the type of decay to be
+/// generated. If another or no argument is specified, both scenarios will be generated.
+
 #include "psdecay.h"
 //#include <iostream>
 #include "TGenPhaseSpace.h"
@@ -5,6 +17,12 @@
 
 static int noOfGammasToSimulate = 0;
 
+///
+/// \brief simulateDecayTo3 Runs Ps->3 gamma decay.
+/// \param Ps   Four vector of positronium.
+/// \param simSteps Number of events to be simulated, also the number of simulation steps.
+/// \return An instance of PsDecay class.
+///
 PsDecay* simulateDecayTo3(TLorentzVector Ps, Int_t simSteps=1000000)
 {
 //    if (!gROOT->GetClass("TGenPhaseSpace")) gSystem.Load("libPhysics");
@@ -27,7 +45,12 @@ PsDecay* simulateDecayTo3(TLorentzVector Ps, Int_t simSteps=1000000)
     return decayTo3;
 }
 
-
+///
+/// \brief simulateDecayTo2 Runs Ps->2 gamma decay.
+/// \param Ps   Four vector of positronium.
+/// \param simSteps Number of events to be simulated, also the number of simulation steps.
+/// \return An instance of PsDecay class.
+///
 PsDecay* simulateDecayTo2(TLorentzVector Ps, Int_t simSteps=1000000)
 {
 //    if (!gROOT->GetClass("TGenPhaseSpace")) gSystem.Load("libPhysics");
@@ -50,9 +73,9 @@ PsDecay* simulateDecayTo2(TLorentzVector Ps, Int_t simSteps=1000000)
     return decayTo2;
 }
 
-
-
-
+///
+/// \brief simulate Main function of simulation.
+///
 void simulate()//int noOfGammas)
 {
    int noOfGammas = noOfGammasToSimulate;
@@ -99,6 +122,12 @@ void simulate()//int noOfGammas)
 }
 
 # ifndef __CINT__
+///
+/// \brief main C++ wrapper of simulate function.
+/// \param argc Number of provided arguments.
+/// \param argv Array of arguments.
+/// \return 0
+///
 int main(int argc, char* argv[])
 {
 //  std::cout<<"main"<<std::endl;
