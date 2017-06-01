@@ -1,6 +1,6 @@
 # j-pet-ortho-simulations
 
-##Requirements:
+## Requirements:
 + ROOT 5
 + GCC
 + Unix
