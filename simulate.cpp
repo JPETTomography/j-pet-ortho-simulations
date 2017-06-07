@@ -104,19 +104,25 @@ void simulate()//int noOfGammas)
 
    if(decayTo2)
    {
-        decayTo2->DrawHistograms();
+        decayTo2->DrawHistograms("results/");
         std::cout << std::fixed;
         std::cout << std::setprecision(2);
         std::cout<<"[INFO] fraction of accepted 2-gamma decays: "<<decayTo2->GetAcceptedNo()<<"/"<<simSteps<<"="<<\
                    decayTo2->GetAcceptedNo()/(float)simSteps*100<<"%"<<std::endl;
+        std::cout<<std::endl;
+//        delete decayTo2;
    }
    if(decayTo3)
    {
-       decayTo3->DrawHistograms();
+       decayTo3->DrawHistograms("results/");
        std::cout << std::fixed;
        std::cout << std::setprecision(2);
        std::cout<<"[INFO] fraction of accepted 3-gamma decays: "<<decayTo3->GetAcceptedNo()<<"/"<<simSteps<<"="<<\
                   decayTo3->GetAcceptedNo()/(float)simSteps*100<<"%"<<std::endl;
+       std::cout<<std::endl;
+
+//       delete decayTo2;
+
    }
 
 }

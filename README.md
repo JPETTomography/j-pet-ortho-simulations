@@ -16,3 +16,4 @@ and type 'make' in the bash console.
 To run the application type ./sim <number>
 where the number specifies whether you want to perform simulation for 2-gamma decays (type 2), 3-gamma 
 decays (type 3) or for both types (type any other number or leave blank).
+Results will be saved to the results/ directory.
