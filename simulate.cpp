@@ -1,7 +1,7 @@
 /// @file simulate.cpp
 /// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
 /// @date 01.06.2017
-/// @version 1.0
+/// @version 1.1
 ///
 /// @section DESCRIPTION
 /// Simple simulation of positronium decay to 2 or 3 gammas.
@@ -11,6 +11,7 @@
 /// generated. If another or no argument is specified, both scenarios will be generated.
 
 #include "psdecay.h"
+//#include "constants.h"
 //#include <iostream>
 #include "TGenPhaseSpace.h"
 #include <iomanip>
@@ -51,7 +52,7 @@ PsDecay* simulateDecayTo3(TLorentzVector Ps, Int_t simSteps=1000000)
 /// \param simSteps Number of events to be simulated, also the number of simulation steps.
 /// \return An instance of PsDecay class.
 ///
-PsDecay* simulateDecayTo2(TLorentzVector Ps, Int_t simSteps=1000000)
+PsDecay* simulateDecayTo2(TLorentzVector Ps, Int_t simSteps=1000)
 {
 //    if (!gROOT->GetClass("TGenPhaseSpace")) gSystem.Load("libPhysics");
     PsDecay* decayTo2 = new PsDecay(2);
@@ -79,8 +80,8 @@ PsDecay* simulateDecayTo2(TLorentzVector Ps, Int_t simSteps=1000000)
 void simulate()//int noOfGammas)
 {
    int noOfGammas = noOfGammasToSimulate;
-   TLorentzVector Ps(0.000001, 0.00001, 0.000001, 1.022); //zrodlo
-   Int_t simSteps = 1000000;
+   TLorentzVector Ps(0.000001, 0.000001, 0.000001, 1.022/1000); //zrodlo [GeV/c, GeV]
+   Int_t simSteps = 100000;
    PsDecay* decayTo2;
    PsDecay* decayTo3;
    if(noOfGammas==2)
@@ -136,7 +137,9 @@ void simulate()//int noOfGammas)
 ///
 int main(int argc, char* argv[])
 {
-//  std::cout<<"main"<<std::endl;
+  PrintConstants();
+//  ComptonScattering* cs = new ComptonScattering();
+//  cs->DrawPDF();
   if(argc>1)
     noOfGammasToSimulate = atoi(argv[1]);
   simulate();

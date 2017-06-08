@@ -24,6 +24,8 @@ PsDecay::PsDecay(int noOfGammas, float R, float L)
     fNumberOfGammas_ = 0;
     double hypotenuse = sqrt(fR_*fR_+fL_*fL_/4.0);
     fMinCos_ = fL_/2.0/hypotenuse;
+
+    cs_ = new ComptonScattering();
     if(noOfGammas==3)
     {
         //histograms for all events
@@ -138,13 +140,13 @@ PsDecay::PsDecay(int noOfGammas, float R, float L)
     // histograms common for all particles
     fH_en_ = new TH1F((std::string("fH_en_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
     fH_en_ -> SetTitle("Energy distribution");
-    fH_en_ -> GetXaxis()->SetTitle("E [GeV]");
+    fH_en_ -> GetXaxis()->SetTitle("E [MeV]");
     fH_en_ -> GetXaxis()->SetTitleOffset(2.);
     fH_en_ -> GetYaxis()->SetTitle("dN/dE");
     fH_en_ -> GetYaxis()->SetTitleOffset(2.);
     fH_p_ = new TH1F((std::string("fH_p_")+std::to_string(noOfGammas)).c_str(), "fH_p_", 100, 0.0, 0.6);
     fH_p_ -> SetTitle("Momentum distribution");
-    fH_p_ -> GetXaxis()->SetTitle("p [GeV/c]");
+    fH_p_ -> GetXaxis()->SetTitle("p [MeV/c]");
     fH_p_ -> GetXaxis()->SetTitleOffset(2.);
     fH_p_ -> GetYaxis()->SetTitle("dN/dp");
     fH_p_ -> GetYaxis()->SetTitleOffset(2.);
@@ -164,13 +166,13 @@ PsDecay::PsDecay(int noOfGammas, float R, float L)
     //histograms for particles that passed through cuts
     fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
     fH_en_pass_ -> SetTitle("Energy distribution");
-    fH_en_pass_ -> GetXaxis()->SetTitle("E [GeV]");
+    fH_en_pass_ -> GetXaxis()->SetTitle("E [MeV]");
     fH_en_pass_ -> GetXaxis()->SetTitleOffset(2.);
     fH_en_pass_ -> GetYaxis()->SetTitle("dN/dE");
     fH_en_pass_ -> GetYaxis()->SetTitleOffset(2.);
     fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(noOfGammas)).c_str(), "fH_p_", 100, 0.0, 0.6);
     fH_p_pass_ -> SetTitle("Momentum distribution");
-    fH_p_pass_ -> GetXaxis()->SetTitle("p [GeV/c]");
+    fH_p_pass_ -> GetXaxis()->SetTitle("p [MeV/c]");
     fH_p_pass_ -> GetXaxis()->SetTitleOffset(2.);
     fH_p_pass_ -> GetYaxis()->SetTitle("dN/dp");
     fH_p_pass_ -> GetYaxis()->SetTitleOffset(2.);
@@ -190,13 +192,13 @@ PsDecay::PsDecay(int noOfGammas, float R, float L)
     //histograms for particles that did not pass through cuts
     fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
     fH_en_fail_ -> SetTitle("Energy distribution");
-    fH_en_fail_ -> GetXaxis()->SetTitle("E [GeV]");
+    fH_en_fail_ -> GetXaxis()->SetTitle("E [MeV]");
     fH_en_fail_ -> GetXaxis()->SetTitleOffset(2.);
     fH_en_fail_ -> GetYaxis()->SetTitle("dN/dE");
     fH_en_fail_ -> GetYaxis()->SetTitleOffset(2.);
     fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(noOfGammas)).c_str(), "fH_p_", 100, 0.0, 0.6);
     fH_p_fail_ -> SetTitle("Momentum distribution");
-    fH_p_fail_ -> GetXaxis()->SetTitle("p [GeV/c]");
+    fH_p_fail_ -> GetXaxis()->SetTitle("p [MeV/c]");
     fH_p_fail_ -> GetXaxis()->SetTitleOffset(2.);
     fH_p_fail_ -> GetYaxis()->SetTitle("dN/dp");
     fH_p_fail_ -> GetYaxis()->SetTitleOffset(2.);
@@ -283,8 +285,8 @@ void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector*
             if(gammas[ii])
             {
                 //filling histograms for all gammas
-                fH_en_->Fill(gammas[ii]->Energy());
-                fH_p_->Fill(gammas[ii]->P());
+                fH_en_->Fill(gammas[ii]->Energy()*1000);
+                fH_p_->Fill(gammas[ii]->P()*1000);
                 fH_phi_->Fill(gammas[ii]->Phi());
                 fH_cosTheta_->Fill(gammas[ii]->CosTheta());
                 fH_gamma_cuts_->Fill(0);
@@ -304,16 +306,19 @@ void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector*
                         break;
                 }
                 //filling histograms only for gammas that passed cuts
-                fH_en_pass_->Fill(gammas[ii]->Energy());
-                fH_p_pass_->Fill(gammas[ii]->P());
+                fH_en_pass_->Fill(gammas[ii]->Energy()*1000);
+                fH_p_pass_->Fill(gammas[ii]->P()*1000);
                 fH_phi_pass_->Fill(gammas[ii]->Phi());
                 fH_cosTheta_pass_->Fill(gammas[ii]->CosTheta());
+                //performing scattering
+                cs_->Scatter(gammas[ii]->Energy()*1000);
+
             }
             else if(gammas[ii])
             {
                 //filling histograms only for gammas that passed cuts
-                fH_en_fail_->Fill(gammas[ii]->Energy());
-                fH_p_fail_->Fill(gammas[ii]->P());
+                fH_en_fail_->Fill(gammas[ii]->Energy()*1000);
+                fH_p_fail_->Fill(gammas[ii]->P()*1000);
                 fH_phi_fail_->Fill(gammas[ii]->Phi());
                 fH_cosTheta_fail_->Fill(gammas[ii]->CosTheta());
             }
@@ -363,6 +368,7 @@ void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector*
 ///
 void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail, bool compare, bool cuts)
 {
+    cs_->DrawElectronDist();
     std::string outFile;
     if(cuts)
     {

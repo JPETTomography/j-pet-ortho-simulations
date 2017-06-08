@@ -15,6 +15,7 @@
 #include <string>
 #include <cmath>
 
+#include "comptonscattering.h"
 ///
 /// \brief The PsDecay class Contains all information about simulation of a certain type of decay.
 ///
@@ -35,6 +36,8 @@ class PsDecay
         // info about decay products
         int fNoOfDecayProducts_;
         std::vector<Double_t> fMasses_;
+        // Compton scattering
+        ComptonScattering* cs_;
 
         // histograms with relative angles for all events generated
         TH1F* fH_12_;
