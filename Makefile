@@ -1,17 +1,23 @@
 CC=g++
-CFLAGS=-c -Wall `root-config --cflags`
+CFLAGS=-c -std=c++11 -Wall `root-config --cflags`
 LDFLAGS=`root-config --ldflags --glibs`
 
 all: sim
 
-sim: simulate.o psdecay.o
-	$(CC) -o sim simulate.o psdecay.o $(LDFLAGS)
+sim: simulate.o psdecay.o comptonscattering.o parammanager.o
+	$(CC) -o sim simulate.o psdecay.o comptonscattering.o parammanager.o $(LDFLAGS)
 
-simulate.o: simulate.cpp psdecay.cpp psdecay.h
-	$(CC) $(CFLAGS) simulate.cpp psdecay.cpp psdecay.h 
+psdecay.o: psdecay.cpp psdecay.h comptonscattering.h constants.h
+	$(CC) $(CFLAGS) psdecay.cpp psdecay.h #comptonscattering.h constants.h
 
-psdecay.o: psdecay.cpp psdecay.h
-	$(CC) $(CFLAGS) psdecay.cpp psdecay.h
+comptonscattering.o: comptonscattering.cpp comptonscattering.h constants.h
+	$(CC) $(CFLAGS) comptonscattering.cpp comptonscattering.h constants.h
+
+parammanager.o: parammanager.cpp parammanager.h
+	$(CC) $(CFLAGS) parammanager.cpp parammanager.h
+
+simulate.o: simulate.cpp psdecay.h comptonscattering.h constants.h parammanager.h
+	$(CC) $(CFLAGS) simulate.cpp #psdecay.h comptonscattering.h constants.h
 
 clean: 
-	rm *o sim
+	rm *.gch *.o sim

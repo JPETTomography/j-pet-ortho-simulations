@@ -1,0 +1,8 @@
+#First line contains number of simulation steps
+#Next lines contain the posistion of source and its momentum
+#Single <tab> is used as a separator
+#X_s Y_s Z_s pX  pY  pZ
+#DON'T REMOVE COMMENTED LINES!
+100
+0   1   0   0.000001    0.000001    0.000001
+0   2   0   0.000003    0.000003    0.0

@@ -5,8 +5,10 @@
 
 ///
 /// \brief ComptonScattering::ComptonScattering Constructs histograms and TF1 object.
+/// \param prefix File prefix.
+/// \param noOfGammas No of gammas (only for file naming).
 ///
-ComptonScattering::ComptonScattering()
+ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
 {
     fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 100, 0.0, 0.2);
     fH_electron_E_->SetTitle("Energy distribution");
@@ -31,7 +33,7 @@ ComptonScattering::ComptonScattering()
 ///
 /// \brief ComptonScattering::DrawPDF Draws Klein-Nishina function and saves to a file.
 ///
-void ComptonScattering::DrawPDF()
+void ComptonScattering::DrawPDF(std::string filePrefix)
 {
     std::cout<<"[INFO] Drawing Klein-Nishima function."<<std::endl;
     int range = 1000;
@@ -51,7 +53,7 @@ void ComptonScattering::DrawPDF()
     fH_PDF_->Draw("colz");
     TImage *img2 = TImage::Create();
     img2->FromPad(c);
-    img2->WriteImage("Klein-Nishina.png");
+    img2->WriteImage((filePrefix+std::string("Klein-Nishina.png")).c_str());
     std::cout<<"[INFO] Klein-Nishina function saved to file.\n"<<std::endl;
 
 }
@@ -59,7 +61,7 @@ void ComptonScattering::DrawPDF()
 ///
 /// \brief ComptonScattering::DrawElectronDist Draws and saves to file energy and angle distributions of Compton electrons.
 ///
-void ComptonScattering::DrawElectronDist()
+void ComptonScattering::DrawElectronDist(std::string filePrefix)
 {
     std::cout<<"[INFO] Drawing histograms for Compton electrons."<<std::endl;
     TCanvas* c = new TCanvas("c", "Compton electrons", 850, 380);
@@ -70,7 +72,8 @@ void ComptonScattering::DrawElectronDist()
     fH_electron_theta_->Draw();
     TImage *img2 = TImage::Create();
     img2->FromPad(c);
-    img2->WriteImage("results/compton/_compton_distr.png");
+    img2->WriteImage((filePrefix+std::string("_compton_distr_")+std::to_string(fNoOfGammas_)\
+                      +std::string("gammas.png")).c_str());
     std::cout<<"[INFO] Compton electrons' angle and energy distributions saved.\n"<<std::endl;
 }
 

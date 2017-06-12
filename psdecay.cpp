@@ -25,7 +25,6 @@ PsDecay::PsDecay(int noOfGammas, float R, float L)
     double hypotenuse = sqrt(fR_*fR_+fL_*fL_/4.0);
     fMinCos_ = fL_/2.0/hypotenuse;
 
-    cs_ = new ComptonScattering();
     if(noOfGammas==3)
     {
         //histograms for all events
@@ -236,8 +235,65 @@ PsDecay::PsDecay(int noOfGammas, float R, float L)
     fH_gamma_cuts_->GetXaxis()->SetLabelSize(0);
     fH_gamma_cuts_->GetXaxis()->SetTickLength(0);
 
-    std::cout<<"[INFO] Object created!"<<std::endl;
+    std::cout<<"[INFO] PsDecay object created!"<<std::endl;
 }
+
+PsDecay::PsDecay(const PsDecay& est)
+{
+    // detector's parameters
+    fR_ = est.fR_;  //radius in cm
+    fL_ = est.fL_;  //length in cm
+    fMinCos_ = est.fMinCos_; //minimal value of cos theta
+    // info about decay products
+    fNoOfDecayProducts_ = est.fNoOfDecayProducts_;
+    fMasses_.resize(est.fMasses_.size());
+    std::copy(est.fMasses_.begin(), est.fMasses_.end(), fMasses_.begin());
+
+    // histograms with relative angles for all events generated
+    fH_12_ = new TH1F(*est.fH_12_);
+    fH_12_23_ = new TH2F(*est.fH_12_23_);
+    fH_12_31_ = new TH2F(*est.fH_12_31_);
+    fH_23_31_ = new TH2F(*est.fH_23_31_);
+
+    // histograms with relative angles for events that passed cuts
+    fH_12_pass_ = new TH1F(*est.fH_12_pass_);
+    fH_12_23_pass_ = new TH2F(*est.fH_12_23_pass_);
+    fH_12_31_pass_ = new TH2F(*est.fH_12_31_pass_);
+    fH_23_31_pass_ = new TH2F(*est.fH_23_31_pass_);
+
+    // histograms with relative angles for events that failed cuts
+    fH_12_fail_ = new TH1F(*est.fH_12_fail_);
+    fH_12_23_fail_ = new TH2F(*est.fH_12_23_fail_);
+    fH_12_31_fail_ = new TH2F(*est.fH_12_31_fail_);
+    fH_23_31_fail_ = new TH2F(*est.fH_23_31_fail_);
+
+
+    // histograms with distributions of basic quantities for all events generated
+    fH_en_ = new TH1F(*est.fH_en_);
+    fH_p_ = new TH1F(*est.fH_p_);
+    fH_phi_= new TH1F(*est.fH_phi_);
+    fH_cosTheta_ = new TH1F(*est.fH_cosTheta_);
+    //only for events that passed cuts
+    fH_en_pass_ = new TH1F(*est.fH_en_pass_);
+    fH_p_pass_ = new TH1F(*est.fH_p_pass_);
+    fH_phi_pass_= new TH1F(*est.fH_phi_pass_);
+    fH_cosTheta_pass_ = new TH1F(*est.fH_cosTheta_pass_);
+    //only for events that did not pass cuts
+    fH_en_fail_ = new TH1F(*est.fH_en_fail_);
+    fH_p_fail_ = new TH1F(*est.fH_p_fail_);
+    fH_phi_fail_= new TH1F(*est.fH_phi_fail_);
+    fH_cosTheta_fail_ = new TH1F(*est.fH_cosTheta_fail_);
+//        ClassDef(PsDecay, 1); // required by ROOT
+
+    //histogram for showing fraction of events that passed different cuts
+    fH_event_cuts_ = new TH1F(*est.fH_event_cuts_);
+    fH_gamma_cuts_ = new TH1F(*est.fH_gamma_cuts_);
+
+    fNumberOfEvents_ = est.fNumberOfEvents_;
+    fNumberOfGammas_ = est.fNumberOfGammas_;
+    fAcceptedNo_ = est.fAcceptedNo_;
+}
+
 
 ///
 /// \brief PsDecay::~PsDecay Destructor, deletes all histograms.
@@ -271,8 +327,9 @@ PsDecay::~PsDecay()
 /// \param gamma1 Four vector of the first gamma.
 /// \param gamma2 Four vector of the second gamma.
 /// \param gamma3 Four vector of the third gamma.
+/// \return An array of bools indicating if particular gammas passed all cuts.
 ///
-void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3)
+std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3)
 {
         fNumberOfEvents_++;
         fNumberOfGammas_+=fNoOfDecayProducts_;
@@ -310,9 +367,6 @@ void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector*
                 fH_p_pass_->Fill(gammas[ii]->P()*1000);
                 fH_phi_pass_->Fill(gammas[ii]->Phi());
                 fH_cosTheta_pass_->Fill(gammas[ii]->CosTheta());
-                //performing scattering
-                cs_->Scatter(gammas[ii]->Energy()*1000);
-
             }
             else if(gammas[ii])
             {
@@ -359,7 +413,11 @@ void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector*
                 fH_23_31_fail_->Fill(gamma2->Angle(gamma3->Vect()), gamma3->Angle(gamma1->Vect()), weight);
             }
         }
-
+    std::vector<bool> ifPassed;// = new std::vector<bool>();
+    ifPassed.push_back(pass1);
+    ifPassed.push_back(pass2);
+    ifPassed.push_back(pass3);
+    return ifPassed;
 }
 
 ///
@@ -368,7 +426,6 @@ void PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector*
 ///
 void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail, bool compare, bool cuts)
 {
-    cs_->DrawElectronDist();
     std::string outFile;
     if(cuts)
     {

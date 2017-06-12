@@ -23,8 +23,9 @@ class PsDecay
 {
     public:
         PsDecay(int noOfGammas=5, float R=50, float L=70);
+        PsDecay(const PsDecay&);
         ~PsDecay();
-        void AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3);
+        std::vector<bool> AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3);
         void DrawHistograms(std::string prefix="RM", bool all=true, bool pass=true, bool fail=true, \
                             bool compare=true, bool cuts=true);
         int GetAcceptedNo();
@@ -36,8 +37,6 @@ class PsDecay
         // info about decay products
         int fNoOfDecayProducts_;
         std::vector<Double_t> fMasses_;
-        // Compton scattering
-        ComptonScattering* cs_;
 
         // histograms with relative angles for all events generated
         TH1F* fH_12_;
