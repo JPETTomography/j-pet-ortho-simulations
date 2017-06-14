@@ -13,10 +13,10 @@ To build the application download all files from the repository into a destinati
 and type *make* in the bash console.
 
 ### Running:
-To run the application type ./sim <number> <param_file>
-+ <number> specifies whether you want to perform simulation for 2-gamma decays (type 2), 3-gamma 
+To run the application type ./sim *<number>* *<param_file>*
++ *<number>* specifies whether you want to perform simulation for 2-gamma decays (type 2), 3-gamma 
 decays (type 3) or for both types (type any other number or leave blank).
-+ <param_file> is optional. It is a path to a file, where source's position and momentum is stored (x, y, z, px, py, pz). If argument is not provided, the program will try to read
++ *<param_file>* is optional. It is a path to a file, where source's position and momentum is stored (x, y, z, px, py, pz). If argument is not provided, the program will try to read
 from *simulation_parameters.par*, which is included in the repository. Please, look into it to learn how to specify simulation parameters.
 
 ### Results 
