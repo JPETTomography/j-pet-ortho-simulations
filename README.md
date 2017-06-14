@@ -5,7 +5,7 @@
 
 ### Requirements:
 + ROOT 5 (You may have to manually load the environment, if it is not set in *~/.bashrc* To learn how to do it see ROOT installation manual.
-+ GCC (tested on 5.4.0 20160609)
++ GCC (default version on cluster is too old, load more recent one; tested on 5.4.0 20160609)
 + Unix (tested on Kubuntu 16.04)
 
 ### Installation:
