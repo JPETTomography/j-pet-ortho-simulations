@@ -1,0 +1,408 @@
+\hypertarget{classPsDecay}{}\section{Ps\+Decay Class Reference}
+\label{classPsDecay}\index{Ps\+Decay@{Ps\+Decay}}
+
+
+The \hyperlink{classPsDecay}{Ps\+Decay} class Contains histograms with gammas\textquotesingle{} characteristics and inforamtion about passed cuts..  
+
+
+
+
+{\ttfamily \#include $<$psdecay.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay} (int no\+Of\+Gammas, double $\ast$source\+Pos, float R=0.\+50, float L=0.\+70)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} The main constructor of \hyperlink{classPsDecay}{Ps\+Decay} class. Assigns some fields; creates histograms and sets their names and labels. \end{DoxyCompactList}\item 
+\hyperlink{classPsDecay_a572b4252d8fee9cf74912bc5028aacdd}{Ps\+Decay} (const \hyperlink{classPsDecay}{Ps\+Decay} \&)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} Copy constructor. \end{DoxyCompactList}\item 
+\hyperlink{classPsDecay}{Ps\+Decay} \& \hyperlink{classPsDecay_a90bd9f4ce937cc828fef2bcf254005a9}{operator=} (const \hyperlink{classPsDecay}{Ps\+Decay} \&est)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a90bd9f4ce937cc828fef2bcf254005a9}{Ps\+Decay\+::operator =} Assignement operator. \end{DoxyCompactList}\item 
+\hyperlink{classPsDecay_a18464d58ecac1d13983a170a86b37910}{$\sim$\+Ps\+Decay} ()
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a18464d58ecac1d13983a170a86b37910}{Ps\+Decay\+::$\sim$\+Ps\+Decay} Destructor, deletes all histograms. \end{DoxyCompactList}\item 
+std\+::vector$<$ bool $>$ \hyperlink{classPsDecay_a85fae0338b221eee90bf497819e71c84}{Add\+Event} (Double\+\_\+t weight, T\+Lorentz\+Vector $\ast$gamma1, T\+Lorentz\+Vector $\ast$gamma2, T\+Lorentz\+Vector $\ast$gamma3)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a85fae0338b221eee90bf497819e71c84}{Ps\+Decay\+::\+Add\+Event} Checks whether a particle passes all cuts and fills histograms. \end{DoxyCompactList}\item 
+void \hyperlink{classPsDecay_acf37a3232c075338710e7732da809fbe}{Draw\+Histograms} (std\+::string prefix=\char`\"{}RM\char`\"{}, bool all=true, bool pass=true, bool fail=true, bool compare=true, bool cuts=true)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_acf37a3232c075338710e7732da809fbe}{Ps\+Decay\+::\+Draw\+Histograms}. \end{DoxyCompactList}\item 
+int \hyperlink{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{Get\+Accepted\+No} ()
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{Ps\+Decay\+::\+Get\+Accepted\+No} Indicates how many events passed were accepted after adding cuts. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Add\+Cuts\+\_\+} (T\+Lorentz\+Vector $\ast$gamma)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Ps\+Decay\+::\+Add\+Cuts\+\_\+} Applies all cuts to a particle. \end{DoxyCompactList}\item 
+bool \hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Geometrical\+Acceptance\+\_\+} (T\+Lorentz\+Vector $\ast$gamma)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{classPsDecay_a66690e9b186fc10c3a494e9e5b2a138f}{source\+Pos\+\_\+} \mbox{[}3\mbox{]}
+\item 
+float \hyperlink{classPsDecay_a905b6db3efeb23b273e90f2f3984ccd7}{f\+R\+\_\+}
+\item 
+float \hyperlink{classPsDecay_ac1c3221c8429f1ae5d9ae2a1c520693e}{f\+L\+\_\+}
+\item 
+int \hyperlink{classPsDecay_a58f1f81e395d364ede01d5a8bc894d75}{f\+No\+Of\+Decay\+Products\+\_\+}
+\item 
+std\+::vector$<$ Double\+\_\+t $>$ \hyperlink{classPsDecay_a4669d133357c99ee6dd74d7e60c569e2}{f\+Masses\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a6ffb64480ec7bb3eb9243b20e8130e42}{f\+H\+\_\+12\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a4ae2285b3310298d6c16722c31c7a577}{f\+H\+\_\+12\+\_\+23\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a7748ba2d2bc38d63f994384daa510f44}{f\+H\+\_\+12\+\_\+31\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a377a85bffa5b853437f82c027954be49}{f\+H\+\_\+23\+\_\+31\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a4f9fdbf77ce499b590a18bb36971632d}{f\+H\+\_\+12\+\_\+pass\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a6dd5ce52db37f0dfe214eb5cee6af997}{f\+H\+\_\+12\+\_\+23\+\_\+pass\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a67645ae244636b74b4f9f7ce1dc743bb}{f\+H\+\_\+12\+\_\+31\+\_\+pass\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a3fe38b267cb5662574862237d79e0f36}{f\+H\+\_\+23\+\_\+31\+\_\+pass\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a8fedb5a14c4e8a7c0b09b084fcd4eec1}{f\+H\+\_\+12\+\_\+fail\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a403e21c0bd6fe979a43bc6b8f267041c}{f\+H\+\_\+12\+\_\+23\+\_\+fail\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_afbac4f1be93aa53f00f7c80b88d0e291}{f\+H\+\_\+12\+\_\+31\+\_\+fail\+\_\+}
+\item 
+T\+H2F $\ast$ \hyperlink{classPsDecay_a929f173b06a0cee44ea090f5d35d15c8}{f\+H\+\_\+23\+\_\+31\+\_\+fail\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a6dfa432418e7f7e49ee6635e4df80c70}{f\+H\+\_\+en\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a7dc7f2407d80e5439a397632723ed60d}{f\+H\+\_\+p\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_ae501ea764ce924148fca7d6b1690c40b}{f\+H\+\_\+phi\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_ac3abee8f113229cc7fc3b5c6822b08c9}{f\+H\+\_\+cos\+Theta\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a3d42050216fe2a6d43d63fd0a0a6e94a}{f\+H\+\_\+en\+\_\+pass\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a65d304f41e588f9588cb551826989dae}{f\+H\+\_\+p\+\_\+pass\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a8f1c6d7069dad26f9fab9e319e940db2}{f\+H\+\_\+phi\+\_\+pass\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_aa35962b605f27e790af869e62b8e30b0}{f\+H\+\_\+cos\+Theta\+\_\+pass\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_ad545f241da3ae36ce43bc082a0c71183}{f\+H\+\_\+en\+\_\+fail\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a6e4560ff2d8b93cb0654535579fef5cf}{f\+H\+\_\+p\+\_\+fail\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_abb74a986a7f2115c0113b2a0702b7e80}{f\+H\+\_\+phi\+\_\+fail\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_a08392542526dfd2f80ed110843b477a4}{f\+H\+\_\+cos\+Theta\+\_\+fail\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_adedcdf6c1878a93c5f2c3809f6ced052}{f\+H\+\_\+event\+\_\+cuts\+\_\+}
+\item 
+T\+H1F $\ast$ \hyperlink{classPsDecay_aaa94c7a338ede5d9b6cfbdd5a6a72d4e}{f\+H\+\_\+gamma\+\_\+cuts\+\_\+}
+\item 
+int \hyperlink{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}{f\+Accepted\+No\+\_\+}
+\item 
+int \hyperlink{classPsDecay_a32e3f4712d0c7a995d0b8c959c720e79}{f\+Number\+Of\+Events\+\_\+}
+\item 
+int \hyperlink{classPsDecay_a7181fb08b4524a9f222bb5178e2b33b4}{f\+Number\+Of\+Gammas\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classPsDecay}{Ps\+Decay} class Contains histograms with gammas\textquotesingle{} characteristics and inforamtion about passed cuts.. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Ps\+Decay@{Ps\+Decay}!Ps\+Decay@{Ps\+Decay}}
+\index{Ps\+Decay@{Ps\+Decay}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Ps\+Decay(int no\+Of\+Gammas, double $\ast$source\+Pos, float R=0.\+50, float L=0.\+70)}{PsDecay(int noOfGammas, double *sourcePos, float R=0.50, float L=0.70)}}]{\setlength{\rightskip}{0pt plus 5cm}Ps\+Decay\+::\+Ps\+Decay (
+\begin{DoxyParamCaption}
+\item[{int}]{no\+Of\+Gammas, }
+\item[{double $\ast$}]{source\+X\+YZ, }
+\item[{float}]{R = {\ttfamily 0.50}, }
+\item[{float}]{L = {\ttfamily 0.70}}
+\end{DoxyParamCaption}
+)}\hypertarget{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{}\label{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}
+
+
+\hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} The main constructor of \hyperlink{classPsDecay}{Ps\+Decay} class. Assigns some fields; creates histograms and sets their names and labels. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em no\+Of\+Gammas} & How many gammas are created in a decay (2 or 3 must be provided). \\
+\hline
+{\em source\+Pos} & An array containing 3 spacial coordinates of the source (x,y,z). \\
+\hline
+{\em R} & Radius of the detector in m. \\
+\hline
+{\em L} & Length of the detector in m. \\
+\hline
+\end{DoxyParams}
+\index{Ps\+Decay@{Ps\+Decay}!Ps\+Decay@{Ps\+Decay}}
+\index{Ps\+Decay@{Ps\+Decay}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Ps\+Decay(const Ps\+Decay \&)}{PsDecay(const PsDecay &)}}]{\setlength{\rightskip}{0pt plus 5cm}Ps\+Decay\+::\+Ps\+Decay (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ps\+Decay} \&}]{est}
+\end{DoxyParamCaption}
+)}\hypertarget{classPsDecay_a572b4252d8fee9cf74912bc5028aacdd}{}\label{classPsDecay_a572b4252d8fee9cf74912bc5028aacdd}
+
+
+\hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} Copy constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em est} & Instance of \hyperlink{classPsDecay}{Ps\+Decay} to be copied. \\
+\hline
+\end{DoxyParams}
+\index{Ps\+Decay@{Ps\+Decay}!````~Ps\+Decay@{$\sim$\+Ps\+Decay}}
+\index{````~Ps\+Decay@{$\sim$\+Ps\+Decay}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{$\sim$\+Ps\+Decay()}{~PsDecay()}}]{\setlength{\rightskip}{0pt plus 5cm}Ps\+Decay\+::$\sim$\+Ps\+Decay (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classPsDecay_a18464d58ecac1d13983a170a86b37910}{}\label{classPsDecay_a18464d58ecac1d13983a170a86b37910}
+
+
+\hyperlink{classPsDecay_a18464d58ecac1d13983a170a86b37910}{Ps\+Decay\+::$\sim$\+Ps\+Decay} Destructor, deletes all histograms. 
+
+
+
+\subsection{Member Function Documentation}
+\index{Ps\+Decay@{Ps\+Decay}!Add\+Cuts\+\_\+@{Add\+Cuts\+\_\+}}
+\index{Add\+Cuts\+\_\+@{Add\+Cuts\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Add\+Cuts\+\_\+(\+T\+Lorentz\+Vector $\ast$gamma)}{AddCuts_(TLorentzVector *gamma)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Ps\+Decay\+::\+Add\+Cuts\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{T\+Lorentz\+Vector $\ast$}]{gamma}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{}\label{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}
+
+
+\hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Ps\+Decay\+::\+Add\+Cuts\+\_\+} Applies all cuts to a particle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em gamma} & Four vector of a particle (gamma quant). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if particle passed through all cuts, false if it did not. 
+\end{DoxyReturn}
+\index{Ps\+Decay@{Ps\+Decay}!Add\+Event@{Add\+Event}}
+\index{Add\+Event@{Add\+Event}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Add\+Event(\+Double\+\_\+t weight, T\+Lorentz\+Vector $\ast$gamma1, T\+Lorentz\+Vector $\ast$gamma2, T\+Lorentz\+Vector $\ast$gamma3)}{AddEvent(Double_t weight, TLorentzVector *gamma1, TLorentzVector *gamma2, TLorentzVector *gamma3)}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ bool $>$ Ps\+Decay\+::\+Add\+Event (
+\begin{DoxyParamCaption}
+\item[{Double\+\_\+t}]{weight, }
+\item[{T\+Lorentz\+Vector $\ast$}]{gamma1, }
+\item[{T\+Lorentz\+Vector $\ast$}]{gamma2, }
+\item[{T\+Lorentz\+Vector $\ast$}]{gamma3}
+\end{DoxyParamCaption}
+)}\hypertarget{classPsDecay_a85fae0338b221eee90bf497819e71c84}{}\label{classPsDecay_a85fae0338b221eee90bf497819e71c84}
+
+
+\hyperlink{classPsDecay_a85fae0338b221eee90bf497819e71c84}{Ps\+Decay\+::\+Add\+Event} Checks whether a particle passes all cuts and fills histograms. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em weight} & Event\textquotesingle{}s weight from the generator. \\
+\hline
+{\em gamma1} & Four vector of the first gamma. \\
+\hline
+{\em gamma2} & Four vector of the second gamma. \\
+\hline
+{\em gamma3} & Four vector of the third gamma. For two-\/gamma decays it should be null. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An array of bools indicating if particular gammas passed all cuts. 
+\end{DoxyReturn}
+\index{Ps\+Decay@{Ps\+Decay}!Draw\+Histograms@{Draw\+Histograms}}
+\index{Draw\+Histograms@{Draw\+Histograms}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Draw\+Histograms(std\+::string prefix=""RM"", bool all=true, bool pass=true, bool fail=true, bool compare=true, bool cuts=true)}{DrawHistograms(std::string prefix="RM", bool all=true, bool pass=true, bool fail=true, bool compare=true, bool cuts=true)}}]{\setlength{\rightskip}{0pt plus 5cm}void Ps\+Decay\+::\+Draw\+Histograms (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{prefix = {\ttfamily \char`\"{}RM\char`\"{}}, }
+\item[{bool}]{all = {\ttfamily true}, }
+\item[{bool}]{pass = {\ttfamily true}, }
+\item[{bool}]{fail = {\ttfamily true}, }
+\item[{bool}]{compare = {\ttfamily true}, }
+\item[{bool}]{cuts = {\ttfamily true}}
+\end{DoxyParamCaption}
+)}\hypertarget{classPsDecay_acf37a3232c075338710e7732da809fbe}{}\label{classPsDecay_acf37a3232c075338710e7732da809fbe}
+
+
+\hyperlink{classPsDecay_acf37a3232c075338710e7732da809fbe}{Ps\+Decay\+::\+Draw\+Histograms}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em prefix} & Prefix of the output file name. The number indicating type of decay and \char`\"{}.\+png\char`\"{} extension will be added afterwards. \\
+\hline
+{\em all} & If true, histograms for all generated gammas will be created and saved to file. \\
+\hline
+{\em pass} & If true, histograms for gammas that passed cuts will be created and saved to file. \\
+\hline
+{\em fail} & If true, histograms for gammas that did not pass cuts will be created and saved to file. \\
+\hline
+{\em compare} & Currently unused. \\
+\hline
+{\em cuts} & If true, histograms showing how many gammas and events passed cuts will be created and saved to file. \\
+\hline
+\end{DoxyParams}
+\index{Ps\+Decay@{Ps\+Decay}!Geometrical\+Acceptance\+\_\+@{Geometrical\+Acceptance\+\_\+}}
+\index{Geometrical\+Acceptance\+\_\+@{Geometrical\+Acceptance\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Geometrical\+Acceptance\+\_\+(\+T\+Lorentz\+Vector $\ast$gamma)}{GeometricalAcceptance_(TLorentzVector *gamma)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+ (
+\begin{DoxyParamCaption}
+\item[{T\+Lorentz\+Vector $\ast$}]{gamma}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{}\label{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}
+
+
+\hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em gamma} & Four vector of a particle (gamma quant). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if particle hit the side surface of the detector\textquotesingle{}s barrel, false otherwise. 
+\end{DoxyReturn}
+\index{Ps\+Decay@{Ps\+Decay}!Get\+Accepted\+No@{Get\+Accepted\+No}}
+\index{Get\+Accepted\+No@{Get\+Accepted\+No}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Get\+Accepted\+No()}{GetAcceptedNo()}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::\+Get\+Accepted\+No (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{}\label{classPsDecay_ae53824e7c6ffc093053bf1aece564044}
+
+
+\hyperlink{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{Ps\+Decay\+::\+Get\+Accepted\+No} Indicates how many events passed were accepted after adding cuts. 
+
+\begin{DoxyReturn}{Returns}
+The number of accepted events. 
+\end{DoxyReturn}
+\index{Ps\+Decay@{Ps\+Decay}!operator=@{operator=}}
+\index{operator=@{operator=}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{operator=(const Ps\+Decay \&est)}{operator=(const PsDecay &est)}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Ps\+Decay} \& Ps\+Decay\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Ps\+Decay} \&}]{est}
+\end{DoxyParamCaption}
+)}\hypertarget{classPsDecay_a90bd9f4ce937cc828fef2bcf254005a9}{}\label{classPsDecay_a90bd9f4ce937cc828fef2bcf254005a9}
+
+
+\hyperlink{classPsDecay_a90bd9f4ce937cc828fef2bcf254005a9}{Ps\+Decay\+::operator =} Assignement operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em est} & Instance of \hyperlink{classPsDecay}{Ps\+Decay} to be copied. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to instance of \hyperlink{classPsDecay}{Ps\+Decay} with values of member fields copied. 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\index{Ps\+Decay@{Ps\+Decay}!f\+Accepted\+No\+\_\+@{f\+Accepted\+No\+\_\+}}
+\index{f\+Accepted\+No\+\_\+@{f\+Accepted\+No\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+Accepted\+No\+\_\+}{fAcceptedNo_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+Accepted\+No\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}{}\label{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+@{f\+H\+\_\+12\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+@{f\+H\+\_\+12\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+}{fH_12_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a6ffb64480ec7bb3eb9243b20e8130e42}{}\label{classPsDecay_a6ffb64480ec7bb3eb9243b20e8130e42}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+23\+\_\+@{f\+H\+\_\+12\+\_\+23\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+23\+\_\+@{f\+H\+\_\+12\+\_\+23\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+23\+\_\+}{fH_12_23_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+23\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a4ae2285b3310298d6c16722c31c7a577}{}\label{classPsDecay_a4ae2285b3310298d6c16722c31c7a577}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+23\+\_\+fail\+\_\+@{f\+H\+\_\+12\+\_\+23\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+23\+\_\+fail\+\_\+@{f\+H\+\_\+12\+\_\+23\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+23\+\_\+fail\+\_\+}{fH_12_23_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+23\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a403e21c0bd6fe979a43bc6b8f267041c}{}\label{classPsDecay_a403e21c0bd6fe979a43bc6b8f267041c}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+23\+\_\+pass\+\_\+@{f\+H\+\_\+12\+\_\+23\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+23\+\_\+pass\+\_\+@{f\+H\+\_\+12\+\_\+23\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+23\+\_\+pass\+\_\+}{fH_12_23_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+23\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a6dd5ce52db37f0dfe214eb5cee6af997}{}\label{classPsDecay_a6dd5ce52db37f0dfe214eb5cee6af997}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+31\+\_\+@{f\+H\+\_\+12\+\_\+31\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+31\+\_\+@{f\+H\+\_\+12\+\_\+31\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+31\+\_\+}{fH_12_31_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+31\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a7748ba2d2bc38d63f994384daa510f44}{}\label{classPsDecay_a7748ba2d2bc38d63f994384daa510f44}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+31\+\_\+fail\+\_\+@{f\+H\+\_\+12\+\_\+31\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+31\+\_\+fail\+\_\+@{f\+H\+\_\+12\+\_\+31\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+31\+\_\+fail\+\_\+}{fH_12_31_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+31\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_afbac4f1be93aa53f00f7c80b88d0e291}{}\label{classPsDecay_afbac4f1be93aa53f00f7c80b88d0e291}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+31\+\_\+pass\+\_\+@{f\+H\+\_\+12\+\_\+31\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+31\+\_\+pass\+\_\+@{f\+H\+\_\+12\+\_\+31\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+31\+\_\+pass\+\_\+}{fH_12_31_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+31\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a67645ae244636b74b4f9f7ce1dc743bb}{}\label{classPsDecay_a67645ae244636b74b4f9f7ce1dc743bb}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+fail\+\_\+@{f\+H\+\_\+12\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+fail\+\_\+@{f\+H\+\_\+12\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+fail\+\_\+}{fH_12_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a8fedb5a14c4e8a7c0b09b084fcd4eec1}{}\label{classPsDecay_a8fedb5a14c4e8a7c0b09b084fcd4eec1}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+pass\+\_\+@{f\+H\+\_\+12\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+12\+\_\+pass\+\_\+@{f\+H\+\_\+12\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+pass\+\_\+}{fH_12_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a4f9fdbf77ce499b590a18bb36971632d}{}\label{classPsDecay_a4f9fdbf77ce499b590a18bb36971632d}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+23\+\_\+31\+\_\+@{f\+H\+\_\+23\+\_\+31\+\_\+}}
+\index{f\+H\+\_\+23\+\_\+31\+\_\+@{f\+H\+\_\+23\+\_\+31\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+23\+\_\+31\+\_\+}{fH_23_31_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+23\+\_\+31\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a377a85bffa5b853437f82c027954be49}{}\label{classPsDecay_a377a85bffa5b853437f82c027954be49}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+23\+\_\+31\+\_\+fail\+\_\+@{f\+H\+\_\+23\+\_\+31\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+23\+\_\+31\+\_\+fail\+\_\+@{f\+H\+\_\+23\+\_\+31\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+23\+\_\+31\+\_\+fail\+\_\+}{fH_23_31_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+23\+\_\+31\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a929f173b06a0cee44ea090f5d35d15c8}{}\label{classPsDecay_a929f173b06a0cee44ea090f5d35d15c8}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+23\+\_\+31\+\_\+pass\+\_\+@{f\+H\+\_\+23\+\_\+31\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+23\+\_\+31\+\_\+pass\+\_\+@{f\+H\+\_\+23\+\_\+31\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+23\+\_\+31\+\_\+pass\+\_\+}{fH_23_31_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H2F$\ast$ Ps\+Decay\+::f\+H\+\_\+23\+\_\+31\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a3fe38b267cb5662574862237d79e0f36}{}\label{classPsDecay_a3fe38b267cb5662574862237d79e0f36}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+cos\+Theta\+\_\+@{f\+H\+\_\+cos\+Theta\+\_\+}}
+\index{f\+H\+\_\+cos\+Theta\+\_\+@{f\+H\+\_\+cos\+Theta\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+cos\+Theta\+\_\+}{fH_cosTheta_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+cos\+Theta\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_ac3abee8f113229cc7fc3b5c6822b08c9}{}\label{classPsDecay_ac3abee8f113229cc7fc3b5c6822b08c9}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+cos\+Theta\+\_\+fail\+\_\+@{f\+H\+\_\+cos\+Theta\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+cos\+Theta\+\_\+fail\+\_\+@{f\+H\+\_\+cos\+Theta\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+cos\+Theta\+\_\+fail\+\_\+}{fH_cosTheta_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+cos\+Theta\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a08392542526dfd2f80ed110843b477a4}{}\label{classPsDecay_a08392542526dfd2f80ed110843b477a4}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+cos\+Theta\+\_\+pass\+\_\+@{f\+H\+\_\+cos\+Theta\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+cos\+Theta\+\_\+pass\+\_\+@{f\+H\+\_\+cos\+Theta\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+cos\+Theta\+\_\+pass\+\_\+}{fH_cosTheta_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+cos\+Theta\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_aa35962b605f27e790af869e62b8e30b0}{}\label{classPsDecay_aa35962b605f27e790af869e62b8e30b0}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+en\+\_\+@{f\+H\+\_\+en\+\_\+}}
+\index{f\+H\+\_\+en\+\_\+@{f\+H\+\_\+en\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+en\+\_\+}{fH_en_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+en\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a6dfa432418e7f7e49ee6635e4df80c70}{}\label{classPsDecay_a6dfa432418e7f7e49ee6635e4df80c70}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+en\+\_\+fail\+\_\+@{f\+H\+\_\+en\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+en\+\_\+fail\+\_\+@{f\+H\+\_\+en\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+en\+\_\+fail\+\_\+}{fH_en_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+en\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_ad545f241da3ae36ce43bc082a0c71183}{}\label{classPsDecay_ad545f241da3ae36ce43bc082a0c71183}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+en\+\_\+pass\+\_\+@{f\+H\+\_\+en\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+en\+\_\+pass\+\_\+@{f\+H\+\_\+en\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+en\+\_\+pass\+\_\+}{fH_en_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+en\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a3d42050216fe2a6d43d63fd0a0a6e94a}{}\label{classPsDecay_a3d42050216fe2a6d43d63fd0a0a6e94a}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+event\+\_\+cuts\+\_\+@{f\+H\+\_\+event\+\_\+cuts\+\_\+}}
+\index{f\+H\+\_\+event\+\_\+cuts\+\_\+@{f\+H\+\_\+event\+\_\+cuts\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+event\+\_\+cuts\+\_\+}{fH_event_cuts_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+event\+\_\+cuts\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_adedcdf6c1878a93c5f2c3809f6ced052}{}\label{classPsDecay_adedcdf6c1878a93c5f2c3809f6ced052}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+gamma\+\_\+cuts\+\_\+@{f\+H\+\_\+gamma\+\_\+cuts\+\_\+}}
+\index{f\+H\+\_\+gamma\+\_\+cuts\+\_\+@{f\+H\+\_\+gamma\+\_\+cuts\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+gamma\+\_\+cuts\+\_\+}{fH_gamma_cuts_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+gamma\+\_\+cuts\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_aaa94c7a338ede5d9b6cfbdd5a6a72d4e}{}\label{classPsDecay_aaa94c7a338ede5d9b6cfbdd5a6a72d4e}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+p\+\_\+@{f\+H\+\_\+p\+\_\+}}
+\index{f\+H\+\_\+p\+\_\+@{f\+H\+\_\+p\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+p\+\_\+}{fH_p_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+p\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a7dc7f2407d80e5439a397632723ed60d}{}\label{classPsDecay_a7dc7f2407d80e5439a397632723ed60d}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+p\+\_\+fail\+\_\+@{f\+H\+\_\+p\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+p\+\_\+fail\+\_\+@{f\+H\+\_\+p\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+p\+\_\+fail\+\_\+}{fH_p_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+p\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a6e4560ff2d8b93cb0654535579fef5cf}{}\label{classPsDecay_a6e4560ff2d8b93cb0654535579fef5cf}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+p\+\_\+pass\+\_\+@{f\+H\+\_\+p\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+p\+\_\+pass\+\_\+@{f\+H\+\_\+p\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+p\+\_\+pass\+\_\+}{fH_p_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+p\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a65d304f41e588f9588cb551826989dae}{}\label{classPsDecay_a65d304f41e588f9588cb551826989dae}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+phi\+\_\+@{f\+H\+\_\+phi\+\_\+}}
+\index{f\+H\+\_\+phi\+\_\+@{f\+H\+\_\+phi\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+phi\+\_\+}{fH_phi_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+phi\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_ae501ea764ce924148fca7d6b1690c40b}{}\label{classPsDecay_ae501ea764ce924148fca7d6b1690c40b}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+phi\+\_\+fail\+\_\+@{f\+H\+\_\+phi\+\_\+fail\+\_\+}}
+\index{f\+H\+\_\+phi\+\_\+fail\+\_\+@{f\+H\+\_\+phi\+\_\+fail\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+phi\+\_\+fail\+\_\+}{fH_phi_fail_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+phi\+\_\+fail\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_abb74a986a7f2115c0113b2a0702b7e80}{}\label{classPsDecay_abb74a986a7f2115c0113b2a0702b7e80}
+\index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+phi\+\_\+pass\+\_\+@{f\+H\+\_\+phi\+\_\+pass\+\_\+}}
+\index{f\+H\+\_\+phi\+\_\+pass\+\_\+@{f\+H\+\_\+phi\+\_\+pass\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+H\+\_\+phi\+\_\+pass\+\_\+}{fH_phi_pass_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+phi\+\_\+pass\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a8f1c6d7069dad26f9fab9e319e940db2}{}\label{classPsDecay_a8f1c6d7069dad26f9fab9e319e940db2}
+\index{Ps\+Decay@{Ps\+Decay}!f\+L\+\_\+@{f\+L\+\_\+}}
+\index{f\+L\+\_\+@{f\+L\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+L\+\_\+}{fL_}}]{\setlength{\rightskip}{0pt plus 5cm}float Ps\+Decay\+::f\+L\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_ac1c3221c8429f1ae5d9ae2a1c520693e}{}\label{classPsDecay_ac1c3221c8429f1ae5d9ae2a1c520693e}
+\index{Ps\+Decay@{Ps\+Decay}!f\+Masses\+\_\+@{f\+Masses\+\_\+}}
+\index{f\+Masses\+\_\+@{f\+Masses\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+Masses\+\_\+}{fMasses_}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$Double\+\_\+t$>$ Ps\+Decay\+::f\+Masses\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a4669d133357c99ee6dd74d7e60c569e2}{}\label{classPsDecay_a4669d133357c99ee6dd74d7e60c569e2}
+\index{Ps\+Decay@{Ps\+Decay}!f\+No\+Of\+Decay\+Products\+\_\+@{f\+No\+Of\+Decay\+Products\+\_\+}}
+\index{f\+No\+Of\+Decay\+Products\+\_\+@{f\+No\+Of\+Decay\+Products\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+No\+Of\+Decay\+Products\+\_\+}{fNoOfDecayProducts_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+No\+Of\+Decay\+Products\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a58f1f81e395d364ede01d5a8bc894d75}{}\label{classPsDecay_a58f1f81e395d364ede01d5a8bc894d75}
+\index{Ps\+Decay@{Ps\+Decay}!f\+Number\+Of\+Events\+\_\+@{f\+Number\+Of\+Events\+\_\+}}
+\index{f\+Number\+Of\+Events\+\_\+@{f\+Number\+Of\+Events\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+Number\+Of\+Events\+\_\+}{fNumberOfEvents_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+Number\+Of\+Events\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a32e3f4712d0c7a995d0b8c959c720e79}{}\label{classPsDecay_a32e3f4712d0c7a995d0b8c959c720e79}
+\index{Ps\+Decay@{Ps\+Decay}!f\+Number\+Of\+Gammas\+\_\+@{f\+Number\+Of\+Gammas\+\_\+}}
+\index{f\+Number\+Of\+Gammas\+\_\+@{f\+Number\+Of\+Gammas\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+Number\+Of\+Gammas\+\_\+}{fNumberOfGammas_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+Number\+Of\+Gammas\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a7181fb08b4524a9f222bb5178e2b33b4}{}\label{classPsDecay_a7181fb08b4524a9f222bb5178e2b33b4}
+\index{Ps\+Decay@{Ps\+Decay}!f\+R\+\_\+@{f\+R\+\_\+}}
+\index{f\+R\+\_\+@{f\+R\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+R\+\_\+}{fR_}}]{\setlength{\rightskip}{0pt plus 5cm}float Ps\+Decay\+::f\+R\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a905b6db3efeb23b273e90f2f3984ccd7}{}\label{classPsDecay_a905b6db3efeb23b273e90f2f3984ccd7}
+\index{Ps\+Decay@{Ps\+Decay}!source\+Pos\+\_\+@{source\+Pos\+\_\+}}
+\index{source\+Pos\+\_\+@{source\+Pos\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{source\+Pos\+\_\+}{sourcePos_}}]{\setlength{\rightskip}{0pt plus 5cm}double Ps\+Decay\+::source\+Pos\+\_\+\mbox{[}3\mbox{]}\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a66690e9b186fc10c3a494e9e5b2a138f}{}\label{classPsDecay_a66690e9b186fc10c3a494e9e5b2a138f}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\hyperlink{psdecay_8h}{psdecay.\+h}\item 
+src/\hyperlink{psdecay_8cpp}{psdecay.\+cpp}\end{DoxyCompactItemize}

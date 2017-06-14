@@ -4,16 +4,21 @@
 ## Email: rafal.maselek@ncbj.gov.pl
 
 ### Requirements:
-+ ROOT 5
-+ GCC
-+ Unix
++ ROOT 5 (You may have to manually load the environment, if it is not set in *~/.bashrc* To learn how to do it see ROOT installation manual.
++ GCC (tested on 5.4.0 20160609)
++ Unix (tested on Kubuntu 16.04)
 
 ### Installation:
-To build the application download all files from the repository into a src folder. Cd to that folder
-and type 'make' in the bash console.
+To build the application download all files from the repository into a destination folder. Cd to that folder
+and type *make* in the bash console.
 
 ### Running:
-To run the application type ./sim <number>
-where the number specifies whether you want to perform simulation for 2-gamma decays (type 2), 3-gamma 
+To run the application type ./sim <number> <param_file>
++ <number> specifies whether you want to perform simulation for 2-gamma decays (type 2), 3-gamma 
 decays (type 3) or for both types (type any other number or leave blank).
-Results will be saved to the results/ directory.
++ <param_file> is optional. It is a path to a file, where source's position and momentum is stored (x, y, z, px, py, pz). If argument is not provided, the program will try to read
+from *simulation_parameters.par*, which is included in the repository. Please, look into it to learn how to specify simulation parameters.
+
+### Results 
+By deault all results will be saved to the *results/* directory. You can change it by editing src/simulate.cpp file. There are static variables at the beginning of the file called:
+_globalPrefix_, _comptonPrefix_ and _decaysPrefix_.

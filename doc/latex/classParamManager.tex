@@ -1,0 +1,180 @@
+\hypertarget{classParamManager}{}\section{Param\+Manager Class Reference}
+\label{classParamManager}\index{Param\+Manager@{Param\+Manager}}
+
+
+The \hyperlink{classParamManager}{Param\+Manager} class Class responsible for loadind simulation parameters from external file. (by default simulation\+\_\+parameters.\+par)  
+
+
+
+
+{\ttfamily \#include $<$parammanager.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classParamManager_a2950d2af06c631b83e0d723765dcacfa}{Param\+Manager} ()
+\begin{DoxyCompactList}\small\item\em \hyperlink{classParamManager_a2950d2af06c631b83e0d723765dcacfa}{Param\+Manager\+::\+Param\+Manager} Basic constructor. \end{DoxyCompactList}\item 
+\hyperlink{classParamManager_a6f0dcb6c03fbacea1fdd78d1410ad776}{Param\+Manager} (const \hyperlink{classParamManager}{Param\+Manager} \&pm)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classParamManager_a2950d2af06c631b83e0d723765dcacfa}{Param\+Manager\+::\+Param\+Manager} Copy constructor. \end{DoxyCompactList}\item 
+\hyperlink{classParamManager}{Param\+Manager} \& \hyperlink{classParamManager_ae4e63f59a1352a3602cb464ab24ef623}{operator=} (const \hyperlink{classParamManager}{Param\+Manager} \&est)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classParamManager_ae4e63f59a1352a3602cb464ab24ef623}{Param\+Manager\+::operator =} Assignement operator. \end{DoxyCompactList}\item 
+double \hyperlink{classParamManager_ae58712c5696b4922b86048725b8c4501}{get\+Sim\+Steps} ()
+\item 
+double \hyperlink{classParamManager_ae02f327dc44c89493a8715f0d943b816}{get\+Sim\+Runs} ()
+\item 
+std\+::vector$<$ double $>$ \hyperlink{classParamManager_a9922b859162ad477b908c4251e90ca99}{get\+Data\+At} (int index=0)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classParamManager_a9922b859162ad477b908c4251e90ca99}{Param\+Manager\+::get\+Data\+At} Used to get source\textquotesingle{}s position and momentum. \end{DoxyCompactList}\item 
+void \hyperlink{classParamManager_a8708a6a6ab26ceb69d856996f2f9085f}{Import\+Params} (std\+::string in\+File=\char`\"{}simulation\+\_\+parameters.\+par\char`\"{})
+\begin{DoxyCompactList}\small\item\em \hyperlink{classParamManager_a8708a6a6ab26ceb69d856996f2f9085f}{Param\+Manager\+::\+Import\+Params} Imports prameters from file. It reads the number of simulation steps from the first line, and source\textquotesingle{}s (x,y,z,px,py,pz) from the nect ones. \end{DoxyCompactList}\item 
+bool \hyperlink{classParamManager_abcaeb584edbc8949339f3a71f0cae3ce}{operator==} (const \hyperlink{classParamManager}{Param\+Manager} \&pm) const 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classParamManager_abcaeb584edbc8949339f3a71f0cae3ce}{Param\+Manager\+::operator ==} Compare operator. Compares values of member fields. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{classParamManager_a6020a91cb4adc8f9dcd6647353840599}{f\+Sim\+Steps\+\_\+}
+\item 
+int \hyperlink{classParamManager_a3f867447d92ddea2da69014308ad0d16}{f\+Sim\+Runs\+\_\+}
+\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \hyperlink{classParamManager_a50cc8e69bb08c7f0b32d7614d5ade323}{f\+Data\+\_\+}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+The \hyperlink{classParamManager}{Param\+Manager} class Class responsible for loadind simulation parameters from external file. (by default simulation\+\_\+parameters.\+par) 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Param\+Manager@{Param\+Manager}!Param\+Manager@{Param\+Manager}}
+\index{Param\+Manager@{Param\+Manager}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{Param\+Manager()}{ParamManager()}}]{\setlength{\rightskip}{0pt plus 5cm}Param\+Manager\+::\+Param\+Manager (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classParamManager_a2950d2af06c631b83e0d723765dcacfa}{}\label{classParamManager_a2950d2af06c631b83e0d723765dcacfa}
+
+
+\hyperlink{classParamManager_a2950d2af06c631b83e0d723765dcacfa}{Param\+Manager\+::\+Param\+Manager} Basic constructor. 
+
+\index{Param\+Manager@{Param\+Manager}!Param\+Manager@{Param\+Manager}}
+\index{Param\+Manager@{Param\+Manager}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{Param\+Manager(const Param\+Manager \&pm)}{ParamManager(const ParamManager &pm)}}]{\setlength{\rightskip}{0pt plus 5cm}Param\+Manager\+::\+Param\+Manager (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Manager} \&}]{est}
+\end{DoxyParamCaption}
+)}\hypertarget{classParamManager_a6f0dcb6c03fbacea1fdd78d1410ad776}{}\label{classParamManager_a6f0dcb6c03fbacea1fdd78d1410ad776}
+
+
+\hyperlink{classParamManager_a2950d2af06c631b83e0d723765dcacfa}{Param\+Manager\+::\+Param\+Manager} Copy constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em est} & \hyperlink{classParamManager}{Param\+Manager} instance from which fields will be copied. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Param\+Manager@{Param\+Manager}!get\+Data\+At@{get\+Data\+At}}
+\index{get\+Data\+At@{get\+Data\+At}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{get\+Data\+At(int index=0)}{getDataAt(int index=0)}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ double $>$ Param\+Manager\+::get\+Data\+At (
+\begin{DoxyParamCaption}
+\item[{int}]{index = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{classParamManager_a9922b859162ad477b908c4251e90ca99}{}\label{classParamManager_a9922b859162ad477b908c4251e90ca99}
+
+
+\hyperlink{classParamManager_a9922b859162ad477b908c4251e90ca99}{Param\+Manager\+::get\+Data\+At} Used to get source\textquotesingle{}s position and momentum. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Number of the run, used to access apropriate data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+An array with a set of source\textquotesingle{}s parameters\+: x, y, z, px, py, pz; 
+\end{DoxyReturn}
+\index{Param\+Manager@{Param\+Manager}!get\+Sim\+Runs@{get\+Sim\+Runs}}
+\index{get\+Sim\+Runs@{get\+Sim\+Runs}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{get\+Sim\+Runs()}{getSimRuns()}}]{\setlength{\rightskip}{0pt plus 5cm}double Param\+Manager\+::get\+Sim\+Runs (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classParamManager_ae02f327dc44c89493a8715f0d943b816}{}\label{classParamManager_ae02f327dc44c89493a8715f0d943b816}
+\index{Param\+Manager@{Param\+Manager}!get\+Sim\+Steps@{get\+Sim\+Steps}}
+\index{get\+Sim\+Steps@{get\+Sim\+Steps}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{get\+Sim\+Steps()}{getSimSteps()}}]{\setlength{\rightskip}{0pt plus 5cm}double Param\+Manager\+::get\+Sim\+Steps (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classParamManager_ae58712c5696b4922b86048725b8c4501}{}\label{classParamManager_ae58712c5696b4922b86048725b8c4501}
+\index{Param\+Manager@{Param\+Manager}!Import\+Params@{Import\+Params}}
+\index{Import\+Params@{Import\+Params}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{Import\+Params(std\+::string in\+File=""simulation\+\_\+parameters.\+par"")}{ImportParams(std::string inFile="simulation_parameters.par")}}]{\setlength{\rightskip}{0pt plus 5cm}void Param\+Manager\+::\+Import\+Params (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{in\+File = {\ttfamily \char`\"{}simulation\+\_\+parameters.par\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{classParamManager_a8708a6a6ab26ceb69d856996f2f9085f}{}\label{classParamManager_a8708a6a6ab26ceb69d856996f2f9085f}
+
+
+\hyperlink{classParamManager_a8708a6a6ab26ceb69d856996f2f9085f}{Param\+Manager\+::\+Import\+Params} Imports prameters from file. It reads the number of simulation steps from the first line, and source\textquotesingle{}s (x,y,z,px,py,pz) from the nect ones. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in\+File} & Path to the file with parameters. \\
+\hline
+\end{DoxyParams}
+\index{Param\+Manager@{Param\+Manager}!operator=@{operator=}}
+\index{operator=@{operator=}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{operator=(const Param\+Manager \&est)}{operator=(const ParamManager &est)}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Param\+Manager} \& Param\+Manager\+::operator= (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Manager} \&}]{est}
+\end{DoxyParamCaption}
+)}\hypertarget{classParamManager_ae4e63f59a1352a3602cb464ab24ef623}{}\label{classParamManager_ae4e63f59a1352a3602cb464ab24ef623}
+
+
+\hyperlink{classParamManager_ae4e63f59a1352a3602cb464ab24ef623}{Param\+Manager\+::operator =} Assignement operator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em est} & \hyperlink{classParamManager}{Param\+Manager} instance from which member fields will be copied. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to \hyperlink{classParamManager}{Param\+Manager} instance with values of fields from est. 
+\end{DoxyReturn}
+\index{Param\+Manager@{Param\+Manager}!operator==@{operator==}}
+\index{operator==@{operator==}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{operator==(const Param\+Manager \&pm) const }{operator==(const ParamManager &pm) const }}]{\setlength{\rightskip}{0pt plus 5cm}bool Param\+Manager\+::operator== (
+\begin{DoxyParamCaption}
+\item[{const {\bf Param\+Manager} \&}]{est}
+\end{DoxyParamCaption}
+) const}\hypertarget{classParamManager_abcaeb584edbc8949339f3a71f0cae3ce}{}\label{classParamManager_abcaeb584edbc8949339f3a71f0cae3ce}
+
+
+\hyperlink{classParamManager_abcaeb584edbc8949339f3a71f0cae3ce}{Param\+Manager\+::operator ==} Compare operator. Compares values of member fields. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em est} & Instance of \hyperlink{classParamManager}{Param\+Manager} to be compared with this. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if all fields are equal. 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\index{Param\+Manager@{Param\+Manager}!f\+Data\+\_\+@{f\+Data\+\_\+}}
+\index{f\+Data\+\_\+@{f\+Data\+\_\+}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{f\+Data\+\_\+}{fData_}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$std\+::vector$<$double$>$ $>$ Param\+Manager\+::f\+Data\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classParamManager_a50cc8e69bb08c7f0b32d7614d5ade323}{}\label{classParamManager_a50cc8e69bb08c7f0b32d7614d5ade323}
+\index{Param\+Manager@{Param\+Manager}!f\+Sim\+Runs\+\_\+@{f\+Sim\+Runs\+\_\+}}
+\index{f\+Sim\+Runs\+\_\+@{f\+Sim\+Runs\+\_\+}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{f\+Sim\+Runs\+\_\+}{fSimRuns_}}]{\setlength{\rightskip}{0pt plus 5cm}int Param\+Manager\+::f\+Sim\+Runs\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classParamManager_a3f867447d92ddea2da69014308ad0d16}{}\label{classParamManager_a3f867447d92ddea2da69014308ad0d16}
+\index{Param\+Manager@{Param\+Manager}!f\+Sim\+Steps\+\_\+@{f\+Sim\+Steps\+\_\+}}
+\index{f\+Sim\+Steps\+\_\+@{f\+Sim\+Steps\+\_\+}!Param\+Manager@{Param\+Manager}}
+\subsubsection[{\texorpdfstring{f\+Sim\+Steps\+\_\+}{fSimSteps_}}]{\setlength{\rightskip}{0pt plus 5cm}int Param\+Manager\+::f\+Sim\+Steps\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classParamManager_a6020a91cb4adc8f9dcd6647353840599}{}\label{classParamManager_a6020a91cb4adc8f9dcd6647353840599}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\hyperlink{parammanager_8h}{parammanager.\+h}\item 
+src/\hyperlink{parammanager_8cpp}{parammanager.\+cpp}\end{DoxyCompactItemize}

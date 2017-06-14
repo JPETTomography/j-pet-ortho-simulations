@@ -2,22 +2,26 @@ CC=g++
 CFLAGS=-c -std=c++11 -Wall `root-config --cflags`
 LDFLAGS=`root-config --ldflags --glibs`
 
+OBJDIR=./obj
+SRCDIR=src
+
 all: sim
 
-sim: simulate.o psdecay.o comptonscattering.o parammanager.o
-	$(CC) -o sim simulate.o psdecay.o comptonscattering.o parammanager.o $(LDFLAGS)
+sim: $(OBJDIR)/simulate.o $(OBJDIR)/psdecay.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o
+	$(CC) -o sim $(OBJDIR)/simulate.o $(OBJDIR)/psdecay.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o $(LDFLAGS)
 
-psdecay.o: psdecay.cpp psdecay.h comptonscattering.h constants.h
-	$(CC) $(CFLAGS) psdecay.cpp psdecay.h #comptonscattering.h constants.h
+$(OBJDIR)/psdecay.o: $(SRCDIR)/psdecay.cpp $(SRCDIR)/psdecay.h $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h
+	$(CC) $(CFLAGS) $(SRCDIR)/psdecay.cpp -o $(OBJDIR)/psdecay.o
 
-comptonscattering.o: comptonscattering.cpp comptonscattering.h constants.h
-	$(CC) $(CFLAGS) comptonscattering.cpp comptonscattering.h constants.h
+$(OBJDIR)/comptonscattering.o: $(SRCDIR)/comptonscattering.cpp $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h
+	$(CC) $(CFLAGS) $(SRCDIR)/comptonscattering.cpp -o $(OBJDIR)/comptonscattering.o
 
-parammanager.o: parammanager.cpp parammanager.h
-	$(CC) $(CFLAGS) parammanager.cpp parammanager.h
+$(OBJDIR)/parammanager.o: $(SRCDIR)/parammanager.cpp $(SRCDIR)/parammanager.h
+	$(CC) $(CFLAGS) $(SRCDIR)/parammanager.cpp -o $(OBJDIR)/parammanager.o
 
-simulate.o: simulate.cpp psdecay.h comptonscattering.h constants.h parammanager.h
-	$(CC) $(CFLAGS) simulate.cpp #psdecay.h comptonscattering.h constants.h
+$(OBJDIR)/simulate.o: $(SRCDIR)/simulate.cpp $(SRCDIR)/psdecay.h $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h $(SRCDIR)/parammanager.h
+	$(CC) $(CFLAGS) $(SRCDIR)/simulate.cpp -o $(OBJDIR)/simulate.o
 
 clean: 
-	rm *.gch *.o sim
+	rm $(SRCDIR)/*.gch $(OBJDIR)/*.o sim
+
