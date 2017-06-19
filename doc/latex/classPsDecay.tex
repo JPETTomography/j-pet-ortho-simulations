@@ -12,10 +12,10 @@ The \hyperlink{classPsDecay}{Ps\+Decay} class Contains histograms with gammas\te
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay} (int no\+Of\+Gammas, double $\ast$source\+Pos, float R=0.\+50, float L=0.\+70)
-\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} The main constructor of \hyperlink{classPsDecay}{Ps\+Decay} class. Assigns some fields; creates histograms and sets their names and labels. \end{DoxyCompactList}\item 
+\hyperlink{classPsDecay_a138b7f62cfe2e4c673db5409abdf153d}{Ps\+Decay} (int no\+Of\+Gammas, double $\ast$source\+Pos, float p=1.\+0, float R=0.\+50, float L=0.\+70)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a138b7f62cfe2e4c673db5409abdf153d}{Ps\+Decay\+::\+Ps\+Decay} The main constructor of \hyperlink{classPsDecay}{Ps\+Decay} class. Assigns some fields; creates histograms and sets their names and labels. \end{DoxyCompactList}\item 
 \hyperlink{classPsDecay_a572b4252d8fee9cf74912bc5028aacdd}{Ps\+Decay} (const \hyperlink{classPsDecay}{Ps\+Decay} \&)
-\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} Copy constructor. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a138b7f62cfe2e4c673db5409abdf153d}{Ps\+Decay\+::\+Ps\+Decay} Copy constructor. \end{DoxyCompactList}\item 
 \hyperlink{classPsDecay}{Ps\+Decay} \& \hyperlink{classPsDecay_a90bd9f4ce937cc828fef2bcf254005a9}{operator=} (const \hyperlink{classPsDecay}{Ps\+Decay} \&est)
 \begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a90bd9f4ce937cc828fef2bcf254005a9}{Ps\+Decay\+::operator =} Assignement operator. \end{DoxyCompactList}\item 
 \hyperlink{classPsDecay_a18464d58ecac1d13983a170a86b37910}{$\sim$\+Ps\+Decay} ()
@@ -32,7 +32,9 @@ int \hyperlink{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{Get\+Accepted\+No
 bool \hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Add\+Cuts\+\_\+} (T\+Lorentz\+Vector $\ast$gamma)
 \begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Ps\+Decay\+::\+Add\+Cuts\+\_\+} Applies all cuts to a particle. \end{DoxyCompactList}\item 
 bool \hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Geometrical\+Acceptance\+\_\+} (T\+Lorentz\+Vector $\ast$gamma)
-\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. \end{DoxyCompactList}\item 
+bool \hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Detection\+Cut} ()
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Ps\+Decay\+::\+Detection\+Cut} A particle not always interacts with a detector. This cut checks if it interacts, with a priori probability given by a user. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -103,6 +105,8 @@ int \hyperlink{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}{f\+Accepted\+No\+
 int \hyperlink{classPsDecay_a32e3f4712d0c7a995d0b8c959c720e79}{f\+Number\+Of\+Events\+\_\+}
 \item 
 int \hyperlink{classPsDecay_a7181fb08b4524a9f222bb5178e2b33b4}{f\+Number\+Of\+Gammas\+\_\+}
+\item 
+float \hyperlink{classPsDecay_afcd2742fdf65e1f1070294b06fc112c7}{f\+Detection\+Probability\+\_\+}
 \end{DoxyCompactItemize}
 
 
@@ -112,17 +116,18 @@ The \hyperlink{classPsDecay}{Ps\+Decay} class Contains histograms with gammas\te
 \subsection{Constructor \& Destructor Documentation}
 \index{Ps\+Decay@{Ps\+Decay}!Ps\+Decay@{Ps\+Decay}}
 \index{Ps\+Decay@{Ps\+Decay}!Ps\+Decay@{Ps\+Decay}}
-\subsubsection[{\texorpdfstring{Ps\+Decay(int no\+Of\+Gammas, double $\ast$source\+Pos, float R=0.\+50, float L=0.\+70)}{PsDecay(int noOfGammas, double *sourcePos, float R=0.50, float L=0.70)}}]{\setlength{\rightskip}{0pt plus 5cm}Ps\+Decay\+::\+Ps\+Decay (
+\subsubsection[{\texorpdfstring{Ps\+Decay(int no\+Of\+Gammas, double $\ast$source\+Pos, float p=1.\+0, float R=0.\+50, float L=0.\+70)}{PsDecay(int noOfGammas, double *sourcePos, float p=1.0, float R=0.50, float L=0.70)}}]{\setlength{\rightskip}{0pt plus 5cm}Ps\+Decay\+::\+Ps\+Decay (
 \begin{DoxyParamCaption}
 \item[{int}]{no\+Of\+Gammas, }
 \item[{double $\ast$}]{source\+X\+YZ, }
+\item[{float}]{p = {\ttfamily 1.0}, }
 \item[{float}]{R = {\ttfamily 0.50}, }
 \item[{float}]{L = {\ttfamily 0.70}}
 \end{DoxyParamCaption}
-)}\hypertarget{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{}\label{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}
+)}\hypertarget{classPsDecay_a138b7f62cfe2e4c673db5409abdf153d}{}\label{classPsDecay_a138b7f62cfe2e4c673db5409abdf153d}
 
 
-\hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} The main constructor of \hyperlink{classPsDecay}{Ps\+Decay} class. Assigns some fields; creates histograms and sets their names and labels. 
+\hyperlink{classPsDecay_a138b7f62cfe2e4c673db5409abdf153d}{Ps\+Decay\+::\+Ps\+Decay} The main constructor of \hyperlink{classPsDecay}{Ps\+Decay} class. Assigns some fields; creates histograms and sets their names and labels. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -144,7 +149,7 @@ The \hyperlink{classPsDecay}{Ps\+Decay} class Contains histograms with gammas\te
 )}\hypertarget{classPsDecay_a572b4252d8fee9cf74912bc5028aacdd}{}\label{classPsDecay_a572b4252d8fee9cf74912bc5028aacdd}
 
 
-\hyperlink{classPsDecay_a72fd76a6033f64d2e004529ccf1a316c}{Ps\+Decay\+::\+Ps\+Decay} Copy constructor. 
+\hyperlink{classPsDecay_a138b7f62cfe2e4c673db5409abdf153d}{Ps\+Decay\+::\+Ps\+Decay} Copy constructor. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -211,6 +216,20 @@ True if particle passed through all cuts, false if it did not.
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
 An array of bools indicating if particular gammas passed all cuts. 
+\end{DoxyReturn}
+\index{Ps\+Decay@{Ps\+Decay}!Detection\+Cut@{Detection\+Cut}}
+\index{Detection\+Cut@{Detection\+Cut}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Detection\+Cut()}{DetectionCut()}}]{\setlength{\rightskip}{0pt plus 5cm}bool Ps\+Decay\+::\+Detection\+Cut (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{}\label{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}
+
+
+\hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Ps\+Decay\+::\+Detection\+Cut} A particle not always interacts with a detector. This cut checks if it interacts, with a priori probability given by a user. 
+
+\begin{DoxyReturn}{Returns}
+True if particle interacts with a detector, false if not. 
 \end{DoxyReturn}
 \index{Ps\+Decay@{Ps\+Decay}!Draw\+Histograms@{Draw\+Histograms}}
 \index{Draw\+Histograms@{Draw\+Histograms}!Ps\+Decay@{Ps\+Decay}}
@@ -301,6 +320,9 @@ Reference to instance of \hyperlink{classPsDecay}{Ps\+Decay} with values of memb
 \index{Ps\+Decay@{Ps\+Decay}!f\+Accepted\+No\+\_\+@{f\+Accepted\+No\+\_\+}}
 \index{f\+Accepted\+No\+\_\+@{f\+Accepted\+No\+\_\+}!Ps\+Decay@{Ps\+Decay}}
 \subsubsection[{\texorpdfstring{f\+Accepted\+No\+\_\+}{fAcceptedNo_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+Accepted\+No\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}{}\label{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}
+\index{Ps\+Decay@{Ps\+Decay}!f\+Detection\+Probability\+\_\+@{f\+Detection\+Probability\+\_\+}}
+\index{f\+Detection\+Probability\+\_\+@{f\+Detection\+Probability\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+Detection\+Probability\+\_\+}{fDetectionProbability_}}]{\setlength{\rightskip}{0pt plus 5cm}float Ps\+Decay\+::f\+Detection\+Probability\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_afcd2742fdf65e1f1070294b06fc112c7}{}\label{classPsDecay_afcd2742fdf65e1f1070294b06fc112c7}
 \index{Ps\+Decay@{Ps\+Decay}!f\+H\+\_\+12\+\_\+@{f\+H\+\_\+12\+\_\+}}
 \index{f\+H\+\_\+12\+\_\+@{f\+H\+\_\+12\+\_\+}!Ps\+Decay@{Ps\+Decay}}
 \subsubsection[{\texorpdfstring{f\+H\+\_\+12\+\_\+}{fH_12_}}]{\setlength{\rightskip}{0pt plus 5cm}T\+H1F$\ast$ Ps\+Decay\+::f\+H\+\_\+12\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a6ffb64480ec7bb3eb9243b20e8130e42}{}\label{classPsDecay_a6ffb64480ec7bb3eb9243b20e8130e42}
@@ -404,5 +426,5 @@ Reference to instance of \hyperlink{classPsDecay}{Ps\+Decay} with values of memb
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-src/\hyperlink{psdecay_8h}{psdecay.\+h}\item 
-src/\hyperlink{psdecay_8cpp}{psdecay.\+cpp}\end{DoxyCompactItemize}
+/home/rafal/\+Projekty/j-\/pet-\/ortho-\/simulations/src/\hyperlink{psdecay_8h}{psdecay.\+h}\item 
+/home/rafal/\+Projekty/j-\/pet-\/ortho-\/simulations/src/\hyperlink{psdecay_8cpp}{psdecay.\+cpp}\end{DoxyCompactItemize}

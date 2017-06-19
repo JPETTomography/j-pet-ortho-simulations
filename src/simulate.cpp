@@ -43,10 +43,10 @@ std::string to_string(const T a_value)
 /// \param sourceXYZ Three element array containg position of the source (x,y,z).
 /// \return An instance of PsDecay class.
 ///
-PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double* sourceXYZ=nullptr)
+PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double* sourceXYZ=nullptr, float p=1.0)
 {
     double* masses = new double[noOfGammas]();
-    PsDecay* decay = new PsDecay(noOfGammas, sourceXYZ);
+    PsDecay* decay = new PsDecay(noOfGammas, sourceXYZ, p);
 
     //(Momentum, Energy units are Gev/C, GeV)
     TGenPhaseSpace event;
@@ -84,7 +84,7 @@ PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string file
 /// \param noOfGammas How many decay products should be simulated. If different from 2 or 3 then both scenarios are simulated.
 /// \param pManag ParamManager object containing parameters of the simulation and source coordinates.
 ///
-void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr)//int noOfGammas)
+void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr, float p = 1.0)//int noOfGammas)
 {
    // Settings
    TLorentzVector Ps;
@@ -128,26 +128,27 @@ void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr)//i
    //Performing simulations based on the provided number of gammas
    if(noOfGammas==2)
    {
-       std::cout<<"[INFO] Simulating 2-gamma decays"<<std::endl;
-       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos);
+       std::cout<<"::::::::::::Simulating 2-gamma decays::::::::::::"<<std::endl;
+       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
        decayTo3 = nullptr;
    }
    else if(noOfGammas==3)
    {
-       std::cout<<"[INFO] Simulating 3-gamma decays"<<std::endl;       
-       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos);
+       std::cout<<"::::::::::::Simulating 3-gamma decays::::::::::::"<<std::endl;
+       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
        decayTo2 = nullptr;
    }
    else
    {
-       std::cout<<"[INFO] Simulating both 2-gamma and 3-gammas decays"<<std::endl;
-       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos);
-       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos);
+       std::cout<<"::::::::::::Simulating both 2-gamma and 3-gammas decays::::::::::::"<<std::endl;
+       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
+       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
    }
 
    // Getting the results
    if(decayTo2)
    {
+        std::cout<<"[INFO] Saving results for 2-gamma decays"<<std::endl;
         decayTo2->DrawHistograms((decaysPrefix+subDir).c_str());
         std::cout << std::fixed;
         std::cout << std::setprecision(2);
@@ -157,6 +158,7 @@ void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr)//i
    }
    if(decayTo3)
    {
+       std::cout<<"[INFO] Saving results for 3-gamma decays"<<std::endl;
        decayTo3->DrawHistograms((decaysPrefix+subDir).c_str());
        std::cout << std::fixed;
        std::cout << std::setprecision(2);
@@ -182,20 +184,46 @@ int main(int argc, char* argv[])
   PrintConstants();
   ParamManager* par_man;
   int noOfGammasToSimulate = 0;
-  if(argc>1)
-    noOfGammasToSimulate = atoi(argv[1]);
 
+  float p = 1.0;
+  bool pars_imported = false;
   par_man = new ParamManager();
-  //importing source parameters from external file
-  if(argc == 3)
+  if(argc > 1) //parsing command line arguments
   {
-     par_man->ImportParams(argv[2]);
-  }
-  else
-  {
-      par_man->ImportParams();
-  }
+      for(int par=1; par<argc; par++)
+      {
+          if(par==1)
+          {
+              if(atoi(argv[1])==2 || atoi(argv[1])==3)
+                  noOfGammasToSimulate = atoi(argv[1]);
+              else
+                  noOfGammasToSimulate = 1; //this will force running simulations for both 2 and 3 gamma decays
+          }
 
+          if((std::string(argv[par]) == "-p") && (argc>=par+2))
+          {
+              p = atof(argv[par+1]); //probability to react with detector
+              if(p>1.0)
+                  p = 1.0;
+              if(p<0.0)
+                  p=0.0;
+              par++;
+              std::cout<<"[INFO] Probability to react with scintillator set to: "<<p<<"\n"<<std::endl;
+          }
+          else if((std::string(argv[par]) == "-i") && (argc>=par+2))
+          {
+            //importing source parameters from external file
+              par_man->ImportParams(argv[par+1]);
+              pars_imported=true;
+          }
+      }
+
+      if(!pars_imported)
+      {
+          std::cout<<"[WARNING] Input file not provided! Trying to load simulation_parameters.par!"<<std::endl;
+          par_man->ImportParams();
+      }
+  }
   //creating directories for storing the results
   mkdir(generalPrefix.c_str(), ACCESSPERMS);
   chmod(generalPrefix.c_str(), ACCESSPERMS);
@@ -207,7 +235,7 @@ int main(int argc, char* argv[])
   //loop with simulation runs
   for(int ii=0; ii< (par_man->getSimRuns()); ii++)
   {
-      simulate(ii, noOfGammasToSimulate, par_man);
+      simulate(ii, noOfGammasToSimulate, par_man, p);
       std::cout<<"[INFO] End of run no:  "<<ii<<"\n"<<std::endl;
   }
   std::cout<<"\n[INFO] END OF PROGRAM."<<std::endl;

@@ -16,14 +16,15 @@ const long double r_Compton_SI= h_bar_eV*light_speed_SI/(e_mass_MeV*1000000);
 ///
 inline void PrintConstants()
 {
-    std::cout<<"\n*** CONSTANTS:"<<std::endl;
+    std::cout<<"\n******    CONSTANTS    ******"<<std::endl;
     std::cout<<"* FINE STRUCTURE: "<<fine_structure_const_<<std::endl;
     std::cout<<"* H BAR: "<<h_bar_SI<<" [J*s]"<<std::endl;
     std::cout<<"* H_BAR: "<<h_bar_eV<<" [eV*s]"<<std::endl;
     std::cout<<"* C (SI): "<<light_speed_SI<<" [m/s]"<<std::endl;
     std::cout<<"* ELECTRON MASS: "<<e_mass_SI<<" [kg]"<<std::endl;
     std::cout<<"* ELECTRON MASS: "<<e_mass_MeV<<" [MeV/c^2]"<<std::endl;
-    std::cout<<"* COMPTON R: "<<r_Compton_SI<<" [m]"<<std::endl<<std::endl;
+    std::cout<<"* COMPTON R: "<<r_Compton_SI<<" [m]"<<std::endl;
+    std::cout<<"******************************\n"<<std::endl;
 }
 
 #endif // CONSTANTS_H

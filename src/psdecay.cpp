@@ -9,6 +9,7 @@
 #include <cstdio>
 #include "TText.h"
 #include <iomanip>
+#include "TRandom3.h"
 
 
 ///
@@ -18,7 +19,7 @@
 /// \param R Radius of the detector in m.
 /// \param L Length of the detector in m.
 ///
-PsDecay::PsDecay(int noOfGammas, double* sourceXYZ, float R, float L) : fR_(R), fL_(L), fAcceptedNo_(0), fNumberOfEvents_(0), fNumberOfGammas_(0)
+PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) : fR_(R), fL_(L), fAcceptedNo_(0), fNumberOfEvents_(0), fNumberOfGammas_(0), fDetectionProbability_(p)
 {
     // checking if: 1) source coordinates provided 2) and 3) if they are inside the detector
     if(sourceXYZ && (sourceXYZ[0]*sourceXYZ[0]+sourceXYZ[1]*sourceXYZ[1]<R*R) && (TMath::Abs(sourceXYZ[2])<L/2.0))
@@ -270,6 +271,7 @@ PsDecay::PsDecay(const PsDecay& est)
         sourcePos_[ii] = est.sourcePos_[ii];
     fR_ = est.fR_;  //radius in m
     fL_ = est.fL_;  //length in m
+    fDetectionProbability_ = est.fDetectionProbability_;
     fNoOfDecayProducts_ = est.fNoOfDecayProducts_;
     fMasses_.resize(est.fMasses_.size());
     std::copy(est.fMasses_.begin(), est.fMasses_.end(), fMasses_.begin());
@@ -315,6 +317,7 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
         sourcePos_[ii]=est.sourcePos_[ii];
     fR_=est.fR_;  //radius in m
     fL_=est.fL_;  //length in m
+    fDetectionProbability_ = est.fDetectionProbability_;
     fNoOfDecayProducts_=est.fNoOfDecayProducts_;
     fNoOfDecayProducts_ = est.fNoOfDecayProducts_;
     fMasses_.resize(est.fMasses_.size());
@@ -729,7 +732,7 @@ bool PsDecay::AddCuts_(TLorentzVector* gamma)
 {     
     if(!gamma)
         return false;
-    return GeometricalAcceptance_(gamma);
+    return GeometricalAcceptance_(gamma) && DetectionCut();
 }
 
 ///
@@ -749,4 +752,20 @@ bool PsDecay::GeometricalAcceptance_(TLorentzVector *gamma)
         return true;
     }
     else return false;
+}
+
+///
+/// \brief PsDecay::DetectionCut A particle not always interacts with a detector. This cut checks if it interacts, with a priori probability given by a user.
+/// \return True if particle interacts with a detector, false if not.
+///
+bool PsDecay::DetectionCut()
+{
+    if(fDetectionProbability_==1.0)
+        return true;
+    else
+    {
+        TRandom3 r(0); //set seed
+        float p = r.Uniform(0.0, 1.0);
+        return p <= fDetectionProbability_;
+    }
 }

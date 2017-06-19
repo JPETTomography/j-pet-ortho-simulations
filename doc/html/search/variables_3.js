@@ -2,6 +2,7 @@ var searchData=
 [
   ['facceptedno_5f',['fAcceptedNo_',['../classPsDecay.html#a87f76faf8bed97d0297fa9fc5a8058b6',1,'PsDecay']]],
   ['fdata_5f',['fData_',['../classParamManager.html#a50cc8e69bb08c7f0b32d7614d5ade323',1,'ParamManager']]],
+  ['fdetectionprobability_5f',['fDetectionProbability_',['../classPsDecay.html#afcd2742fdf65e1f1070294b06fc112c7',1,'PsDecay']]],
   ['fh_5f12_5f',['fH_12_',['../classPsDecay.html#a6ffb64480ec7bb3eb9243b20e8130e42',1,'PsDecay']]],
   ['fh_5f12_5f23_5f',['fH_12_23_',['../classPsDecay.html#a4ae2285b3310298d6c16722c31c7a577',1,'PsDecay']]],
   ['fh_5f12_5f23_5ffail_5f',['fH_12_23_fail_',['../classPsDecay.html#a403e21c0bd6fe979a43bc6b8f267041c',1,'PsDecay']]],

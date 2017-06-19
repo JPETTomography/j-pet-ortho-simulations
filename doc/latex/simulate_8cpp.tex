@@ -1,12 +1,13 @@
-\hypertarget{simulate_8cpp}{}\section{src/simulate.cpp File Reference}
-\label{simulate_8cpp}\index{src/simulate.\+cpp@{src/simulate.\+cpp}}
+\hypertarget{simulate_8cpp}{}\section{/home/rafal/\+Projekty/j-\/pet-\/ortho-\/simulations/src/simulate.cpp File Reference}
+\label{simulate_8cpp}\index{/home/rafal/\+Projekty/j-\/pet-\/ortho-\/simulations/src/simulate.\+cpp@{/home/rafal/\+Projekty/j-\/pet-\/ortho-\/simulations/src/simulate.\+cpp}}
 {\ttfamily \#include \char`\"{}psdecay.\+h\char`\"{}}\\*
 {\ttfamily \#include \char`\"{}T\+Gen\+Phase\+Space.\+h\char`\"{}}\\*
 {\ttfamily \#include $<$iomanip$>$}\\*
 {\ttfamily \#include \char`\"{}parammanager.\+h\char`\"{}}\\*
 {\ttfamily \#include $<$sys/stat.\+h$>$}\\*
 {\ttfamily \#include $<$sstream$>$}\\*
-Include dependency graph for simulate.\+cpp\+:\nopagebreak
+Include dependency graph for simulate.\+cpp\+:
+\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -20,9 +21,9 @@ static std\+::string \hyperlink{simulate_8cpp_a444f28cefb24d90ebbc3d304698f4ae6}
 \item 
 {\footnotesize template$<$typename T $>$ }\\std\+::string \hyperlink{simulate_8cpp_a6baf1eea32bd2e429a23a0f147c573b9}{to\+\_\+string} (const T a\+\_\+value)
 \begin{DoxyCompactList}\small\item\em Template used to cast any value to string. Mainly used to cast double to string, preserving scientific notation. \end{DoxyCompactList}\item 
-\hyperlink{classPsDecay}{Ps\+Decay} $\ast$ \hyperlink{simulate_8cpp_aa7b0b81d052171427ae22e0e350acea6}{simulate\+Decay} (T\+Lorentz\+Vector Ps, const int no\+Of\+Gammas, std\+::string file\+Prefix, int sim\+Steps=1000, double $\ast$source\+X\+YZ=nullptr)
+\hyperlink{classPsDecay}{Ps\+Decay} $\ast$ \hyperlink{simulate_8cpp_a8c6ae1cf926408e89753bc79ad28f0df}{simulate\+Decay} (T\+Lorentz\+Vector Ps, const int no\+Of\+Gammas, std\+::string file\+Prefix, int sim\+Steps=1000, double $\ast$source\+X\+YZ=nullptr, float p=1.\+0)
 \begin{DoxyCompactList}\small\item\em simulate\+Decay Runs Ps-\/$>$2 or Ps-\/$>$3 gamma decay. \end{DoxyCompactList}\item 
-void \hyperlink{simulate_8cpp_af00dd037aec8987144d17b43882ce4c7}{simulate} (int sim\+Run, int no\+Of\+Gammas=0, \hyperlink{classParamManager}{Param\+Manager} $\ast$p\+Manag=nullptr)
+void \hyperlink{simulate_8cpp_a04a333e7c6cff37f55c83666c7bc23df}{simulate} (int sim\+Run, int no\+Of\+Gammas=0, \hyperlink{classParamManager}{Param\+Manager} $\ast$p\+Manag=nullptr, float p=1.\+0)
 \begin{DoxyCompactList}\small\item\em simulate Main function of the simulation. \end{DoxyCompactList}\item 
 int \hyperlink{simulate_8cpp_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
 \begin{DoxyCompactList}\small\item\em main C++ wrapper of simulate function. \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -81,13 +82,14 @@ main C++ wrapper of simulate function.
 \end{DoxyReturn}
 \index{simulate.\+cpp@{simulate.\+cpp}!simulate@{simulate}}
 \index{simulate@{simulate}!simulate.\+cpp@{simulate.\+cpp}}
-\subsubsection[{\texorpdfstring{simulate(int sim\+Run, int no\+Of\+Gammas=0, Param\+Manager $\ast$p\+Manag=nullptr)}{simulate(int simRun, int noOfGammas=0, ParamManager *pManag=nullptr)}}]{\setlength{\rightskip}{0pt plus 5cm}void simulate (
+\subsubsection[{\texorpdfstring{simulate(int sim\+Run, int no\+Of\+Gammas=0, Param\+Manager $\ast$p\+Manag=nullptr, float p=1.\+0)}{simulate(int simRun, int noOfGammas=0, ParamManager *pManag=nullptr, float p=1.0)}}]{\setlength{\rightskip}{0pt plus 5cm}void simulate (
 \begin{DoxyParamCaption}
 \item[{int}]{sim\+Run, }
 \item[{int}]{no\+Of\+Gammas = {\ttfamily 0}, }
-\item[{{\bf Param\+Manager} $\ast$}]{p\+Manag = {\ttfamily nullptr}}
+\item[{{\bf Param\+Manager} $\ast$}]{p\+Manag = {\ttfamily nullptr}, }
+\item[{float}]{p = {\ttfamily 1.0}}
 \end{DoxyParamCaption}
-)}\hypertarget{simulate_8cpp_af00dd037aec8987144d17b43882ce4c7}{}\label{simulate_8cpp_af00dd037aec8987144d17b43882ce4c7}
+)}\hypertarget{simulate_8cpp_a04a333e7c6cff37f55c83666c7bc23df}{}\label{simulate_8cpp_a04a333e7c6cff37f55c83666c7bc23df}
 
 
 simulate Main function of the simulation. 
@@ -103,15 +105,16 @@ simulate Main function of the simulation.
 \end{DoxyParams}
 \index{simulate.\+cpp@{simulate.\+cpp}!simulate\+Decay@{simulate\+Decay}}
 \index{simulate\+Decay@{simulate\+Decay}!simulate.\+cpp@{simulate.\+cpp}}
-\subsubsection[{\texorpdfstring{simulate\+Decay(\+T\+Lorentz\+Vector Ps, const int no\+Of\+Gammas, std\+::string file\+Prefix, int sim\+Steps=1000, double $\ast$source\+X\+Y\+Z=nullptr)}{simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double *sourceXYZ=nullptr)}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Ps\+Decay}$\ast$ simulate\+Decay (
+\subsubsection[{\texorpdfstring{simulate\+Decay(\+T\+Lorentz\+Vector Ps, const int no\+Of\+Gammas, std\+::string file\+Prefix, int sim\+Steps=1000, double $\ast$source\+X\+Y\+Z=nullptr, float p=1.\+0)}{simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double *sourceXYZ=nullptr, float p=1.0)}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Ps\+Decay}$\ast$ simulate\+Decay (
 \begin{DoxyParamCaption}
 \item[{T\+Lorentz\+Vector}]{Ps, }
 \item[{const int}]{no\+Of\+Gammas, }
 \item[{std\+::string}]{file\+Prefix, }
 \item[{int}]{sim\+Steps = {\ttfamily 1000}, }
-\item[{double $\ast$}]{source\+X\+YZ = {\ttfamily nullptr}}
+\item[{double $\ast$}]{source\+X\+YZ = {\ttfamily nullptr}, }
+\item[{float}]{p = {\ttfamily 1.0}}
 \end{DoxyParamCaption}
-)}\hypertarget{simulate_8cpp_aa7b0b81d052171427ae22e0e350acea6}{}\label{simulate_8cpp_aa7b0b81d052171427ae22e0e350acea6}
+)}\hypertarget{simulate_8cpp_a8c6ae1cf926408e89753bc79ad28f0df}{}\label{simulate_8cpp_a8c6ae1cf926408e89753bc79ad28f0df}
 
 
 simulate\+Decay Runs Ps-\/$>$2 or Ps-\/$>$3 gamma decay. 

@@ -22,7 +22,7 @@
 class PsDecay
 {
     public:
-        PsDecay(int noOfGammas, double* sourcePos, float R=0.50, float L=0.70);
+        PsDecay(int noOfGammas, double* sourcePos,  float p=1.0, float R=0.50, float L=0.70);
         PsDecay(const PsDecay&);
         PsDecay& operator=(const PsDecay& est);
         ~PsDecay();
@@ -84,8 +84,10 @@ class PsDecay
         int fNumberOfEvents_;
         int fNumberOfGammas_;
 
+        float fDetectionProbability_; //probability that detector will detect gamma after being hit
         bool AddCuts_(TLorentzVector* gamma);
         bool GeometricalAcceptance_(TLorentzVector* gamma);
+        bool DetectionCut();
 };
 
 #endif // PSDECAY_H
