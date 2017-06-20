@@ -745,16 +745,8 @@ bool PsDecay::GeometricalAcceptance(TLorentzVector *gamma)
     double x = sourcePos_[0] + s*(gamma->Px());
     double y = sourcePos_[1] +s*(gamma->Py());
 
-//    if(gamma->CosTheta() < TMath::Power(10, -4)) //gamma travels perpendicular to OZ axis
-//        return true;
-//    double ct = (side*0.5*fL_ - sourcePos_[2])/(gamma->CosTheta());
-//    double x = sourcePos_[0] + ct*TMath::Cos(gamma->Phi());
-//    double y = sourcePos_[1] + ct*TMath::Sin(gamma->Phi());
-//    if(TMath::Abs(TMath::Abs(sourcePos_[2]+ct*(gamma->CosTheta()))-0.35) > 0.01)
-//        std::cout<<TMath::Abs(TMath::Abs(sourcePos_[2]+ct*(gamma->CosTheta()))-0.35)<<" "<<std::endl;
     if(x*x + y*y >= fR_*fR_)
     {
-//        std::cout<<"ct="<<ct<<" x*x="<<x*x<<" y*y="<<y*y<<std::endl;
         fH_gamma_cuts_->Fill(1);
         return true;
     }

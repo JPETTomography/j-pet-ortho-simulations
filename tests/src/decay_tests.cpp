@@ -101,7 +101,7 @@ TEST_F (decayTestFixture, GeometricalAcceptanceTestZAxis)
     double masses3[3] = {0.0, 0.0, 0.0};
     double masses2[2] = {0.0, 0.0};
     TLorentzVector Ps(0.000000001, 0.000000001, 0.000000001, 1.022/1000);
-    int simSteps = 1000000;
+    int simSteps = 10000;
 
     double pos[3]={0.0, 0.0, decay3->GetLength()/(-4.0)};
     //1 indicates the left side of the detector, 2 the right side
@@ -109,8 +109,8 @@ TEST_F (decayTestFixture, GeometricalAcceptanceTestZAxis)
             + ((decay3->GetRadius()) * (decay3->GetRadius())));
     double r2 = TMath::Sqrt((decay3->GetLength()/2.0+TMath::Abs(pos[2])) * (decay3->GetLength()/2.0+TMath::Abs(pos[2]))\
             + ((decay3->GetRadius()) * (decay3->GetRadius())));
-    double S1 = (2*TMath::Pi()*r1*(r1-(decay3->GetLength()/2.0)));
-    double S2 = (2*TMath::Pi()*r2*(r2-(decay3->GetLength()/2.0)));
+    double S1 = (2*TMath::Pi()*r1*(r1-(decay3->GetLength()/2.0)+TMath::Abs(pos[2])));
+    double S2 = (2*TMath::Pi()*r2*(r2-(decay3->GetLength()/2.0)-TMath::Abs(pos[2])));
 
     std::cout<<S1/4.0/TMath::Pi()/r1/r1<<"  "<<S2/4.0/TMath::Pi()/r2/r2<<std::endl;
     float pForGammaToPass = ((int)(100*(1.0 - S1/4.0/TMath::Pi()/r1/r1 -  S2/4.0/TMath::Pi()/r2/r2))) / 100.0;
