@@ -25,6 +25,7 @@ class ComptonScattering
     private:
         int fNoOfGammas_;
         TH1F* fH_electron_E_;   //energy distribution for electrons
+        TH1F* fH_photon_E_depos_; //distribution of energy deposited by incident photons
         TH1F* fH_photon_theta_;   //angle distribution for scattered photons
         TH2D* fH_PDF_;  // Klein-Nishina function plot, for testing purpose only
         static long double KleinNishina_(double* angle, double* energy);

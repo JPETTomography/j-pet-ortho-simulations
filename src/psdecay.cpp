@@ -19,7 +19,7 @@
 /// \param R Radius of the detector in m.
 /// \param L Length of the detector in m.
 ///
-PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) : fR_(R), fL_(L), fAcceptedNo_(0), fNumberOfEvents_(0), fNumberOfGammas_(0), fDetectionProbability_(p)
+PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) : fR_(R), fL_(L), fAcceptedEvents_(0), fAcceptedGammas_(0), fNumberOfEvents_(0), fNumberOfGammas_(0), fDetectionProbability_(p)
 {
     // checking if: 1) source coordinates provided 2) and 3) if they are inside the detector
     if(sourceXYZ && (sourceXYZ[0]*sourceXYZ[0]+sourceXYZ[1]*sourceXYZ[1]<R*R) && (TMath::Abs(sourceXYZ[2])<L/2.0))
@@ -303,7 +303,9 @@ PsDecay::PsDecay(const PsDecay& est)
     fH_gamma_cuts_ = new TH1F(*est.fH_gamma_cuts_);
     fNumberOfEvents_ = est.fNumberOfEvents_;
     fNumberOfGammas_ = est.fNumberOfGammas_;
-    fAcceptedNo_ = est.fAcceptedNo_;
+    fAcceptedEvents_ = est.fAcceptedEvents_;
+    fAcceptedGammas_ = est.fAcceptedGammas_;
+
 }
 
 ///
@@ -350,7 +352,8 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
     fH_gamma_cuts_ = new TH1F(*est.fH_gamma_cuts_);
     fNumberOfEvents_ = est.fNumberOfEvents_;
     fNumberOfGammas_ = est.fNumberOfGammas_;
-    fAcceptedNo_ = est.fAcceptedNo_;
+    fAcceptedEvents_ = est.fAcceptedEvents_;
+    fAcceptedGammas_ = est.fAcceptedGammas_;
     return *this;
 }
 
@@ -417,6 +420,7 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
             }
             if(AddCuts_(gammas[ii]))
             {
+                fAcceptedGammas_++;
                 switch (ii)
                 {
                     case 0:
@@ -454,7 +458,7 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
             {
                 fH_12_pass_->Fill(gamma1->Angle((gamma2)->Vect()), weight);
                 fH_event_cuts_->Fill(1);
-                fAcceptedNo_++;
+                fAcceptedEvents_++;
             }
             else
             {
@@ -471,7 +475,7 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
                 fH_12_23_pass_->Fill(gamma1->Angle(gamma2->Vect()), gamma2->Angle(gamma3->Vect()), weight);
                 fH_12_31_pass_->Fill(gamma1->Angle(gamma2->Vect()), gamma3->Angle(gamma1->Vect()), weight);
                 fH_23_31_pass_->Fill(gamma2->Angle(gamma3->Vect()), gamma3->Angle(gamma1->Vect()), weight);
-                fAcceptedNo_++;
+                fAcceptedEvents_++;
                 fH_event_cuts_->Fill(1);
             }
             else
@@ -718,12 +722,6 @@ void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail,
 }
 
 ///
-/// \brief PsDecay::GetAcceptedNo Indicates how many events passed were accepted after adding cuts.
-/// \return The number of accepted events.
-///
-int PsDecay::GetAcceptedNo() {return fAcceptedNo_;}
-
-///
 /// \brief PsDecay::AddCuts_ Applies all cuts to a particle.
 /// \param gamma Four vector of a particle (gamma quant).
 /// \return True if particle passed through all cuts, false if it did not.
@@ -732,22 +730,31 @@ bool PsDecay::AddCuts_(TLorentzVector* gamma)
 {     
     if(!gamma)
         return false;
-    return GeometricalAcceptance_(gamma) && DetectionCut();
+    return GeometricalAcceptance(gamma) && DetectionCut();
 }
 
 ///
-/// \brief PsDecay::GeometricalAcceptance_ Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder.
+/// \brief PsDecay::GeometricalAcceptance Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder.
 /// \param gamma Four vector of a particle (gamma quant).
 /// \return True if particle hit the side surface of the detector's barrel, false otherwise.
 ///
-bool PsDecay::GeometricalAcceptance_(TLorentzVector *gamma)
+bool PsDecay::GeometricalAcceptance(TLorentzVector *gamma)
 {
     int side = (gamma->Pz()>0) ? 1 : -1;
     double s = (side*fL_/2.0 - sourcePos_[2])/gamma->Pz();
     double x = sourcePos_[0] + s*(gamma->Px());
     double y = sourcePos_[1] +s*(gamma->Py());
-    if(x*x + y*y > fR_*fR_)
+
+//    if(gamma->CosTheta() < TMath::Power(10, -4)) //gamma travels perpendicular to OZ axis
+//        return true;
+//    double ct = (side*0.5*fL_ - sourcePos_[2])/(gamma->CosTheta());
+//    double x = sourcePos_[0] + ct*TMath::Cos(gamma->Phi());
+//    double y = sourcePos_[1] + ct*TMath::Sin(gamma->Phi());
+//    if(TMath::Abs(TMath::Abs(sourcePos_[2]+ct*(gamma->CosTheta()))-0.35) > 0.01)
+//        std::cout<<TMath::Abs(TMath::Abs(sourcePos_[2]+ct*(gamma->CosTheta()))-0.35)<<" "<<std::endl;
+    if(x*x + y*y >= fR_*fR_)
     {
+//        std::cout<<"ct="<<ct<<" x*x="<<x*x<<" y*y="<<y*y<<std::endl;
         fH_gamma_cuts_->Fill(1);
         return true;
     }

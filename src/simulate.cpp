@@ -152,8 +152,8 @@ void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr, fl
         decayTo2->DrawHistograms((decaysPrefix+subDir).c_str());
         std::cout << std::fixed;
         std::cout << std::setprecision(2);
-        std::cout<<"[INFO] Fraction of accepted 2-gamma decays: "<<decayTo2->GetAcceptedNo()<<"/"<<simSteps<<"="<<\
-                   decayTo2->GetAcceptedNo()/(float)simSteps*100<<"%"<<std::endl;
+        std::cout<<"[INFO] Fraction of accepted 2-gamma decays: "<<decayTo2->GetAcceptedEvents()<<"/"<<simSteps<<"="<<\
+                   decayTo2->GetAcceptedEvents()/(float)simSteps*100<<"%"<<std::endl;
         std::cout<<std::endl;
    }
    if(decayTo3)
@@ -162,8 +162,8 @@ void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr, fl
        decayTo3->DrawHistograms((decaysPrefix+subDir).c_str());
        std::cout << std::fixed;
        std::cout << std::setprecision(2);
-       std::cout<<"[INFO] Fraction of accepted 3-gamma decays: "<<decayTo3->GetAcceptedNo()<<"/"<<simSteps<<"="<<\
-                  decayTo3->GetAcceptedNo()/(float)simSteps*100<<"%"<<std::endl;
+       std::cout<<"[INFO] Fraction of accepted 3-gamma decays: "<<decayTo3->GetAcceptedEvents()<<"/"<<simSteps<<"="<<\
+                  decayTo3->GetAcceptedEvents()/(float)simSteps*100<<"%"<<std::endl;
        std::cout<<std::endl;
    }
 

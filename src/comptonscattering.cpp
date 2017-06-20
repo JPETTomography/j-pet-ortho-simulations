@@ -15,6 +15,13 @@ ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
     fH_electron_E_->GetXaxis()->SetTitle("E [MeV]");
     fH_electron_E_->GetYaxis()->SetTitle("dN/dE");
     fH_electron_E_->GetYaxis()->SetTitleOffset(1.8);
+    
+    fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 100, 0.0, 0.511);
+    fH_photon_E_depos_->SetTitle("Incident photon energy deposition");
+    fH_photon_E_depos_->GetXaxis()->SetTitle("E [MeV]");
+    fH_photon_E_depos_->GetYaxis()->SetTitle("dN/dE");
+    fH_photon_E_depos_->GetYaxis()->SetTitleOffset(1.8);
+    
     fH_photon_theta_ = new TH1F("fH_photon_theta_", "fH_photon_theta_", 100, 0.0, TMath::Pi()/2.);
     fH_photon_theta_->SetTitle("Scattering angle distribution");
     fH_photon_theta_->GetXaxis()->SetTitle("#theta");
@@ -38,6 +45,7 @@ ComptonScattering::ComptonScattering(const ComptonScattering &est)
 {
     fNoOfGammas_=est.fNoOfGammas_;
     fPDF = new TF1(*est.fPDF);  //special root object
+    fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
     fH_electron_E_ = new TH1F(*est.fH_electron_E_);   //energy distribution for electrons
     fH_photon_theta_ = new TH1F(*est.fH_photon_theta_);   //angle distribution for electrons
     fH_PDF_ = new TH2D(*est.fH_PDF_);  // Klein-Nishina function plot, for testing purpose only
@@ -52,6 +60,7 @@ ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
 {
     fNoOfGammas_=est.fNoOfGammas_;
     fPDF = new TF1(*est.fPDF);  //special root object
+    fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
     fH_electron_E_ = new TH1F(*est.fH_electron_E_);   //energy distribution for electrons
     fH_photon_theta_ = new TH1F(*est.fH_photon_theta_);   //angle distribution for electrons
     fH_PDF_ = new TH2D(*est.fH_PDF_);  // Klein-Nishina function plot, for testing purpose only
@@ -65,6 +74,7 @@ ComptonScattering::~ComptonScattering()
 {
     if(fH_electron_E_) delete fH_electron_E_;
     if(fH_photon_theta_) delete fH_photon_theta_;
+    if(fH_photon_E_depos_) delete fH_photon_E_depos_;
     if(fH_PDF_) delete fH_PDF_;
     if(fPDF) delete fPDF;
 }
@@ -106,18 +116,20 @@ void ComptonScattering::DrawPDF(std::string filePrefix)
 void ComptonScattering::DrawElectronDist(std::string filePrefix)
 {
     std::cout<<"\n[INFO] Drawing histograms for Compton electrons and scattered photons."<<std::endl;
-    TCanvas* c = new TCanvas("c", "Compton electrons and scattered photons", 850, 380);
-    c->Divide(2,1);
+    TCanvas* c = new TCanvas("c", "Compton effect distributions", 1200, 380);
+    c->Divide(3,1);
     c->cd(1);
-    fH_electron_E_ ->Draw();
+    fH_photon_E_depos_->Draw();
     c->cd(2);
+    fH_electron_E_ ->Draw();
+    c->cd(3);
     fH_photon_theta_->Draw();
     TImage *img2 = TImage::Create();
     img2->FromPad(c);
     img2->WriteImage((filePrefix+std::string("_compton_distr_")+std::to_string(fNoOfGammas_)\
                       +std::string("gammas.png")).c_str());
     delete c;
-    std::cout<<"[INFO] Compton electrons' energy and scattered photons' angle distributions saved.\n"<<std::endl;
+    std::cout<<"[INFO] Distributions of electrons' energy, incident photons' energy and Compton scattering angle saved.\n"<<std::endl;
 }
 
 ///
@@ -127,6 +139,7 @@ void ComptonScattering::DrawElectronDist(std::string filePrefix)
 void ComptonScattering::Scatter(double E)
 {
     TRandom3 r(0); //set seed
+    fH_photon_E_depos_->Fill(E);
     fPDF->SetParameter(0, E); //set incident photon energy
     double theta = fPDF->GetRandom(); //get scattering angle
     fH_photon_theta_->Fill(theta);

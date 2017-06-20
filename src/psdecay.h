@@ -29,7 +29,22 @@ class PsDecay
         std::vector<bool> AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3);
         void DrawHistograms(std::string prefix="RM", bool all=true, bool pass=true, bool fail=true, \
                             bool compare=true, bool cuts=true);
-        int GetAcceptedNo();
+
+        // Getters and setters
+        int GetAcceptedEvents(){return fAcceptedEvents_;}
+        int GetAcceptedGammas(){return fAcceptedGammas_;}
+        float GetRadius(){return fR_;}
+        void SetRadius(float R){fR_=R;}
+        float GetLength(){return fL_;}
+        void SetLength(float L){fL_=L;}
+        double* GetSourcePos(){return sourcePos_;}
+        void SetSourcePos(double* pos){for(int ii=0; ii<3; ii++) sourcePos_[ii]=pos[ii];}
+        float GetDetectionProbability(){return fDetectionProbability_;}
+        void SetDetectionProbability(float p){if(p>1.0) fDetectionProbability_=1.0; else if(p<0.0) fDetectionProbability_=0.0; else fDetectionProbability_=p;}
+
+        //cuts
+        bool GeometricalAcceptance(TLorentzVector* gamma);
+        bool DetectionCut();
     private:
         //source's parameters
         double sourcePos_[3];
@@ -80,14 +95,14 @@ class PsDecay
         TH1F* fH_event_cuts_;
         TH1F* fH_gamma_cuts_;
 
-        int fAcceptedNo_;
+        int fAcceptedEvents_;
+        int fAcceptedGammas_;
         int fNumberOfEvents_;
         int fNumberOfGammas_;
 
         float fDetectionProbability_; //probability that detector will detect gamma after being hit
         bool AddCuts_(TLorentzVector* gamma);
-        bool GeometricalAcceptance_(TLorentzVector* gamma);
-        bool DetectionCut();
+
 };
 
 #endif // PSDECAY_H
