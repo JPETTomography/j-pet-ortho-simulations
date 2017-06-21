@@ -1,0 +1,51 @@
+#include ""
+#include "psdecay.h"
+#include "parammanager.h"
+
+class decayTestFixture: public ::testing::test
+{
+    public:
+       myTestFixture1( )
+       {
+           // initialization code here
+           int noOfGammas = 3;
+           double* sourcePos = new double[3]();
+           sourcePos[0] = 0.0;
+           sourcePos[1] = 0.0;
+           sourcePos[2] = 0.0;
+           PsDecay( noOfGammas,  sourcePos,  p=1.0, R=0.50, L=0.70);
+
+       }
+
+       void SetUp( )
+       {
+           // code here will execute just before the test ensues
+       }
+
+       void TearDown( )
+       {
+           // code here will be called just after the test completes
+           // ok to through exceptions from here if need be
+       }
+
+       ~myTestFixture1( )
+       {
+           // cleanup any pending stuff, but no exceptions allowed
+           delete[] sourcePos;
+       }
+
+       // put in any custom data members that you need
+};
+
+TEST_F (decayTestFixture, test)
+{
+    EXPECT_EQ (18.0, 324.0);
+    EXPECT_EQ (25.4, 25.40);
+    EXPECT_EQ (50.0, 50);
+}
+
+
+int main(int argc, char **argv) {
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
