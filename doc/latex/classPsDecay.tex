@@ -24,17 +24,35 @@ std\+::vector$<$ bool $>$ \hyperlink{classPsDecay_a85fae0338b221eee90bf497819e71
 \begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a85fae0338b221eee90bf497819e71c84}{Ps\+Decay\+::\+Add\+Event} Checks whether a particle passes all cuts and fills histograms. \end{DoxyCompactList}\item 
 void \hyperlink{classPsDecay_acf37a3232c075338710e7732da809fbe}{Draw\+Histograms} (std\+::string prefix=\char`\"{}RM\char`\"{}, bool all=true, bool pass=true, bool fail=true, bool compare=true, bool cuts=true)
 \begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_acf37a3232c075338710e7732da809fbe}{Ps\+Decay\+::\+Draw\+Histograms}. \end{DoxyCompactList}\item 
-int \hyperlink{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{Get\+Accepted\+No} ()
-\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{Ps\+Decay\+::\+Get\+Accepted\+No} Indicates how many events passed were accepted after adding cuts. \end{DoxyCompactList}\end{DoxyCompactItemize}
+int \hyperlink{classPsDecay_a72748b543e708190792f542589d400bf}{Get\+Accepted\+Events} ()
+\item 
+int \hyperlink{classPsDecay_a3d38be1c590da4bd4831fd6399cee2fc}{Get\+Accepted\+Gammas} ()
+\item 
+float \hyperlink{classPsDecay_ac0517f667702f7e1bee0d20db672ab9a}{Get\+Radius} ()
+\item 
+void \hyperlink{classPsDecay_a86a0cf5299fdd8a300b749a0bc315664}{Set\+Radius} (float R)
+\item 
+float \hyperlink{classPsDecay_a82413603fa5eda90d972b6f32843b100}{Get\+Length} ()
+\item 
+void \hyperlink{classPsDecay_aed3ef319a61a3229a586956fbe1827ad}{Set\+Length} (float L)
+\item 
+double $\ast$ \hyperlink{classPsDecay_a6fc8d3c99830bfde08ab095401eb1638}{Get\+Source\+Pos} ()
+\item 
+void \hyperlink{classPsDecay_a574ae1e69be02777efc29d897b743c7d}{Set\+Source\+Pos} (double $\ast$pos)
+\item 
+float \hyperlink{classPsDecay_a9b62d4d9f520a79e4e31c923a6ceff3e}{Get\+Detection\+Probability} ()
+\item 
+void \hyperlink{classPsDecay_a5bc4bac0d5e0002e7ffefbc57762e4a4}{Set\+Detection\+Probability} (float p)
+\item 
+bool \hyperlink{classPsDecay_a3988e06145dee5f112aee8b256b4cab8}{Geometrical\+Acceptance} (T\+Lorentz\+Vector $\ast$gamma)
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a3988e06145dee5f112aee8b256b4cab8}{Ps\+Decay\+::\+Geometrical\+Acceptance} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. \end{DoxyCompactList}\item 
+bool \hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Detection\+Cut} ()
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Ps\+Decay\+::\+Detection\+Cut} A particle not always interacts with a detector. This cut checks if it interacts, with a priori probability given by a user. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 bool \hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Add\+Cuts\+\_\+} (T\+Lorentz\+Vector $\ast$gamma)
-\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Ps\+Decay\+::\+Add\+Cuts\+\_\+} Applies all cuts to a particle. \end{DoxyCompactList}\item 
-bool \hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Geometrical\+Acceptance\+\_\+} (T\+Lorentz\+Vector $\ast$gamma)
-\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. \end{DoxyCompactList}\item 
-bool \hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Detection\+Cut} ()
-\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Ps\+Decay\+::\+Detection\+Cut} A particle not always interacts with a detector. This cut checks if it interacts, with a priori probability given by a user. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPsDecay_aa0df6edea1fa6961cbf5307a2c975e3b}{Ps\+Decay\+::\+Add\+Cuts\+\_\+} Applies all cuts to a particle. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Private Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -100,7 +118,9 @@ T\+H1F $\ast$ \hyperlink{classPsDecay_adedcdf6c1878a93c5f2c3809f6ced052}{f\+H\+\
 \item 
 T\+H1F $\ast$ \hyperlink{classPsDecay_aaa94c7a338ede5d9b6cfbdd5a6a72d4e}{f\+H\+\_\+gamma\+\_\+cuts\+\_\+}
 \item 
-int \hyperlink{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}{f\+Accepted\+No\+\_\+}
+int \hyperlink{classPsDecay_a7dd049a762031e8b8120db993f430603}{f\+Accepted\+Events\+\_\+}
+\item 
+int \hyperlink{classPsDecay_a0edd6a352178070e2433bee0a0632264}{f\+Accepted\+Gammas\+\_\+}
 \item 
 int \hyperlink{classPsDecay_a32e3f4712d0c7a995d0b8c959c720e79}{f\+Number\+Of\+Events\+\_\+}
 \item 
@@ -223,7 +243,7 @@ An array of bools indicating if particular gammas passed all cuts.
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{}\label{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}
+)}\hypertarget{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{}\label{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}
 
 
 \hyperlink{classPsDecay_a98329cfeebbca0017123fd7928de1cfe}{Ps\+Decay\+::\+Detection\+Cut} A particle not always interacts with a detector. This cut checks if it interacts, with a priori probability given by a user. 
@@ -262,16 +282,16 @@ True if particle interacts with a detector, false if not.
 {\em cuts} & If true, histograms showing how many gammas and events passed cuts will be created and saved to file. \\
 \hline
 \end{DoxyParams}
-\index{Ps\+Decay@{Ps\+Decay}!Geometrical\+Acceptance\+\_\+@{Geometrical\+Acceptance\+\_\+}}
-\index{Geometrical\+Acceptance\+\_\+@{Geometrical\+Acceptance\+\_\+}!Ps\+Decay@{Ps\+Decay}}
-\subsubsection[{\texorpdfstring{Geometrical\+Acceptance\+\_\+(\+T\+Lorentz\+Vector $\ast$gamma)}{GeometricalAcceptance_(TLorentzVector *gamma)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+ (
+\index{Ps\+Decay@{Ps\+Decay}!Geometrical\+Acceptance@{Geometrical\+Acceptance}}
+\index{Geometrical\+Acceptance@{Geometrical\+Acceptance}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Geometrical\+Acceptance(\+T\+Lorentz\+Vector $\ast$gamma)}{GeometricalAcceptance(TLorentzVector *gamma)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Ps\+Decay\+::\+Geometrical\+Acceptance (
 \begin{DoxyParamCaption}
 \item[{T\+Lorentz\+Vector $\ast$}]{gamma}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{}\label{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}
+)}\hypertarget{classPsDecay_a3988e06145dee5f112aee8b256b4cab8}{}\label{classPsDecay_a3988e06145dee5f112aee8b256b4cab8}
 
 
-\hyperlink{classPsDecay_a183a1874ec37ec1eea0fe82fde501ef0}{Ps\+Decay\+::\+Geometrical\+Acceptance\+\_\+} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. 
+\hyperlink{classPsDecay_a3988e06145dee5f112aee8b256b4cab8}{Ps\+Decay\+::\+Geometrical\+Acceptance} Applies geometrical acceptance cut to a particle. It calculates intersection point on the basis surface of the cyllinder. 
 
 
 \begin{DoxyParams}{Parameters}
@@ -281,20 +301,48 @@ True if particle interacts with a detector, false if not.
 \begin{DoxyReturn}{Returns}
 True if particle hit the side surface of the detector\textquotesingle{}s barrel, false otherwise. 
 \end{DoxyReturn}
-\index{Ps\+Decay@{Ps\+Decay}!Get\+Accepted\+No@{Get\+Accepted\+No}}
-\index{Get\+Accepted\+No@{Get\+Accepted\+No}!Ps\+Decay@{Ps\+Decay}}
-\subsubsection[{\texorpdfstring{Get\+Accepted\+No()}{GetAcceptedNo()}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::\+Get\+Accepted\+No (
+\index{Ps\+Decay@{Ps\+Decay}!Get\+Accepted\+Events@{Get\+Accepted\+Events}}
+\index{Get\+Accepted\+Events@{Get\+Accepted\+Events}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Get\+Accepted\+Events()}{GetAcceptedEvents()}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::\+Get\+Accepted\+Events (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)}\hypertarget{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{}\label{classPsDecay_ae53824e7c6ffc093053bf1aece564044}
-
-
-\hyperlink{classPsDecay_ae53824e7c6ffc093053bf1aece564044}{Ps\+Decay\+::\+Get\+Accepted\+No} Indicates how many events passed were accepted after adding cuts. 
-
-\begin{DoxyReturn}{Returns}
-The number of accepted events. 
-\end{DoxyReturn}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a72748b543e708190792f542589d400bf}{}\label{classPsDecay_a72748b543e708190792f542589d400bf}
+\index{Ps\+Decay@{Ps\+Decay}!Get\+Accepted\+Gammas@{Get\+Accepted\+Gammas}}
+\index{Get\+Accepted\+Gammas@{Get\+Accepted\+Gammas}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Get\+Accepted\+Gammas()}{GetAcceptedGammas()}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::\+Get\+Accepted\+Gammas (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a3d38be1c590da4bd4831fd6399cee2fc}{}\label{classPsDecay_a3d38be1c590da4bd4831fd6399cee2fc}
+\index{Ps\+Decay@{Ps\+Decay}!Get\+Detection\+Probability@{Get\+Detection\+Probability}}
+\index{Get\+Detection\+Probability@{Get\+Detection\+Probability}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Get\+Detection\+Probability()}{GetDetectionProbability()}}]{\setlength{\rightskip}{0pt plus 5cm}float Ps\+Decay\+::\+Get\+Detection\+Probability (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a9b62d4d9f520a79e4e31c923a6ceff3e}{}\label{classPsDecay_a9b62d4d9f520a79e4e31c923a6ceff3e}
+\index{Ps\+Decay@{Ps\+Decay}!Get\+Length@{Get\+Length}}
+\index{Get\+Length@{Get\+Length}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Get\+Length()}{GetLength()}}]{\setlength{\rightskip}{0pt plus 5cm}float Ps\+Decay\+::\+Get\+Length (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a82413603fa5eda90d972b6f32843b100}{}\label{classPsDecay_a82413603fa5eda90d972b6f32843b100}
+\index{Ps\+Decay@{Ps\+Decay}!Get\+Radius@{Get\+Radius}}
+\index{Get\+Radius@{Get\+Radius}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Get\+Radius()}{GetRadius()}}]{\setlength{\rightskip}{0pt plus 5cm}float Ps\+Decay\+::\+Get\+Radius (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_ac0517f667702f7e1bee0d20db672ab9a}{}\label{classPsDecay_ac0517f667702f7e1bee0d20db672ab9a}
+\index{Ps\+Decay@{Ps\+Decay}!Get\+Source\+Pos@{Get\+Source\+Pos}}
+\index{Get\+Source\+Pos@{Get\+Source\+Pos}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Get\+Source\+Pos()}{GetSourcePos()}}]{\setlength{\rightskip}{0pt plus 5cm}double$\ast$ Ps\+Decay\+::\+Get\+Source\+Pos (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a6fc8d3c99830bfde08ab095401eb1638}{}\label{classPsDecay_a6fc8d3c99830bfde08ab095401eb1638}
 \index{Ps\+Decay@{Ps\+Decay}!operator=@{operator=}}
 \index{operator=@{operator=}!Ps\+Decay@{Ps\+Decay}}
 \subsubsection[{\texorpdfstring{operator=(const Ps\+Decay \&est)}{operator=(const PsDecay &est)}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Ps\+Decay} \& Ps\+Decay\+::operator= (
@@ -314,12 +362,43 @@ The number of accepted events.
 \begin{DoxyReturn}{Returns}
 Reference to instance of \hyperlink{classPsDecay}{Ps\+Decay} with values of member fields copied. 
 \end{DoxyReturn}
+\index{Ps\+Decay@{Ps\+Decay}!Set\+Detection\+Probability@{Set\+Detection\+Probability}}
+\index{Set\+Detection\+Probability@{Set\+Detection\+Probability}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Set\+Detection\+Probability(float p)}{SetDetectionProbability(float p)}}]{\setlength{\rightskip}{0pt plus 5cm}void Ps\+Decay\+::\+Set\+Detection\+Probability (
+\begin{DoxyParamCaption}
+\item[{float}]{p}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a5bc4bac0d5e0002e7ffefbc57762e4a4}{}\label{classPsDecay_a5bc4bac0d5e0002e7ffefbc57762e4a4}
+\index{Ps\+Decay@{Ps\+Decay}!Set\+Length@{Set\+Length}}
+\index{Set\+Length@{Set\+Length}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Set\+Length(float L)}{SetLength(float L)}}]{\setlength{\rightskip}{0pt plus 5cm}void Ps\+Decay\+::\+Set\+Length (
+\begin{DoxyParamCaption}
+\item[{float}]{L}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_aed3ef319a61a3229a586956fbe1827ad}{}\label{classPsDecay_aed3ef319a61a3229a586956fbe1827ad}
+\index{Ps\+Decay@{Ps\+Decay}!Set\+Radius@{Set\+Radius}}
+\index{Set\+Radius@{Set\+Radius}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Set\+Radius(float R)}{SetRadius(float R)}}]{\setlength{\rightskip}{0pt plus 5cm}void Ps\+Decay\+::\+Set\+Radius (
+\begin{DoxyParamCaption}
+\item[{float}]{R}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a86a0cf5299fdd8a300b749a0bc315664}{}\label{classPsDecay_a86a0cf5299fdd8a300b749a0bc315664}
+\index{Ps\+Decay@{Ps\+Decay}!Set\+Source\+Pos@{Set\+Source\+Pos}}
+\index{Set\+Source\+Pos@{Set\+Source\+Pos}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{Set\+Source\+Pos(double $\ast$pos)}{SetSourcePos(double *pos)}}]{\setlength{\rightskip}{0pt plus 5cm}void Ps\+Decay\+::\+Set\+Source\+Pos (
+\begin{DoxyParamCaption}
+\item[{double $\ast$}]{pos}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\hypertarget{classPsDecay_a574ae1e69be02777efc29d897b743c7d}{}\label{classPsDecay_a574ae1e69be02777efc29d897b743c7d}
 
 
 \subsection{Member Data Documentation}
-\index{Ps\+Decay@{Ps\+Decay}!f\+Accepted\+No\+\_\+@{f\+Accepted\+No\+\_\+}}
-\index{f\+Accepted\+No\+\_\+@{f\+Accepted\+No\+\_\+}!Ps\+Decay@{Ps\+Decay}}
-\subsubsection[{\texorpdfstring{f\+Accepted\+No\+\_\+}{fAcceptedNo_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+Accepted\+No\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}{}\label{classPsDecay_a87f76faf8bed97d0297fa9fc5a8058b6}
+\index{Ps\+Decay@{Ps\+Decay}!f\+Accepted\+Events\+\_\+@{f\+Accepted\+Events\+\_\+}}
+\index{f\+Accepted\+Events\+\_\+@{f\+Accepted\+Events\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+Accepted\+Events\+\_\+}{fAcceptedEvents_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+Accepted\+Events\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a7dd049a762031e8b8120db993f430603}{}\label{classPsDecay_a7dd049a762031e8b8120db993f430603}
+\index{Ps\+Decay@{Ps\+Decay}!f\+Accepted\+Gammas\+\_\+@{f\+Accepted\+Gammas\+\_\+}}
+\index{f\+Accepted\+Gammas\+\_\+@{f\+Accepted\+Gammas\+\_\+}!Ps\+Decay@{Ps\+Decay}}
+\subsubsection[{\texorpdfstring{f\+Accepted\+Gammas\+\_\+}{fAcceptedGammas_}}]{\setlength{\rightskip}{0pt plus 5cm}int Ps\+Decay\+::f\+Accepted\+Gammas\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_a0edd6a352178070e2433bee0a0632264}{}\label{classPsDecay_a0edd6a352178070e2433bee0a0632264}
 \index{Ps\+Decay@{Ps\+Decay}!f\+Detection\+Probability\+\_\+@{f\+Detection\+Probability\+\_\+}}
 \index{f\+Detection\+Probability\+\_\+@{f\+Detection\+Probability\+\_\+}!Ps\+Decay@{Ps\+Decay}}
 \subsubsection[{\texorpdfstring{f\+Detection\+Probability\+\_\+}{fDetectionProbability_}}]{\setlength{\rightskip}{0pt plus 5cm}float Ps\+Decay\+::f\+Detection\+Probability\+\_\+\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{classPsDecay_afcd2742fdf65e1f1070294b06fc112c7}{}\label{classPsDecay_afcd2742fdf65e1f1070294b06fc112c7}
@@ -426,5 +505,5 @@ Reference to instance of \hyperlink{classPsDecay}{Ps\+Decay} with values of memb
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
 \item 
-/home/rafal/\+Projekty/j-\/pet-\/ortho-\/simulations/src/\hyperlink{psdecay_8h}{psdecay.\+h}\item 
-/home/rafal/\+Projekty/j-\/pet-\/ortho-\/simulations/src/\hyperlink{psdecay_8cpp}{psdecay.\+cpp}\end{DoxyCompactItemize}
+src/\hyperlink{psdecay_8h}{psdecay.\+h}\item 
+src/\hyperlink{psdecay_8cpp}{psdecay.\+cpp}\end{DoxyCompactItemize}

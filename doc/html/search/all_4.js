@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['facceptedno_5f',['fAcceptedNo_',['../classPsDecay.html#a87f76faf8bed97d0297fa9fc5a8058b6',1,'PsDecay']]],
+  ['facceptedevents_5f',['fAcceptedEvents_',['../classPsDecay.html#a7dd049a762031e8b8120db993f430603',1,'PsDecay']]],
+  ['facceptedgammas_5f',['fAcceptedGammas_',['../classPsDecay.html#a0edd6a352178070e2433bee0a0632264',1,'PsDecay']]],
   ['fdata_5f',['fData_',['../classParamManager.html#a50cc8e69bb08c7f0b32d7614d5ade323',1,'ParamManager']]],
   ['fdetectionprobability_5f',['fDetectionProbability_',['../classPsDecay.html#afcd2742fdf65e1f1070294b06fc112c7',1,'PsDecay']]],
   ['fh_5f12_5f',['fH_12_',['../classPsDecay.html#a6ffb64480ec7bb3eb9243b20e8130e42',1,'PsDecay']]],
@@ -31,6 +32,7 @@ var searchData=
   ['fh_5fphi_5f',['fH_phi_',['../classPsDecay.html#ae501ea764ce924148fca7d6b1690c40b',1,'PsDecay']]],
   ['fh_5fphi_5ffail_5f',['fH_phi_fail_',['../classPsDecay.html#abb74a986a7f2115c0113b2a0702b7e80',1,'PsDecay']]],
   ['fh_5fphi_5fpass_5f',['fH_phi_pass_',['../classPsDecay.html#a8f1c6d7069dad26f9fab9e319e940db2',1,'PsDecay']]],
+  ['fh_5fphoton_5fe_5fdepos_5f',['fH_photon_E_depos_',['../classComptonScattering.html#ad159583a2b296aa366e2a301d8cf4a9f',1,'ComptonScattering']]],
   ['fh_5fphoton_5ftheta_5f',['fH_photon_theta_',['../classComptonScattering.html#ac2f4da687eadc32b94a80fe82f8e5a2b',1,'ComptonScattering']]],
   ['fine_5fstructure_5fconst_5f',['fine_structure_const_',['../constants_8h.html#a94810453bb92e7ee5773585ae90baebe',1,'constants.h']]],
   ['fl_5f',['fL_',['../classPsDecay.html#ac1c3221c8429f1ae5d9ae2a1c520693e',1,'PsDecay']]],
