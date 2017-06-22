@@ -45,9 +45,23 @@ std::string to_string(const T a_value)
 ///
 PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double* sourceXYZ=nullptr, float p=1.0)
 {
+    if (sourceXYZ)
+    {
+        std::cout<<"[INFO] Source coordinates: (";
+        for(int ii=0; ii<3; ii++)
+        {
+            std::cout<<sourceXYZ[ii];
+            if(ii != 2)
+                std::cout<<", ";
+            else
+                std::cout<<")"<<std::endl;
+        }
+    }
+    else
+        throw("[ERROR] Source coordinates not found!");
+
     double* masses = new double[noOfGammas]();
     PsDecay* decay = new PsDecay(noOfGammas, sourceXYZ, p);
-
     //(Momentum, Energy units are Gev/C, GeV)
     TGenPhaseSpace event;
     event.SetDecay(Ps, noOfGammas, masses);
@@ -217,12 +231,12 @@ int main(int argc, char* argv[])
               pars_imported=true;
           }
       }
+  }
 
-      if(!pars_imported)
-      {
-          std::cout<<"[WARNING] Input file not provided! Trying to load simulation_parameters.par!"<<std::endl;
-          par_man->ImportParams();
-      }
+  if(!pars_imported)
+  {
+      std::cout<<"[WARNING] Input file not provided! Trying to load simulation_parameters.par!"<<std::endl;
+      par_man->ImportParams();
   }
   //creating directories for storing the results
   mkdir(generalPrefix.c_str(), ACCESSPERMS);
@@ -235,8 +249,9 @@ int main(int argc, char* argv[])
   //loop with simulation runs
   for(int ii=0; ii< (par_man->getSimRuns()); ii++)
   {
+      std::cout<<"[INFO] START OF RUN NO: "<<ii<<std::endl;
       simulate(ii, noOfGammasToSimulate, par_man, p);
-      std::cout<<"[INFO] End of run no:  "<<ii<<"\n"<<std::endl;
+      std::cout<<"[INFO] END OF RUN NO:  "<<ii<<"\n"<<std::endl;
   }
   std::cout<<"\n[INFO] END OF PROGRAM."<<std::endl;
   return 0;

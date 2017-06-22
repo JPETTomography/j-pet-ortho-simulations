@@ -31,24 +31,28 @@ class PsDecay
                             bool compare=true, bool cuts=true);
 
         // Getters and setters
-        int GetAcceptedEvents(){return fAcceptedEvents_;}
+        int GetAcceptedEvents(){return fAcceptedEvents_;}        
         int GetAcceptedGammas(){return fAcceptedGammas_;}
         float GetRadius(){return fR_;}
         void SetRadius(float R){fR_=R;}
         float GetLength(){return fL_;}
         void SetLength(float L){fL_=L;}
-        double* GetSourcePos(){return sourcePos_;}
-        void SetSourcePos(double* pos){for(int ii=0; ii<3; ii++) sourcePos_[ii]=pos[ii];}
+        double* GetSourcePos(){return fSourcePos_;}
+        void SetSourcePos(double* pos){for(int ii=0; ii<3; ii++) fSourcePos_[ii]=pos[ii];}
         float GetDetectionProbability(){return fDetectionProbability_;}
         void SetDetectionProbability(float p){if(p>1.0) fDetectionProbability_=1.0; else if(p<0.0) fDetectionProbability_=0.0; else fDetectionProbability_=p;}
 
+        //silent mode switch on/off
+        void EnableSilentMode(){fSilentMode_=true;}
+        void DisableSilentMode(){fSilentMode_=false;}
         //cuts
         bool GeometricalAcceptance(TLorentzVector* gamma);
         bool DetectionCut();
     private:
+        //if set to true, no output is generated to std::cout
+        bool fSilentMode_; //false by default
         //source's parameters
-        double sourcePos_[3];
-
+        double fSourcePos_[3];
         // detector's parameters
         float fR_;  //radius in cm
         float fL_;  //length in cm

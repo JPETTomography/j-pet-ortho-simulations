@@ -1,7 +1,7 @@
 DEP = ../src
 CXX = g++
-CXXFLAGS = -c -std=c++11 -Wall `root-config --cflags` -I$(DEP)
-LDFLAGS = -lgtest -lpthread `root-config --ldflags --glibs` -lstdc++
+CXXFLAGS = -c -std=c++11 -Wall `root-config --cflags` -I$(DEP) #-DBOOST_NO_CXX11_SCOPED_ENUMS
+LDFLAGS = -lgtest -lboost_filesystem -lboost_system -lpthread `root-config --ldflags --glibs` -lstdc++
 OBJDIR = ./obj
 SRCDIR = ./src
 INCS = ./src/main_test_all.cpp ./src/decay_tests.cpp
