@@ -45,6 +45,8 @@ std::string to_string(const T a_value)
 ///
 PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double* sourceXYZ=nullptr, float p=1.0)
 {
+    //Descriptive part
+    std::cout<<"[INFO] Simulating "<<noOfGammas<<"-gamma decays"<<std::endl;
     if (sourceXYZ)
     {
         std::cout<<"[INFO] Source coordinates: (";
@@ -59,7 +61,7 @@ PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string file
     }
     else
         throw("[ERROR] Source coordinates not found!");
-
+    ////////////////////////////////////////////////////////////////////////
     double* masses = new double[noOfGammas]();
     PsDecay* decay = new PsDecay(noOfGammas, sourceXYZ, p);
     //(Momentum, Energy units are Gev/C, GeV)
@@ -142,13 +144,12 @@ void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr, fl
    //Performing simulations based on the provided number of gammas
    if(noOfGammas==2)
    {
-       std::cout<<"::::::::::::Simulating 2-gamma decays::::::::::::"<<std::endl;
        decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
        decayTo3 = nullptr;
    }
    else if(noOfGammas==3)
    {
-       std::cout<<"::::::::::::Simulating 3-gamma decays::::::::::::"<<std::endl;
+//       std::cout<<"::::::::::::Simulating 3-gamma decays::::::::::::"<<std::endl;
        decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
        decayTo2 = nullptr;
    }
@@ -249,11 +250,11 @@ int main(int argc, char* argv[])
   //loop with simulation runs
   for(int ii=0; ii< (par_man->getSimRuns()); ii++)
   {
-      std::cout<<"[INFO] START OF RUN NO: "<<ii<<std::endl;
+      std::cout<<":::::::::::: START OF RUN NO: "<<ii<<" ::::::::::::"<<std::endl;
       simulate(ii, noOfGammasToSimulate, par_man, p);
-      std::cout<<"[INFO] END OF RUN NO:  "<<ii<<"\n"<<std::endl;
+      std::cout<<":::::::::::: END OF RUN NO:  "<<ii<<" ::::::::::::"<<"\n"<<std::endl;
   }
-  std::cout<<"\n[INFO] END OF PROGRAM."<<std::endl;
+  std::cout<<"\n:::::::::::: END OF PROGRAM. ::::::::::::\n"<<std::endl;
   return 0;
 }
 # endif

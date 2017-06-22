@@ -22,19 +22,19 @@ ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
     fH_photon_E_depos_->GetYaxis()->SetTitle("dN/dE");
     fH_photon_E_depos_->GetYaxis()->SetTitleOffset(1.8);
     
-    fH_photon_theta_ = new TH1F("fH_photon_theta_", "fH_photon_theta_", 100, 0.0, TMath::Pi()/2.);
+    fH_photon_theta_ = new TH1F("fH_photon_theta_", "fH_photon_theta_", 100, 0.0, TMath::Pi());
     fH_photon_theta_->SetTitle("Scattering angle distribution");
     fH_photon_theta_->GetXaxis()->SetTitle("#theta");
     fH_photon_theta_->GetYaxis()->SetTitle("dN/d#theta");
     fH_photon_theta_->GetYaxis()->SetTitleOffset(1.8);
 
-    fH_PDF_ = new TH2D("fH_PDF_", "fH_PDF_", 1000, 0.0, 1.022, 1000, 0.0, TMath::Pi()/2.0);
+    fH_PDF_ = new TH2D("fH_PDF_", "fH_PDF_", 1000, 0.0, 1.022, 1000, 0.0, TMath::Pi());
     fH_PDF_->SetTitle("Klein-Nishima function");
     fH_PDF_->GetXaxis()->SetTitle("E [MeV]");
     fH_PDF_->GetYaxis()->SetTitle("#theta'");
     fH_PDF_->SetStats(kFALSE);
     //creating function wrapper around KleinNishina_ function
-    fPDF = new TF1("KleinNishima_", KleinNishina_, 0.0 , 1.022, 1);
+    fPDF = new TF1("KleinNishima_", KleinNishina_, 0.0 , TMath::Pi(), 1);
 }
 
 ///
@@ -93,7 +93,7 @@ void ComptonScattering::DrawPDF(std::string filePrefix)
         double E[1] = {xx/((float)range)*1.022};
         for(int yy=0; yy<range; yy++)
         {
-            double theta[1] = {yy/((float)range)*TMath::Pi()/2};
+            double theta[1] = {yy/((float)range)*TMath::Pi()};
             long double val = fPDF->EvalPar(theta, E);
             fH_PDF_->SetBinContent(xx, yy, val);
         }

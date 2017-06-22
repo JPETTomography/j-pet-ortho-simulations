@@ -72,8 +72,8 @@ void ParamManager::ImportParams(std::string inFile)
     }
     //The number of simulation runs is determined basing on the number of data sets with source's parameters.
     fSimRuns_=fData_.size();
-    std::cout<<"[INFO] Sim steps: "<<fSimSteps_<<std::endl;
-    std::cout<<"[INFO] Sim runs: "<<fSimRuns_<<std::endl;
+    std::cout<<"[INFO] Events to generate: "<<fSimSteps_<<std::endl;
+    std::cout<<"[INFO] Runs to simulate: "<<fSimRuns_<<std::endl;
     std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
 }
 
