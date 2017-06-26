@@ -89,6 +89,7 @@ PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string file
 
     }
     cs.DrawElectronDist(filePrefix); //Draw histograms with scattering angle and electron's energy distributions.
+//    cs.DrawPDF();
     delete[] masses;
     return decay;
 }

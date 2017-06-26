@@ -83,11 +83,17 @@ class PsDecay
         TH1F* fH_p_;
         TH1F* fH_phi_;
         TH1F* fH_cosTheta_;
+
         //only for events that passed cuts
-        TH1F* fH_en_pass_;
+        TH1F* fH_en_pass_; //all gammas that passed cuts
+        TH1F* fH_en_pass_event_; //gammas that passed cuts and could be used to reconstruct an event
+        TH1F* fH_en_pass_low; //gammas that passed cuts and could be used to reconstruct an event; low energy
+        TH1F* fH_en_pass_mid; //gammas that passed cuts and could be used to reconstruct an event; mid energy
+        TH1F* fH_en_pass_high; ////gammas that passed cuts and could be used to reconstruct an event; high energy
         TH1F* fH_p_pass_;
         TH1F* fH_phi_pass_;
         TH1F* fH_cosTheta_pass_;
+
         //only for events that did not pass cuts
         TH1F* fH_en_fail_;
         TH1F* fH_p_fail_;

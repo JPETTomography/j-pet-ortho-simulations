@@ -10,6 +10,7 @@
 #include "TText.h"
 #include <iomanip>
 #include "TRandom3.h"
+#include "TLegend.h"
 
 
 ///
@@ -35,7 +36,7 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
     {
         for(int ii=0; ii<3; ii++)
         {
-            fSourcePos_[ii]=sourceXYZ[ii];
+            fSourcePos_[ii]=sourceXYZ[ii]; //[m]
         }
     }
     //default behavior if position of the source is incorrect -- placing it in the middle of detector.
@@ -53,6 +54,15 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
     //Creating histograms for angle distributions
     if(noOfGammas==3)
     {
+        fH_12_=nullptr;
+        fH_12_pass_=nullptr;
+        fH_12_fail_=nullptr;
+
+        fH_en_pass_low = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
+        fH_en_pass_high = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
+        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
+        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
+
         //histograms for all events
         fH_12_23_ = new TH2F("fH_12_23_","fH_12_23_all", 50,0, 3.15, 50,0,3.15);
         fH_12_23_ -> SetTitle("Polar angle distr, 12 vs 23");
@@ -61,7 +71,7 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
         fH_12_23_ -> GetYaxis()->SetTitle("#theta_{23} [rad]");
         fH_12_23_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_12_31_ = new TH2F("fH_12_31_","fH_12_31_all", 50,0, 3.15, 50,0,3.15);
+        fH_12_31_ = new TH2F("fH_12_31_","fH_12_31_all", 50,0, 3.15, 50, 0, 3.15);
         fH_12_31_ -> SetTitle("Polar angle distr, 12 vs 31");
         fH_12_31_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
         fH_12_31_ -> GetXaxis()->SetTitleOffset(1.4);
@@ -119,9 +129,12 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
         fH_23_31_fail_ -> GetYaxis()->SetTitle("#theta_{31} [rad]");
         fH_23_31_fail_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_12_=nullptr;
-        fH_12_pass_=nullptr;
-        fH_12_fail_=nullptr;
+        fH_en_pass_mid = new TH1F((std::string("fH_en_pass_MID")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
+        fH_en_pass_mid -> SetTitle("Energy distribution, mid energy gammas");
+        fH_en_pass_mid -> GetXaxis()->SetTitle("E [MeV]");
+        fH_en_pass_mid -> GetXaxis()->SetTitleOffset(1.6);
+        fH_en_pass_mid -> GetYaxis()->SetTitle("dN/dE");
+        fH_en_pass_mid -> GetYaxis()->SetTitleOffset(2.);
     }
     else if(noOfGammas==2)
     {
@@ -134,6 +147,12 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
         fH_12_23_fail_ = nullptr;
         fH_12_31_fail_ = nullptr;
         fH_23_31_fail_ = nullptr;
+
+        fH_en_pass_mid = nullptr;
+        fH_en_pass_low = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
+        fH_en_pass_high = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
+        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.511);
+        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
 
         //histogram for all events generated
         fH_12_ = new TH1F("fH_12_all", "fH_12_all", 20, 3.13, 3.15);
@@ -189,7 +208,6 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
     fH_cosTheta_ -> GetYaxis()->SetTitleOffset(2.);
 
     //histograms for particles that passed through cuts
-    fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
     fH_en_pass_ -> SetTitle("Energy distribution");
     fH_en_pass_ -> GetXaxis()->SetTitle("E [MeV]");
     fH_en_pass_ -> GetXaxis()->SetTitleOffset(1.6);
@@ -240,6 +258,22 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
     fH_cosTheta_fail_ -> GetYaxis()->SetTitle("dN/d cos(#theta)");
     fH_cosTheta_fail_ -> GetYaxis()->SetTitleOffset(2.);
 
+    //histograms for gammas that passed through cuts, differentation for low, mid and high energy gammas
+    fH_en_pass_event_ -> SetTitle("Energy distribution");
+    fH_en_pass_event_ -> GetXaxis()->SetTitle("E [MeV]");
+    fH_en_pass_event_ -> GetXaxis()->SetTitleOffset(1.6);
+    fH_en_pass_event_ -> GetYaxis()->SetTitle("dN/dE");
+    fH_en_pass_event_ -> GetYaxis()->SetTitleOffset(2.);
+    fH_en_pass_low -> SetTitle("Energy distribution, low energy gammas");
+    fH_en_pass_low -> GetXaxis()->SetTitle("E [MeV]");
+    fH_en_pass_low -> GetXaxis()->SetTitleOffset(1.6);
+    fH_en_pass_low -> GetYaxis()->SetTitle("dN/dE");
+    fH_en_pass_low -> GetYaxis()->SetTitleOffset(2.);
+    fH_en_pass_high -> SetTitle("Energy distribution, high energy gammas");
+    fH_en_pass_high -> GetXaxis()->SetTitle("E [MeV]");
+    fH_en_pass_high -> GetXaxis()->SetTitleOffset(1.6);
+    fH_en_pass_high -> GetYaxis()->SetTitle("dN/dE");
+    fH_en_pass_high -> GetYaxis()->SetTitleOffset(2.);
 
     fNoOfDecayProducts_=noOfGammas;
     for(int ii=0; ii<noOfGammas; ii++)
@@ -291,6 +325,7 @@ PsDecay::PsDecay(const PsDecay& est)
         fH_12_23_fail_ = nullptr;
         fH_12_31_fail_ = nullptr;
         fH_23_31_fail_ = nullptr;
+        fH_en_pass_mid = nullptr;
     }
     else
     {
@@ -306,6 +341,8 @@ PsDecay::PsDecay(const PsDecay& est)
         fH_12_23_fail_ = new TH2F(*est.fH_12_23_fail_);
         fH_12_31_fail_ = new TH2F(*est.fH_12_31_fail_);
         fH_23_31_fail_ = new TH2F(*est.fH_23_31_fail_);
+        fH_en_pass_mid = new TH1F(*est.fH_en_pass_mid);
+
     }
 
     fH_en_ = new TH1F(*est.fH_en_);
@@ -320,6 +357,10 @@ PsDecay::PsDecay(const PsDecay& est)
     fH_p_fail_ = new TH1F(*est.fH_p_fail_);
     fH_phi_fail_= new TH1F(*est.fH_phi_fail_);
     fH_cosTheta_fail_ = new TH1F(*est.fH_cosTheta_fail_);
+    fH_en_pass_low = new TH1F(*est.fH_en_pass_low);
+    fH_en_pass_high = new TH1F(*est.fH_en_pass_mid);
+    fH_en_pass_event_ = new TH1F(*est.fH_en_pass_event_);
+
     fH_event_cuts_ = new TH1F(*est.fH_event_cuts_);
     fH_gamma_cuts_ = new TH1F(*est.fH_gamma_cuts_);
     fNumberOfEvents_ = est.fNumberOfEvents_;
@@ -360,6 +401,7 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
         fH_12_23_fail_ = nullptr;
         fH_12_31_fail_ = nullptr;
         fH_23_31_fail_ = nullptr;
+        fH_en_pass_mid = nullptr;
     }
     else
     {
@@ -375,6 +417,7 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
         fH_12_23_fail_ = new TH2F(*est.fH_12_23_fail_);
         fH_12_31_fail_ = new TH2F(*est.fH_12_31_fail_);
         fH_23_31_fail_ = new TH2F(*est.fH_23_31_fail_);
+        fH_en_pass_mid = new TH1F(*est.fH_en_pass_mid);
     }
     fH_en_ = new TH1F(*est.fH_en_);
     fH_p_ = new TH1F(*est.fH_p_);
@@ -388,6 +431,10 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
     fH_p_fail_ = new TH1F(*est.fH_p_fail_);
     fH_phi_fail_= new TH1F(*est.fH_phi_fail_);
     fH_cosTheta_fail_ = new TH1F(*est.fH_cosTheta_fail_);
+    fH_en_pass_low = new TH1F(*est.fH_en_pass_low);
+    fH_en_pass_high = new TH1F(*est.fH_en_pass_mid);
+    fH_en_pass_event_ = new TH1F(*est.fH_en_pass_event_);
+
     fH_event_cuts_ = new TH1F(*est.fH_event_cuts_);
     fH_gamma_cuts_ = new TH1F(*est.fH_gamma_cuts_);
     fNumberOfEvents_ = est.fNumberOfEvents_;
@@ -426,6 +473,10 @@ PsDecay::~PsDecay()
     if(fH_p_fail_) delete fH_p_fail_;
     if(fH_phi_fail_) delete fH_phi_fail_;
     if(fH_cosTheta_fail_) delete fH_cosTheta_fail_;
+    if(fH_en_pass_low) delete fH_en_pass_low;
+    if(fH_en_pass_mid) delete fH_en_pass_mid;
+    if(fH_en_pass_high) delete fH_en_pass_high;
+    if(fH_en_pass_event_) delete fH_en_pass_event_;
     if(fH_event_cuts_) delete fH_event_cuts_;
     if(fH_gamma_cuts_) delete fH_gamma_cuts_;
 }
@@ -443,9 +494,10 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
         fNumberOfEvents_++;
         fNumberOfGammas_+=fNoOfDecayProducts_;
         //Boolean variables below indicate whether a gamma passed cuts.
-        bool pass1 = false;
-        bool pass2 = false;
-        bool pass3 = false;
+        bool pass[3] = {false, false, false};
+        int maxIndex = 0;
+        int minIndex = 0;
+
         TLorentzVector* gammas[] = {gamma1, gamma2, gamma3};
         for(int ii=0; ii<3; ii++)
         {
@@ -461,23 +513,17 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
             if(AddCuts_(gammas[ii]))
             {
                 fAcceptedGammas_++;
-                switch (ii)
-                {
-                    case 0:
-                        pass1 = true;
-                        break;
-                    case 1:
-                        pass2 = true;
-                        break;
-                    case 2:
-                        pass3 = true;
-                        break;
-                }
+                pass[ii] = true;
+
                 //filling histograms only for gammas that passed cuts
                 fH_en_pass_->Fill(gammas[ii]->Energy()*1000);
                 fH_p_pass_->Fill(gammas[ii]->P()*1000);
                 fH_phi_pass_->Fill(gammas[ii]->Phi());
                 fH_cosTheta_pass_->Fill(gammas[ii]->CosTheta());
+                //finding highest and lowest energy values
+                maxIndex = ((gammas[maxIndex]->Energy()) > (gammas[ii]->Energy())) ? maxIndex : ii;
+                minIndex = ((gammas[minIndex]->Energy()) < (gammas[ii]->Energy())) ? minIndex : ii;
+
             }
             else if(gammas[ii])
             {
@@ -489,16 +535,22 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
             }
         }
 
+
         //Taking care of event histograms.
         fH_event_cuts_->Fill(0); //filling the first bin of event cut histogram -- means that there was an event generated
         if(fNoOfDecayProducts_==2)
         {
             fH_12_->Fill(gamma1->Angle((gamma2)->Vect()), weight);
-            if(pass1 && pass2) // two-gamma event could be correctly detected
+            if(pass[0] && pass[1]) // two-gamma event could be correctly detected
             {
                 fH_12_pass_->Fill(gamma1->Angle((gamma2)->Vect()), weight);
                 fH_event_cuts_->Fill(1);
                 fAcceptedEvents_++;
+                //filling histograms with low and high energy
+                for(int ii=0; ii<2; ii++)
+                    fH_en_pass_event_->Fill(gammas[ii]->Energy()*1000);
+                fH_en_pass_low->Fill(gammas[minIndex]->Energy()*1000);
+                fH_en_pass_high->Fill(gammas[maxIndex]->Energy()*1000);
             }
             else
             {
@@ -510,13 +562,22 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
             fH_12_23_->Fill(gamma1->Angle(gamma2->Vect()), gamma2->Angle(gamma3->Vect()), weight);
             fH_12_31_->Fill(gamma1->Angle(gamma2->Vect()), gamma3->Angle(gamma1->Vect()), weight);
             fH_23_31_->Fill(gamma2->Angle(gamma3->Vect()), gamma3->Angle(gamma1->Vect()), weight);
-            if(pass1 && pass2 && pass3) // three-gamma event could be correctly detected
+            if(pass[0] && pass[1] && pass[2]) // three-gamma event could be correctly detected
             {
                 fH_12_23_pass_->Fill(gamma1->Angle(gamma2->Vect()), gamma2->Angle(gamma3->Vect()), weight);
                 fH_12_31_pass_->Fill(gamma1->Angle(gamma2->Vect()), gamma3->Angle(gamma1->Vect()), weight);
                 fH_23_31_pass_->Fill(gamma2->Angle(gamma3->Vect()), gamma3->Angle(gamma1->Vect()), weight);
                 fAcceptedEvents_++;
                 fH_event_cuts_->Fill(1);
+                //filling histograms with low, mid and high energy
+                for(int ii=0; ii<3; ii++)
+                    fH_en_pass_event_->Fill(gammas[ii]->Energy()*1000);
+                if(minIndex==maxIndex)
+                    fH_en_pass_mid->Fill(gammas[maxIndex]->Energy()*1000);
+                else
+                    fH_en_pass_mid->Fill(gammas[3-minIndex-maxIndex]->Energy()*1000);
+                fH_en_pass_low->Fill(gammas[minIndex]->Energy()*1000);
+                fH_en_pass_high->Fill(gammas[maxIndex]->Energy()*1000);
             }
             else
             {
@@ -527,9 +588,9 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
         }
     // returning info, if gammas passed the cuts
     std::vector<bool> ifPassed;
-    ifPassed.push_back(pass1);
-    ifPassed.push_back(pass2);
-    ifPassed.push_back(pass3);
+    ifPassed.push_back(pass[0]);
+    ifPassed.push_back(pass[1]);
+    ifPassed.push_back(pass[2]);
     return ifPassed;
 }
 
@@ -539,7 +600,7 @@ std::vector<bool> PsDecay::AddEvent(Double_t weight, TLorentzVector* gamma1,  TL
 /// \param all If true, histograms for all generated gammas will be created and saved to file.
 /// \param pass If true, histograms for gammas that passed cuts will be created and saved to file.
 /// \param fail If true, histograms for gammas that did not pass cuts will be created and saved to file.
-/// \param compare Currently unused.
+/// \param compare Currently unused.::string
 /// \param cuts If true, histograms showing how many gammas and events passed cuts will be created and saved to file.
 ///
 void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail, bool compare, bool cuts)
@@ -661,6 +722,10 @@ void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail,
         TCanvas* dist_pass = new TCanvas((std::string("dist_pass")+std::to_string(fNoOfDecayProducts_)).c_str(),\
                                          ("Basic distributions for passed "\
                                          +std::to_string(fNoOfDecayProducts_)+std::string("-gamma events")).c_str(), 800, 800);
+        //differentation of low, mid and high energy gammas
+        TCanvas *diff_en;
+        std::string outFileDiffEn;
+
         dist_pass->Divide(2, 2);
         dist_pass->cd(1);
         fH_en_pass_->Draw();
@@ -678,6 +743,14 @@ void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail,
         outFile=prefix+std::string("dist_pass_")+std::to_string(fNoOfDecayProducts_)+std::string("_gammas.png");
         img->WriteImage(outFile.c_str());
 
+        //setting fill colors for histograms that differentiate gammas with low, mid and high energies
+        fH_en_pass_event_->SetFillColor(kBlack);
+        fH_en_pass_low->SetFillColor(kRed);
+        fH_en_pass_high->SetFillColor(kBlue);
+        TLegend* legend = new TLegend(0.1, 0.5, 0.4, 0.9);
+        legend->AddEntry(fH_en_pass_event_, "all gammas", "f");
+        legend->AddEntry(fH_en_pass_low, "lowest energy", "f");
+        legend->AddEntry(fH_en_pass_high, "highest energy", "f");
         //angle distribution depends on the number of decay products
         if(fNoOfDecayProducts_==3)
         {
@@ -692,6 +765,27 @@ void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail,
             fH_12_31_pass_->Draw("colz");
             angles_pass->cd(3);
             fH_23_31_pass_->Draw("colz");
+            //Drawing energy distribution of gammas from valid events
+            diff_en= new TCanvas((std::string("diff_energies")+std::to_string(fNoOfDecayProducts_)).c_str(),\
+                                          ("Distribution of energy for incident photons from "\
+                                           +std::to_string(fNoOfDecayProducts_)+std::string("-gamma events")).c_str(), 1000, 900);
+            diff_en->Divide(2,2);
+            diff_en->cd(1);
+            fH_en_pass_mid->SetFillColor(kGreen);
+            legend->AddEntry(fH_en_pass_mid, "medium energy", "f");
+            fH_en_pass_event_->Draw();
+            fH_en_pass_low->Draw("same");
+            fH_en_pass_mid->Draw("same");
+            fH_en_pass_high->Draw("same");
+            legend->Draw();
+            diff_en->cd(2);
+            fH_en_pass_low->Draw();
+            diff_en->cd(3);
+            fH_en_pass_mid->Draw();
+            diff_en->cd(4);
+            fH_en_pass_high->Draw();
+            outFileDiffEn = prefix+std::string("diff_energies_3gammas.png");
+
         }
         else
         {
@@ -700,14 +794,37 @@ void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail,
                                       +std::to_string(fNoOfDecayProducts_)+std::string("-gamma events")).c_str(), 500, 400);
             fH_12_pass_->Draw();
             outFile = prefix+std::string("angles_pass_2gammas.png");
+            //Drawing energy distribution of gammas from valid events
+            diff_en= new TCanvas((std::string("diff_energies")+std::to_string(fNoOfDecayProducts_)).c_str(),\
+                                          ("Distribution of energy for incident photons from "\
+                                           +std::to_string(fNoOfDecayProducts_)+std::string("-gamma events")).c_str(), 1200, 450);
+            diff_en->Divide(3,1);
+            diff_en->cd(1);
+            fH_en_pass_event_->Draw();
+            fH_en_pass_low->Draw("same");
+            fH_en_pass_high->Draw("same");
+            legend->Draw();
+            diff_en->cd(2);
+            fH_en_pass_low->Draw();
+            diff_en->cd(3);
+            fH_en_pass_high->Draw();
+            outFileDiffEn = prefix+std::string("diff_energies_2gammas.png");
         }
         angles_pass->Update();
         TImage *img2 = TImage::Create();
         img2->FromPad(angles_pass);
         img2->WriteImage(outFile.c_str());
 
+        diff_en->Update();
+        TImage *img3 = TImage::Create();
+        img3->FromPad(diff_en);
+        img3->WriteImage(outFileDiffEn.c_str());
+
         delete dist_pass;
         delete angles_pass;
+        delete diff_en;
+        delete legend;
+
     }
 
     if(fail)
