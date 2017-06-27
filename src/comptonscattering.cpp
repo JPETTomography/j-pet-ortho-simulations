@@ -15,9 +15,19 @@ ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
     fH_electron_E_->GetXaxis()->SetTitle("E [MeV]");
     fH_electron_E_->GetYaxis()->SetTitle("dN/dE");
     fH_electron_E_->GetYaxis()->SetTitleOffset(1.8);
+
+    fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 100, 0.0, 0.511);
+    fH_electron_E_blur_->SetTitle("Electrons' energy distribution blurred");
+    fH_electron_E_blur_->GetXaxis()->SetTitle("E [MeV]");
+    fH_electron_E_blur_->GetYaxis()->SetTitle("dN/dE");
+    fH_electron_E_blur_->GetYaxis()->SetTitleOffset(1.8);
     
     if(noOfGammas==3) fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 100, 0.0, 0.511);
-    else fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 20, 0.510, 0.512);
+    else
+    {
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 20, 0.510, 0.512);
+        fH_photon_E_depos_->GetXaxis()->SetNdivisions(7, false);
+    }
     fH_photon_E_depos_->SetTitle("Incident photon energy deposition");
     fH_photon_E_depos_->GetXaxis()->SetTitle("E [MeV]");
     fH_photon_E_depos_->GetYaxis()->SetTitle("dN/dE");
@@ -64,6 +74,7 @@ ComptonScattering::ComptonScattering(const ComptonScattering &est)
     fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
     fH_electron_E_ = new TH1F(*est.fH_electron_E_);   //energy distribution for electrons
+    fH_electron_E_blur_ = new TH1F(*est.fH_electron_E_blur_);
     fH_photon_theta_ = new TH1F(*est.fH_photon_theta_);   //angle distribution for electrons
     fH_PDF_ = new TH2D(*est.fH_PDF_);  // Klein-Nishina function plot, for testing purpose only
     fH_PDF_cross = new TH1D(*est.fH_PDF_cross);
@@ -83,6 +94,7 @@ ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
     fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
     fH_electron_E_ = new TH1F(*est.fH_electron_E_);   //energy distribution for electrons
+    fH_electron_E_blur_ = new TH1F(*est.fH_electron_E_blur_);
     fH_photon_theta_ = new TH1F(*est.fH_photon_theta_);   //angle distribution for electrons
     fH_PDF_ = new TH2D(*est.fH_PDF_);  // Klein-Nishina function plot, for testing purpose only
     fH_PDF_cross = new TH1D(*est.fH_PDF_cross);
@@ -97,6 +109,7 @@ ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
 ComptonScattering::~ComptonScattering()
 {
     if(fH_electron_E_) delete fH_electron_E_;
+    if(fH_electron_E_blur_) delete fH_electron_E_blur_;
     if(fH_photon_theta_) delete fH_photon_theta_;
     if(fH_photon_E_depos_) delete fH_photon_E_depos_;
     if(fH_PDF_) delete fH_PDF_;
@@ -169,14 +182,16 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
 void ComptonScattering::DrawElectronDist(std::string filePrefix)
 {
     std::cout<<"\n[INFO] Drawing histograms for Compton electrons and scattered photons."<<std::endl;
-    TCanvas* c = new TCanvas("c", "Compton effect distributions", 1200, 380);
-    c->Divide(3,1);
+    TCanvas* c = new TCanvas("c", "Compton effect distributions", 1300, 1200);
+    c->Divide(2,2);
     c->cd(1);
     fH_photon_E_depos_->Draw();
     c->cd(2);
-    fH_electron_E_ ->Draw();
-    c->cd(3);
     fH_photon_theta_->Draw();
+    c->cd(3);
+    fH_electron_E_ ->Draw();
+    c->cd(4);
+    fH_electron_E_blur_->Draw();
     TImage *img2 = TImage::Create();
     img2->FromPad(c);
     img2->WriteImage((filePrefix+std::string("_compton_distr_")+std::to_string(fNoOfGammas_)\
@@ -198,6 +213,7 @@ void ComptonScattering::Scatter(double E)
     fH_photon_theta_->Fill(theta);
     double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
     fH_electron_E_->Fill(new_E);
+    fH_electron_E_blur_->Fill(r.Gaus(new_E, sigmaE(E)));
 }
 
 ///
@@ -229,5 +245,8 @@ long double ComptonScattering::KleinNishinaTheta_(double* angle, double* energy)
             *2*TMath::Pi()*TMath::Sin(angle[0]); //corrections suggested by W.Krzemien
 }
 
-
+double ComptonScattering::sigmaE(double E, double coeff)
+{
+    return coeff*E/TMath::Sqrt(E);
+}
 

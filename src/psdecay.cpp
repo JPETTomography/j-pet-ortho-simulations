@@ -149,8 +149,11 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
 
         fH_en_pass_mid = nullptr;
         fH_en_pass_low = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
+        fH_en_pass_low->GetXaxis()->SetNdivisions(7, false);
         fH_en_pass_high = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
+        fH_en_pass_high->GetXaxis()->SetNdivisions(7, false);
         fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
+        fH_en_pass_event_->GetXaxis()->SetNdivisions(7, false);
 
         //histogram for all events generated
         fH_12_ = new TH1F("fH_12_all", "fH_12_all", 20, 3.13, 3.15);
