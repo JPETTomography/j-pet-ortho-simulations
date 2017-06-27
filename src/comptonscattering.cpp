@@ -34,12 +34,23 @@ ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
     fH_PDF_->GetXaxis()->SetTitle("E [MeV]");
     fH_PDF_->GetYaxis()->SetTitle("#theta'");
     fH_PDF_->SetStats(kFALSE);
-    fH_PDF_cross = new TH1D("fH_PDF_cross", "fH_PDF_cross", 1000, 0.0, TMath::Pi());
-    fH_PDF_cross->GetYaxis()->SetTitle("d #sigma/ d #theta");
+    fH_PDF_cross = new TH1D("fH_PDF_cross_", "fH_PDF_cross", 1000, 0.0, TMath::Pi());
+    fH_PDF_cross->GetYaxis()->SetTitle("d N/ d #Omega");
     fH_PDF_cross->GetXaxis()->SetTitle("#theta'");
     fH_PDF_cross->SetStats(kFALSE);
+
+    fH_PDF_Theta_ = new TH2D("fH_PDF_Theta_", "fH_PDF_Theta_", 1000, 0.0, 1.022, 1000, 0.0, TMath::Pi());
+    fH_PDF_Theta_->SetTitle("Klein-Nishima function * 2*#pi*sin(#theta)");
+    fH_PDF_Theta_->GetXaxis()->SetTitle("E [MeV]");
+    fH_PDF_Theta_->GetYaxis()->SetTitle("#theta'");
+    fH_PDF_Theta_->SetStats(kFALSE);
+    fH_PDF_Theta_cross = new TH1D("fH_PDF_Theta_cross_", "fH_PDF_Theta_cross_", 1000, 0.0, TMath::Pi());
+    fH_PDF_Theta_cross->GetYaxis()->SetTitle("d #N/ d #theta");
+    fH_PDF_Theta_cross->GetXaxis()->SetTitle("#theta'");
+    fH_PDF_Theta_cross->SetStats(kFALSE);
     //creating function wrapper around KleinNishina_ function
     fPDF = new TF1("KleinNishima_", KleinNishina_, 0.0 , TMath::Pi(), 1);
+    fPDF_Theta = new TF1("KleinNishimaTheta_", KleinNishinaTheta_, 0.0 , TMath::Pi(), 1);
 }
 
 ///
@@ -50,11 +61,14 @@ ComptonScattering::ComptonScattering(const ComptonScattering &est)
 {
     fNoOfGammas_=est.fNoOfGammas_;
     fPDF = new TF1(*est.fPDF);  //special root object
+    fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
     fH_electron_E_ = new TH1F(*est.fH_electron_E_);   //energy distribution for electrons
     fH_photon_theta_ = new TH1F(*est.fH_photon_theta_);   //angle distribution for electrons
     fH_PDF_ = new TH2D(*est.fH_PDF_);  // Klein-Nishina function plot, for testing purpose only
     fH_PDF_cross = new TH1D(*est.fH_PDF_cross);
+    fH_PDF_Theta_ = new TH2D(*est.fH_PDF_Theta_);
+    fH_PDF_Theta_cross = new TH1D(*est.fH_PDF_Theta_cross);
 }
 
 ///
@@ -66,11 +80,14 @@ ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
 {
     fNoOfGammas_=est.fNoOfGammas_;
     fPDF = new TF1(*est.fPDF);  //special root object
+    fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
     fH_electron_E_ = new TH1F(*est.fH_electron_E_);   //energy distribution for electrons
     fH_photon_theta_ = new TH1F(*est.fH_photon_theta_);   //angle distribution for electrons
     fH_PDF_ = new TH2D(*est.fH_PDF_);  // Klein-Nishina function plot, for testing purpose only
     fH_PDF_cross = new TH1D(*est.fH_PDF_cross);
+    fH_PDF_Theta_ = new TH2D(*est.fH_PDF_Theta_);
+    fH_PDF_Theta_cross = new TH1D(*est.fH_PDF_Theta_cross);
     return *this;
 }
 
@@ -85,6 +102,9 @@ ComptonScattering::~ComptonScattering()
     if(fH_PDF_) delete fH_PDF_;
     if(fH_PDF_cross) delete fH_PDF_cross;
     if(fPDF) delete fPDF;
+    if(fH_PDF_Theta_) delete fH_PDF_Theta_;
+    if(fH_PDF_Theta_cross) delete fH_PDF_Theta_cross;
+    if(fPDF_Theta) delete fPDF_Theta;
 }
 
 ///
@@ -103,10 +123,14 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
         for(int yy=0; yy<range; yy++)
         {
             double theta[1] = {yy/((float)range)*TMath::Pi()};
-            long double val = fPDF->EvalPar(theta, E);
-            fH_PDF_->SetBinContent(xx, yy, val);
+            long double valPDF = fPDF->EvalPar(theta, E);
+            long double valPDFTheta = fPDF_Theta->EvalPar(theta, E);
+            fH_PDF_->SetBinContent(xx, yy, valPDF);
+            fH_PDF_Theta_->SetBinContent(xx, yy, valPDFTheta);
             long double valCross = fPDF->EvalPar(theta, crossE);
             fH_PDF_cross->SetBinContent(yy, valCross);
+            long double valCrossTheta = fPDF_Theta->EvalPar(theta, crossE);
+            fH_PDF_Theta_cross->SetBinContent(yy, valCrossTheta);
         }
 
     }
@@ -118,11 +142,24 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
     c->cd(2);
     fH_PDF_cross->SetTitle((std::string("Klein-Nishima function for ")+std::to_string(crossSectionE)+std::string(" [MeV]")).c_str());
     fH_PDF_cross->Draw();
+    TImage *img = TImage::Create();
+    img->FromPad(c);
+    img->WriteImage((filePrefix+std::string("Klein-Nishina.png")).c_str());
+    //drawing dN/d theta
+    TCanvas* c2 = new TCanvas("c2", "c2", 1300, 380);
+    c2->Divide(2);
+    c2->cd(1);
+    fH_PDF_Theta_->Draw("colz");
+    c2->cd(2);
+    fH_PDF_Theta_cross->SetTitle((std::string("Scattering angle distribution for ")+std::to_string(crossSectionE)+std::string(" [MeV]")).c_str());
+    fH_PDF_Theta_cross->Draw();
     TImage *img2 = TImage::Create();
-    img2->FromPad(c);
-    img2->WriteImage((filePrefix+std::string("Klein-Nishina.png")).c_str());
+    img2->FromPad(c2);
+    img2->WriteImage((filePrefix+std::string("Klein-Nishina_Theta.png")).c_str());
+
     std::cout<<"[INFO] Klein-Nishina function saved to file.\n"<<std::endl;
     delete c;
+    delete c2;
 }
 
 ///
@@ -155,24 +192,35 @@ void ComptonScattering::DrawElectronDist(std::string filePrefix)
 void ComptonScattering::Scatter(double E)
 {
     TRandom3 r(0); //set seed
-//    if(E > 0.2)
-//    {
     fH_photon_E_depos_->Fill(E);
     fPDF->SetParameter(0, E); //set incident photon energy
     double theta = fPDF->GetRandom(); //get scattering angle
     fH_photon_theta_->Fill(theta);
     double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
     fH_electron_E_->Fill(new_E);
-//    }
 }
 
 ///
-/// \brief ComptonScattering::KleinNishima Calculates PDF according to Klein Nishima formula.
-/// \param x Array of values, x[0] -- incident photon's energy, x[1] -- scattering angle
-/// \param params
-/// \return Value of the function.
+/// \brief ComptonScattering::KleinNishina_ Klein-Nishina formula
+/// \param angle Scattering angle.
+/// \param energy Incident's photon energy.
+/// \return Compton effect cross section.
 ///
 long double ComptonScattering::KleinNishina_(double* angle, double* energy)
+{
+    long double denom = 1L+(energy[0]/(e_mass_MeV))*(1-TMath::Cos(angle[0]));
+    long double P = 1.0L/denom;
+    return 0.5L*fine_structure_const_*fine_structure_const_*r_Compton_SI*r_Compton_SI\
+            *P*P*(P + denom - TMath::Sin(angle[0])*TMath::Sin(angle[0]));
+}
+
+///
+/// \brief ComptonScattering::KleinNishinaTheta_ PDF of occuring a Compton scattering with a given angle and energy.
+/// \param angle Scattering angle.
+/// \param energy Incident's photon energy.
+/// \return PDF function value based on Klein-Nishina formula.
+///
+long double ComptonScattering::KleinNishinaTheta_(double* angle, double* energy)
 {
     long double denom = 1L+(energy[0]/(e_mass_MeV))*(1-TMath::Cos(angle[0]));
     long double P = 1.0L/denom;

@@ -60,7 +60,6 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
 
         fH_en_pass_low = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
         fH_en_pass_high = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
-        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
         fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
 
         //histograms for all events
@@ -151,7 +150,6 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
         fH_en_pass_mid = nullptr;
         fH_en_pass_low = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
         fH_en_pass_high = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
-        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.511);
         fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(noOfGammas)).c_str(), "fH_en_", 20, 0.510, 0.512);
 
         //histogram for all events generated
@@ -208,6 +206,7 @@ PsDecay::PsDecay(int noOfGammas, double* sourceXYZ,  float p, float R, float L) 
     fH_cosTheta_ -> GetYaxis()->SetTitleOffset(2.);
 
     //histograms for particles that passed through cuts
+    fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(noOfGammas)).c_str(), "fH_en_", 100, 0.0, 0.6);
     fH_en_pass_ -> SetTitle("Energy distribution");
     fH_en_pass_ -> GetXaxis()->SetTitle("E [MeV]");
     fH_en_pass_ -> GetXaxis()->SetTitleOffset(1.6);
@@ -358,7 +357,7 @@ PsDecay::PsDecay(const PsDecay& est)
     fH_phi_fail_= new TH1F(*est.fH_phi_fail_);
     fH_cosTheta_fail_ = new TH1F(*est.fH_cosTheta_fail_);
     fH_en_pass_low = new TH1F(*est.fH_en_pass_low);
-    fH_en_pass_high = new TH1F(*est.fH_en_pass_mid);
+    fH_en_pass_high = new TH1F(*est.fH_en_pass_high);
     fH_en_pass_event_ = new TH1F(*est.fH_en_pass_event_);
 
     fH_event_cuts_ = new TH1F(*est.fH_event_cuts_);
@@ -432,7 +431,7 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
     fH_phi_fail_= new TH1F(*est.fH_phi_fail_);
     fH_cosTheta_fail_ = new TH1F(*est.fH_cosTheta_fail_);
     fH_en_pass_low = new TH1F(*est.fH_en_pass_low);
-    fH_en_pass_high = new TH1F(*est.fH_en_pass_mid);
+    fH_en_pass_high = new TH1F(*est.fH_en_pass_high);
     fH_en_pass_event_ = new TH1F(*est.fH_en_pass_event_);
 
     fH_event_cuts_ = new TH1F(*est.fH_event_cuts_);
@@ -840,7 +839,7 @@ void PsDecay::DrawHistograms(std::string prefix, bool all, bool pass, bool fail,
         fH_p_fail_->Draw();
         dist_fail->cd(3);
         fH_phi_fail_->Draw();
-        dist_fail->cd(4);return
+        dist_fail->cd(4);
         fH_cosTheta_fail_->Draw();
         dist_fail->Update();
 

@@ -311,7 +311,7 @@ TEST_F(decayTestFixture, DiskAccess)
         FAIL(); //if any exception is thrown, then fail
     }
 
-    EXPECT_EQ(7, noOfFiles); //check if the number of histograms is correct
+    EXPECT_EQ(8, noOfFiles); //check if the number of histograms is correct
     boost::filesystem::remove_all("test_tmp");
     ASSERT_FALSE(boost::filesystem::exists("test_tmp")); //check if the folder was removed
 }
