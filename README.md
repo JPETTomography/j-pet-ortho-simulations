@@ -14,12 +14,11 @@ and type *make* in the bash console.
 
 ### Running:
 To run the application type 
->./sim number -i param_file -p probability
-+ **number** specifies whether you want to perform simulation for 2-gamma decays (type 2), 3-gamma 
-decays (type 3) or for both types (type any other number or leave blank).
-+ **param_file** is a path to a file, where source's position and momentum is stored (x, y, z, px, py, pz). If the flag '-i'  is not provided, the program will try to read
-from *simulation_parameters.par*, which is included in the repository. Please, look into it to learn how to specify simulation parameters.
-+ **probability** is the probability for gammas to interact with the scintillator. If the flag '-p' is not set, probability will be set to 1.
+>./sim -i param_file 
+**param_file** is a path to a file, where simulation parameters are stored. If the flag '-i'  is not provided, the program will try to read file "simulation_parameters.par".
+
+### Changing the simulation parameters
+For details see simulation_parameters.par file.
 
 ### Results 
 By deault all results will be saved to the *results/* directory. You can change it by editing src/simulate.cpp file. There are static variables at the beginning of the file called:

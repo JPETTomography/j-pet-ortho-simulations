@@ -31,20 +31,20 @@ class PsDecay
                             bool compare=true, bool cuts=true);
 
         // Getters and setters
-        int GetAcceptedEvents(){return fAcceptedEvents_;}        
-        int GetAcceptedGammas(){return fAcceptedGammas_;}
-        float GetRadius(){return fR_;}
-        void SetRadius(float R){fR_=R;}
-        float GetLength(){return fL_;}
-        void SetLength(float L){fL_=L;}
-        double* GetSourcePos(){return fSourcePos_;}
-        void SetSourcePos(double* pos){for(int ii=0; ii<3; ii++) fSourcePos_[ii]=pos[ii];}
-        float GetDetectionProbability(){return fDetectionProbability_;}
-        void SetDetectionProbability(float p){if(p>1.0) fDetectionProbability_=1.0; else if(p<0.0) fDetectionProbability_=0.0; else fDetectionProbability_=p;}
+        inline int GetAcceptedEvents() const {return fAcceptedEvents_;}
+        inline int GetAcceptedGammas() const {return fAcceptedGammas_;}
+        inline float GetRadius() const {return fR_;}
+        inline void SetRadius(float R){fR_=R;}
+        inline float GetLength() const {return fL_;}
+        inline void SetLength(float L){fL_=L;}
+        inline double* GetSourcePos() const {return const_cast<double*>(fSourcePos_);}
+        inline void SetSourcePos(double* pos){for(int ii=0; ii<3; ii++) fSourcePos_[ii]=pos[ii];}
+        inline float GetDetectionProbability() const {return fDetectionProbability_;}
+        inline void SetDetectionProbability(float p){if(p>1.0) fDetectionProbability_=1.0; else if(p<0.0) fDetectionProbability_=0.0; else fDetectionProbability_=p;}
 
         //silent mode switch on/off
-        void EnableSilentMode(){fSilentMode_=true;}
-        void DisableSilentMode(){fSilentMode_=false;}
+        inline void EnableSilentMode(){fSilentMode_=true;}
+        inline void DisableSilentMode(){fSilentMode_=false;}
         //cuts
         bool GeometricalAcceptance(TLorentzVector* gamma);
         bool DetectionCut();

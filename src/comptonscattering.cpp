@@ -208,8 +208,8 @@ void ComptonScattering::Scatter(double E)
 {
     TRandom3 r(0); //set seed
     fH_photon_E_depos_->Fill(E);
-    fPDF->SetParameter(0, E); //set incident photon energy
-    double theta = fPDF->GetRandom(); //get scattering angle
+    fPDF_Theta->SetParameter(0, E); //set incident photon energy
+    double theta = fPDF_Theta->GetRandom(); //get scattering angle
     fH_photon_theta_->Fill(theta);
     double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
     fH_electron_E_->Fill(new_E);

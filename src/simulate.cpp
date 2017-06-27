@@ -39,11 +39,15 @@ std::string to_string(const T a_value)
 /// \brief simulateDecay Runs Ps->2 or Ps->3 gamma decay.
 /// \param Ps Four vector of positronium.
 /// \\param noOfGammas How many gammas are produced in a Ps decay.
+/// \param filePrefix
 /// \param simSteps Number of events to be simulated, also the number of simulation steps.
 /// \param sourceXYZ Three element array containg position of the source (x,y,z).
+/// \param p Probability to interact with a detector.
+/// \param R Radius of the detector.
+/// \param L Length of the detector.
 /// \return An instance of PsDecay class.
 ///
-PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double* sourceXYZ=nullptr, float p=1.0)
+PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string filePrefix, int simSteps=1000, double* sourceXYZ=nullptr, float p=1.0, float R=0.50, float L=0.70)
 {
     //Descriptive part
     std::cout<<"[INFO] Simulating "<<noOfGammas<<"-gamma decays"<<std::endl;
@@ -101,18 +105,29 @@ PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string file
 /// \param noOfGammas How many decay products should be simulated. If different from 2 or 3 then both scenarios are simulated.
 /// \param pManag ParamManager object containing parameters of the simulation and source coordinates.
 ///
-void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr, float p = 1.0)//int noOfGammas)
+void simulate(int simRun, ParamManager* pManag = nullptr)//int noOfGammas)
 {
    // Settings
    TLorentzVector Ps;
    int simSteps = 0;
+   int noOfGammas = 0;
+   float p = 1.0;
+   float R = 0.5;
+   float L = 0.7;
+   bool silentMode = false;
    double x,y,z,px,py,pz;
    std::string subDir;
    double sourcePos[3];
    //if ParamManager instance is provided, get number of simulation steps and source's x,y,z,px,py,pz.
    if(pManag)
    {
-       simSteps = pManag->getSimSteps();
+       simSteps = pManag->getSimEvents();
+       p = pManag->getP();
+       noOfGammas = pManag->getNoOfGammas();
+       R = pManag->getR();
+       L = pManag->getL();
+       silentMode = pManag->isSilentMode();
+
        std::vector<double> sourceParams = (pManag->getDataAt(simRun));
        x=(sourceParams)[0];
        y=(sourceParams)[1];
@@ -145,20 +160,28 @@ void simulate(int simRun, int noOfGammas = 0, ParamManager* pManag = nullptr, fl
    //Performing simulations based on the provided number of gammas
    if(noOfGammas==2)
    {
-       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
+       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p, R, L);
+       if(silentMode) decayTo2->EnableSilentMode();
+       else decayTo2->DisableSilentMode();
        decayTo3 = nullptr;
    }
    else if(noOfGammas==3)
    {
 //       std::cout<<"::::::::::::Simulating 3-gamma decays::::::::::::"<<std::endl;
-       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
+       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p, R, L);
+       if(silentMode) decayTo3->EnableSilentMode();
+       else decayTo3->DisableSilentMode();
        decayTo2 = nullptr;
    }
    else
    {
        std::cout<<"::::::::::::Simulating both 2-gamma and 3-gammas decays::::::::::::"<<std::endl;
-       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
-       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p);
+       decayTo2 = simulateDecay(Ps, 2, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p, R, L);
+       decayTo3 = simulateDecay(Ps, 3, (comptonPrefix+subDir).c_str(), simSteps, sourcePos, p, R, L);
+       if(silentMode) decayTo2->EnableSilentMode();
+       else decayTo2->DisableSilentMode();
+       if(silentMode) decayTo3->EnableSilentMode();
+       else decayTo3->DisableSilentMode();
    }
 
    // Getting the results
@@ -199,40 +222,14 @@ int main(int argc, char* argv[])
 {
   PrintConstants();
   ParamManager* par_man;
-  int noOfGammasToSimulate = 0;
 
-  float p = 1.0;
   bool pars_imported = false;
   par_man = new ParamManager();
-  if(argc > 1) //parsing command line arguments
+  if(argc == 3 && std::string(argv[2]) == "-i") //parsing command line arguments
   {
-      for(int par=1; par<argc; par++)
-      {
-          if(par==1)
-          {
-              if(atoi(argv[1])==2 || atoi(argv[1])==3)
-                  noOfGammasToSimulate = atoi(argv[1]);
-              else
-                  noOfGammasToSimulate = 1; //this will force running simulations for both 2 and 3 gamma decays
-          }
-
-          if((std::string(argv[par]) == "-p") && (argc>=par+2))
-          {
-              p = atof(argv[par+1]); //probability to react with detector
-              if(p>1.0)
-                  p = 1.0;
-              if(p<0.0)
-                  p=0.0;
-              par++;
-              std::cout<<"[INFO] Probability to react with scintillator set to: "<<p<<"\n"<<std::endl;
-          }
-          else if((std::string(argv[par]) == "-i") && (argc>=par+2))
-          {
-            //importing source parameters from external file
-              par_man->ImportParams(argv[par+1]);
-              pars_imported=true;
-          }
-      }
+        //importing source parameters from external file
+          par_man->ImportParams(argv[3]);
+          pars_imported=true;
   }
 
   if(!pars_imported)
@@ -252,7 +249,7 @@ int main(int argc, char* argv[])
   for(int ii=0; ii< (par_man->getSimRuns()); ii++)
   {
       std::cout<<":::::::::::: START OF RUN NO: "<<ii<<" ::::::::::::"<<std::endl;
-      simulate(ii, noOfGammasToSimulate, par_man, p);
+      simulate(ii, par_man);
       std::cout<<":::::::::::: END OF RUN NO:  "<<ii<<" ::::::::::::"<<"\n"<<std::endl;
   }
   std::cout<<"\n:::::::::::: END OF PROGRAM. ::::::::::::\n"<<std::endl;
