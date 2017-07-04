@@ -1,7 +1,7 @@
 /// @file simulate.cpp
 /// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
-/// @date 14.06.2017
-/// @version 1.2
+/// @date 04.07.2017
+/// @version 1.3
 ///
 /// @section DESCRIPTION
 /// Simple simulation of positronium decay to 2 or 3 gammas.
@@ -11,13 +11,13 @@
 /// generated. If another or no argument is specified, both scenarios will be generated.
 
 #include "psdecay.h"
-//#include "constants.h"
-//#include <iostream>
+
 #include "TGenPhaseSpace.h"
 #include <iomanip>
 #include "parammanager.h"
 #include <sys/stat.h>
 #include <sstream>
+#include "initialcuts.h"
 
 // Paths to folders containing results.
 static std::string generalPrefix("results/");
@@ -67,32 +67,49 @@ PsDecay* simulateDecay(TLorentzVector Ps, const int noOfGammas, std::string file
         throw("[ERROR] Source coordinates not found!");
     ////////////////////////////////////////////////////////////////////////
     double* masses = new double[noOfGammas]();
-    PsDecay* decay = new PsDecay(noOfGammas, sourceXYZ, p);
+
     //(Momentum, Energy units are Gev/C, GeV)
     TGenPhaseSpace event;
     event.SetDecay(Ps, noOfGammas, masses);
-
+    DecayType type = static_cast<DecayType>(noOfGammas);
+    PsDecay* decay = new PsDecay(type);
+    InitialCuts cuts(type);
     ComptonScattering cs(noOfGammas);
+
     // Generacja eventow
     for (Int_t n=0; n<simSteps; n++)
     {
-       double weight = event.Generate();
+       double x = sourceXYZ[0];
+       double y = sourceXYZ[1];
+       double z = sourceXYZ[2];
 
-       TLorentzVector *gamma1 = event.GetDecay(0);
-       TLorentzVector *gamma2 = event.GetDecay(1);
-       TLorentzVector *gamma3;
+       double weight = event.Generate();
+       TLorentzVector* gamma1 = event.GetDecay(0);
+       TLorentzVector* gamma2 = event.GetDecay(1);
+       TLorentzVector* gamma3;
        if(noOfGammas==3)
            gamma3= event.GetDecay(2);
        else
            gamma3=nullptr;
+       TLorentzVector* fourMomenta[3] = {gamma1, gamma2, gamma3};
+//       std::cout<<"przed="<<fourMomenta[0]->E()<<" ";
+       TLorentzVector* emission1 = new TLorentzVector(x,y,z,0.0);
+       TLorentzVector* emission2 = new TLorentzVector(x,y,z,0.0);
+       TLorentzVector* emission3 = new TLorentzVector(x,y,z,0.0);
 
-       std::vector<bool> ifPassedCuts = decay->AddEvent(weight, gamma1, gamma2, gamma3);
-       if(ifPassedCuts[0]) cs.Scatter(gamma1->Energy()*1000);
-       if(ifPassedCuts[1]) cs.Scatter(gamma2->Energy()*1000);
-       if(ifPassedCuts[2]) cs.Scatter(gamma3->Energy()*1000);
+       TLorentzVector* sourcePar[3] = {emission1, emission2, emission3};
+
+       Event event(sourcePar, fourMomenta, weight, type);
+       decay->AddEvent(event);
+       cuts.AddCuts(event);
+
+//       std::vector<bool> ifPassedCuts = decay->AddEvent(weight, gamma1, gamma2, gamma3);
+//       if(ifPassedCuts[0]) cs.Scatter(gamma1->Energy()*1000);
+//       if(ifPassedCuts[1]) cs.Scatter(gamma2->Energy()*1000);
+//       if(ifPassedCuts[2]) cs.Scatter(gamma3->Energy()*1000);
 
     }
-    cs.DrawElectronDist(filePrefix); //Draw histograms with scattering angle and electron's energy distributions.
+//    cs.DrawElectronDist(filePrefix); //Draw histograms with scattering angle and electron's energy distributions.
 //    cs.DrawPDF(generalPrefix);
     delete[] masses;
     return decay;
@@ -189,21 +206,21 @@ void simulate(int simRun, ParamManager* pManag = nullptr)//int noOfGammas)
    {
         std::cout<<"[INFO] Saving results for 2-gamma decays"<<std::endl;
         decayTo2->DrawHistograms((decaysPrefix+subDir).c_str());
-        std::cout << std::fixed;
-        std::cout << std::setprecision(2);
-        std::cout<<"[INFO] Fraction of accepted 2-gamma decays: "<<decayTo2->GetAcceptedEvents()<<"/"<<simSteps<<"="<<\
-                   decayTo2->GetAcceptedEvents()/(float)simSteps*100<<"%"<<std::endl;
-        std::cout<<std::endl;
+//        std::cout << std::fixed;
+//        std::cout << std::setprecision(2);
+//        std::cout<<"[INFO] Fraction of accepted 2-gamma decays: "<<decayTo2->GetAcceptedEvents()<<"/"<<simSteps<<"="<<\
+//                   decayTo2->GetAcceptedEvents()/(float)simSteps*100<<"%"<<std::endl;
+//        std::cout<<std::endl;
    }
    if(decayTo3)
    {
        std::cout<<"[INFO] Saving results for 3-gamma decays"<<std::endl;
        decayTo3->DrawHistograms((decaysPrefix+subDir).c_str());
-       std::cout << std::fixed;
-       std::cout << std::setprecision(2);
-       std::cout<<"[INFO] Fraction of accepted 3-gamma decays: "<<decayTo3->GetAcceptedEvents()<<"/"<<simSteps<<"="<<\
-                  decayTo3->GetAcceptedEvents()/(float)simSteps*100<<"%"<<std::endl;
-       std::cout<<std::endl;
+//       std::cout << std::fixed;
+//       std::cout << std::setprecision(2);
+//       std::cout<<"[INFO] Fraction of accepted 3-gamma decays: "<<decayTo3->GetAcceptedEvents()<<"/"<<simSteps<<"="<<\
+//                  decayTo3->GetAcceptedEvents()/(float)simSteps*100<<"%"<<std::endl;
+//       std::cout<<std::endl;
    }
 
    delete decayTo2;
