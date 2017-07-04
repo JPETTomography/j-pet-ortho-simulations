@@ -4,17 +4,14 @@
 ///
 #ifndef PSDECAY_H
 #define PSDECAY_H
-
-//#include "TObject.h"
-#include "TLorentzVector.h"
-#include "TH2.h"
-#include "TCanvas.h"
-#include "TImage.h"
 #include <vector>
 #include <iostream>
 #include <string>
 #include <cmath>
-
+#include "TH2.h"
+#include "TCanvas.h"
+#include "TImage.h"
+#include "event.h"
 #include "comptonscattering.h"
 ///
 /// \brief The PsDecay class Contains histograms with gammas' characteristics and inforamtion about passed cuts..
@@ -22,43 +19,22 @@
 class PsDecay
 {
     public:
-        PsDecay(int noOfGammas, double* sourcePos,  float p=1.0, float R=0.50, float L=0.70);
+        PsDecay(DecayType type=TWO);
         PsDecay(const PsDecay&);
         PsDecay& operator=(const PsDecay& est);
         ~PsDecay();
-        std::vector<bool> AddEvent(Double_t weight, TLorentzVector* gamma1,  TLorentzVector* gamma2,  TLorentzVector* gamma3);
-        void DrawHistograms(std::string prefix="RM", bool all=true, bool pass=true, bool fail=true, \
-                            bool compare=true, bool cuts=true);
-
-        // Getters and setters
-        inline int GetAcceptedEvents() const {return fAcceptedEvents_;}
-        inline int GetAcceptedGammas() const {return fAcceptedGammas_;}
-        inline float GetRadius() const {return fR_;}
-        inline void SetRadius(float R){fR_=R;}
-        inline float GetLength() const {return fL_;}
-        inline void SetLength(float L){fL_=L;}
-        inline double* GetSourcePos() const {return const_cast<double*>(fSourcePos_);}
-        inline void SetSourcePos(double* pos){for(int ii=0; ii<3; ii++) fSourcePos_[ii]=pos[ii];}
-        inline float GetDetectionProbability() const {return fDetectionProbability_;}
-        inline void SetDetectionProbability(float p){if(p>1.0) fDetectionProbability_=1.0; else if(p<0.0) fDetectionProbability_=0.0; else fDetectionProbability_=p;}
+        void AddEvent(Event& event);
+        void DrawHistograms(std::string prefix="RM");
 
         //silent mode switch on/off
         inline void EnableSilentMode(){fSilentMode_=true;}
         inline void DisableSilentMode(){fSilentMode_=false;}
-        //cuts
-        bool GeometricalAcceptance(TLorentzVector* gamma);
-        bool DetectionCut();
     private:
         //if set to true, no output is generated to std::cout
         bool fSilentMode_; //false by default
-        //source's parameters
-        double fSourcePos_[3];
-        // detector's parameters
-        float fR_;  //radius in cm
-        float fL_;  //length in cm
-        // info about decay products
-        int fNoOfDecayProducts_;
-        std::vector<Double_t> fMasses_;
+
+        DecayType fDecayType_;
+        std::string fTypeString_;
 
         // histograms with relative angles for all events generated
         TH1F* fH_12_;
@@ -66,52 +42,11 @@ class PsDecay
         TH2F* fH_12_31_;
         TH2F* fH_23_31_;
 
-        // histograms with relative angles for events that passed cuts
-        TH1F* fH_12_pass_;
-        TH2F* fH_12_23_pass_;
-        TH2F* fH_12_31_pass_;
-        TH2F* fH_23_31_pass_;
-
-        // histograms with relative angles for events that failed cuts
-        TH1F* fH_12_fail_;
-        TH2F* fH_12_23_fail_;
-        TH2F* fH_12_31_fail_;
-        TH2F* fH_23_31_fail_;
-
         // histograms with distributions of basic quantities for all events generated
         TH1F* fH_en_;
         TH1F* fH_p_;
         TH1F* fH_phi_;
         TH1F* fH_cosTheta_;
-
-        //only for events that passed cuts
-        TH1F* fH_en_pass_; //all gammas that passed cuts
-        TH1F* fH_en_pass_event_; //gammas that passed cuts and could be used to reconstruct an event
-        TH1F* fH_en_pass_low; //gammas that passed cuts and could be used to reconstruct an event; low energy
-        TH1F* fH_en_pass_mid; //gammas that passed cuts and could be used to reconstruct an event; mid energy
-        TH1F* fH_en_pass_high; ////gammas that passed cuts and could be used to reconstruct an event; high energy
-        TH1F* fH_p_pass_;
-        TH1F* fH_phi_pass_;
-        TH1F* fH_cosTheta_pass_;
-
-        //only for events that did not pass cuts
-        TH1F* fH_en_fail_;
-        TH1F* fH_p_fail_;
-        TH1F* fH_phi_fail_;
-        TH1F* fH_cosTheta_fail_;
-//        ClassDef(PsDecay, 1); // required by ROOT
-
-        //histogram for showing fraction of events that passed different cuts
-        TH1F* fH_event_cuts_;
-        TH1F* fH_gamma_cuts_;
-
-        int fAcceptedEvents_;
-        int fAcceptedGammas_;
-        int fNumberOfEvents_;
-        int fNumberOfGammas_;
-
-        float fDetectionProbability_; //probability that detector will detect gamma after being hit
-        bool AddCuts_(TLorentzVector* gamma);
 
 };
 
