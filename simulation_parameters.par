@@ -1,0 +1,20 @@
+#First few line contain general simulation paraemters as key-value pairs
+#If you want to simulate both 2 and 3 gamma decays, then set gammas to value other than 2 or 3 (e.g. 0)
+#Next lines contain the posistion [m] of source and its momentum [GeV/c]
+#X_s Y_s Z_s pX  pY  pZ
+#Lines that start with '#' are treated as comments.
+gammas := 0 #no of decay products, select 2 or 3, if other number provided both types will be simulated
+events := 10000 #no of decays to be simulated
+p := 0.17 #probability that gamma will be scattered after hitting a detector
+R := 0.5 #radius of the detector
+L := 0.7 #length of the detector
+silent := 0 #set to 1/0 to enable/disable silent mode; in silent mode less text is shown on std::out
+0.0   0.0   0.0   0.000000    0.000000    0.000000
+0.0   0.0   0.0   0.000000    0.000000    0.000001
+0.35   0.35   0.3   0.000000    0.000000    0.000001
+-0.35   -0.35   -0.3   0.000000    0.000000    0.00000
+#0.15   0.15   -0.1   0.000000    0.000000    0.000001
+#0.0	0.0 	0.346 0.0	0.0		0.0000001
+#-0.17	0.0	0.0	0.000004	0.0	0.0
+#0.0	-0.17	0.0	0.000004	0.0	0.0
+#0.0	0.0	-0.17	0.000004	0.0	0.0
