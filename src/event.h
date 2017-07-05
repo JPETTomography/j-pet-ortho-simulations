@@ -18,14 +18,18 @@ class Event
         Event(const Event& est);
         Event& operator=(const Event &est);
         ~Event();
-        inline TLorentzVector* GetEmissionPointAt(const unsigned index) const
+        inline TLorentzVector* GetEmissionPointOf(const unsigned index) const
             {return index<fEmissionPoint_.size() ? const_cast<TLorentzVector*>(&fEmissionPoint_[index]) : nullptr;}
-        inline TLorentzVector* GetFourMomentumAt(const unsigned index) const
+        inline TLorentzVector* GetFourMomentumOf(const unsigned index) const
             {return index<fFourMomentum_.size() ? const_cast<TLorentzVector*>(&fFourMomentum_[index]) : nullptr;}
-        inline bool GetCutPassingAt(const unsigned index) const {return fCutPassing_[index];}
+        inline bool GetCutPassingOf(const unsigned index) const {return fCutPassing_[index];}
         inline void SetCutPassing(int ii, bool val) {fCutPassing_[ii]=val;}
         inline double GetWeight() const {return fWeight_;}
         inline DecayType GetDecayType() const {return fDecayType_;}
+        inline bool GetPassFlag() const {return fPassFlag_;}
+        inline double GetPhiOf(const unsigned index) const {return fPhi_[index];}
+        inline double GetThetaOf(const unsigned index) const {return fTheta_[index];}
+        void DeducePassFlag();
 
     private:
         std::vector<TLorentzVector> fEmissionPoint_; //x, y, z, t [m and s]
@@ -33,6 +37,9 @@ class Event
         bool* fCutPassing_; //indicates if gamma failed passing through cuts
         double fWeight_;
         DecayType fDecayType_;
+        bool fPassFlag_;
+        double *fPhi_;
+        double *fTheta_;
 };
 
 #endif // EVENT_H

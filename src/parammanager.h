@@ -13,22 +13,22 @@ class ParamManager
         ParamManager(const ParamManager &pm);
         ParamManager& operator= (const ParamManager &est);
 
-        inline int getSimEvents() const {return fSimEvents_;}
-        inline int getSimRuns() const {return fSimRuns_;}
-        inline int getNoOfGammas() const {return fNoOfGammas_;}
-        inline float getP() const {return fP_;}
-        inline float getR() const {return fR_;}
-        inline float getL() const {return fL_;}
-        inline bool isSilentMode() const {return fSilentMode_;}
-        inline void setR(float r) {fR_=r;}
-        inline void setL(float l) {fL_=l;}
-        inline void setP(float p) {fP_=p;}
-        inline void setNoOfGammas(int no) {fNoOfGammas_=no;}
-        inline void enableSilentMode() {fSilentMode_=true;}
-        inline void disableSilentMode() {fSilentMode_=false;}
+        inline int GetSimEvents() const {return fSimEvents_;}
+        inline int GetSimRuns() const {return fSimRuns_;}
+        inline int GetNoOfGammas() const {return fNoOfGammas_;}
+        inline float GetP() const {return fP_;}
+        inline float GetR() const {return fR_;}
+        inline float GetL() const {return fL_;}
+        inline bool IsSilentMode() const {return fSilentMode_;}
+        inline void SetR(float r) {fR_=r;}
+        inline void SetL(float l) {fL_=l;}
+        inline void SetP(float p) {fP_=p;}
+        inline void SetNoOfGammas(int no) {fNoOfGammas_=no;}
+        inline void EnableSilentMode() {fSilentMode_=true;}
+        inline void DisableSilentMode() {fSilentMode_=false;}
 
-        std::vector<double> getDataAt(int index=0);
-        void ImportParams(std::string inFile="simulation_parameters.par");
+        std::vector<double> GetDataAt(int index=0);
+        void ImportParams(std::string inFile="simpar.par");
         bool operator==(const ParamManager &pm) const;
 
     private:

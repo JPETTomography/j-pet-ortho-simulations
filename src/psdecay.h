@@ -23,7 +23,7 @@ class PsDecay
         PsDecay(const PsDecay&);
         PsDecay& operator=(const PsDecay& est);
         ~PsDecay();
-        void AddEvent(Event& event);
+        void AddEvent(const Event& event);
         void DrawHistograms(std::string prefix="RM");
 
         //silent mode switch on/off

@@ -1,15 +1,17 @@
-#include "comptonscattering.h"
 #include "TImage.h"
-#include "TRandom3.h"
 #include "TCanvas.h"
+#include "TLine.h"
+#include "comptonscattering.h"
 
 ///
 /// \brief ComptonScattering::ComptonScattering Basic constructor.
 /// \param prefix File prefix.
 /// \param noOfGammas No of gammas (only for file naming).
 ///
-ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
+ComptonScattering::ComptonScattering(DecayType type) : fSilentMode_(false), fDecayType_(type)
 {
+    fRand_ = new TRandom3(0); //set seed for the random generator
+
     fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 100, 0.0, 0.511);
     fH_electron_E_->SetTitle("Electrons' energy distribution");
     fH_electron_E_->GetXaxis()->SetTitle("E [MeV]");
@@ -17,16 +19,24 @@ ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
     fH_electron_E_->GetYaxis()->SetTitleOffset(1.8);
 
     fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 100, 0.0, 0.511);
-    fH_electron_E_blur_->SetTitle("Electrons' energy distribution blurred");
+    fH_electron_E_blur_->SetTitle("Electrons' energy distribution, smear effect");
     fH_electron_E_blur_->GetXaxis()->SetTitle("E [MeV]");
     fH_electron_E_blur_->GetYaxis()->SetTitle("dN/dE");
     fH_electron_E_blur_->GetYaxis()->SetTitleOffset(1.8);
     
-    if(noOfGammas==3) fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 100, 0.0, 0.511);
+    if(fDecayType_!=TWO)
+    {
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 100, 0.0, 0.511);
+        if(fDecayType_==TWOandONE)
+            fTypeString_ = "2&1";
+        else
+            fTypeString_ = "3";
+    }
     else
     {
-        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 20, 0.510, 0.512);
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 21, 0.510, 0.512);
         fH_photon_E_depos_->GetXaxis()->SetNdivisions(7, false);
+        fTypeString_ = "2";
     }
     fH_photon_E_depos_->SetTitle("Incident photon energy deposition");
     fH_photon_E_depos_->GetXaxis()->SetTitle("E [MeV]");
@@ -69,7 +79,9 @@ ComptonScattering::ComptonScattering(int noOfGammas) : fNoOfGammas_(noOfGammas)
 ///
 ComptonScattering::ComptonScattering(const ComptonScattering &est)
 {
-    fNoOfGammas_=est.fNoOfGammas_;
+    fDecayType_=est.fDecayType_;
+    fSilentMode_=est.fSilentMode_;
+    fTypeString_=est.fTypeString_;
     fPDF = new TF1(*est.fPDF);  //special root object
     fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
@@ -89,7 +101,9 @@ ComptonScattering::ComptonScattering(const ComptonScattering &est)
 ///
 ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
 {
-    fNoOfGammas_=est.fNoOfGammas_;
+    fDecayType_=est.fDecayType_;
+    fSilentMode_=est.fSilentMode_;
+    fTypeString_=est.fTypeString_;
     fPDF = new TF1(*est.fPDF);  //special root object
     fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
@@ -118,6 +132,7 @@ ComptonScattering::~ComptonScattering()
     if(fH_PDF_Theta_) delete fH_PDF_Theta_;
     if(fH_PDF_Theta_cross) delete fH_PDF_Theta_cross;
     if(fPDF_Theta) delete fPDF_Theta;
+    if(fRand_) delete fRand_;
 }
 
 ///
@@ -173,6 +188,8 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
     std::cout<<"[INFO] Klein-Nishina function saved to file.\n"<<std::endl;
     delete c;
     delete c2;
+    delete img;
+    delete img2;
 }
 
 ///
@@ -186,17 +203,22 @@ void ComptonScattering::DrawElectronDist(std::string filePrefix)
     c->Divide(2,2);
     c->cd(1);
     fH_photon_E_depos_->Draw();
+    TLine *line = new TLine(0.511, 0.0, 0.511,fH_photon_E_depos_->GetMaximum()*1.05);
+    line->SetLineColor(kViolet+2);
+    line->Draw();
     c->cd(2);
     fH_photon_theta_->Draw();
     c->cd(3);
     fH_electron_E_ ->Draw();
     c->cd(4);
     fH_electron_E_blur_->Draw();
-    TImage *img2 = TImage::Create();
-    img2->FromPad(c);
-    img2->WriteImage((filePrefix+std::string("_compton_distr_")+std::to_string(fNoOfGammas_)\
+    TImage *img = TImage::Create();
+    img->FromPad(c);
+    img->WriteImage((filePrefix+std::string("_compton_distr_")+fTypeString_\
                       +std::string("gammas.png")).c_str());
     delete c;
+    delete line;
+    delete img;
     std::cout<<"[INFO] Distributions of electrons' energy, incident photons' energy and Compton scattering angle saved.\n"<<std::endl;
 }
 
@@ -204,16 +226,26 @@ void ComptonScattering::DrawElectronDist(std::string filePrefix)
 /// \brief ComptonScattering::Scatter Scatters a photon according to Klein-Nishina formula and fills histograms for electrons.
 /// \param E Energy of incident photon.
 ///
-void ComptonScattering::Scatter(double E)
+void ComptonScattering::Scatter(const Event& event, double smearingLowLimit)
 {
-    TRandom3 r(0); //set seed
-    fH_photon_E_depos_->Fill(E);
-    fPDF_Theta->SetParameter(0, E); //set incident photon energy
-    double theta = fPDF_Theta->GetRandom(); //get scattering angle
-    fH_photon_theta_->Fill(theta);
-    double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
-    fH_electron_E_->Fill(new_E);
-    fH_electron_E_blur_->Fill(r.Gaus(new_E, sigmaE(E)));
+    for(int ii=0; ii<3; ii++)
+    {
+
+        if(event.GetFourMomentumOf(ii) != nullptr && event.GetCutPassingOf(ii))
+        {
+            double E = event.GetFourMomentumOf(ii)->Energy();
+            fH_photon_E_depos_->Fill(E);
+            fPDF_Theta->SetParameter(0, E); //set incident photon energy
+            double theta = fPDF_Theta->GetRandom(); //get scattering angle
+            fH_photon_theta_->Fill(theta);
+            double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
+            fH_electron_E_->Fill(new_E);
+            if(E >= smearingLowLimit)
+                fH_electron_E_blur_->Fill(fRand_->Gaus(new_E, sigmaE(E)));
+            else
+                fH_electron_E_blur_->Fill(E);
+        }
+    }
 }
 
 ///

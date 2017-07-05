@@ -101,6 +101,8 @@ PsDecay::PsDecay(const PsDecay& est)
 {
     fSilentMode_=est.fSilentMode_;
     fDecayType_=est.fDecayType_;
+    fTypeString_ = est.fTypeString_;
+
     if(fDecayType_==TWO)
     {
         fH_12_ = new TH1F(*est.fH_12_);
@@ -132,6 +134,8 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
 {
     fSilentMode_=est.fSilentMode_;
     fDecayType_=est.fDecayType_;
+    fTypeString_ = est.fTypeString_;
+
     if(fDecayType_==TWO)
     {
         fH_12_ = new TH1F(*est.fH_12_);
@@ -169,31 +173,31 @@ PsDecay::~PsDecay()
 }
 
 
-void PsDecay::AddEvent(Event& event)
+void PsDecay::AddEvent(const Event& event)
 {
     for(int ii=0; ii<3; ii++)
     {
-        if(event.GetFourMomentumAt(ii)!=nullptr)
+        if(event.GetFourMomentumOf(ii)!=nullptr)
         {
             //filling histograms for all gammas
-            fH_en_->Fill(event.GetFourMomentumAt(ii)->Energy());
-            fH_p_->Fill(event.GetFourMomentumAt(ii)->P());
-            fH_phi_->Fill(event.GetFourMomentumAt(ii)->Phi());
-            fH_cosTheta_->Fill(event.GetFourMomentumAt(ii)->CosTheta());
+            fH_en_->Fill(event.GetFourMomentumOf(ii)->Energy());
+            fH_p_->Fill(event.GetFourMomentumOf(ii)->P());
+            fH_phi_->Fill(event.GetFourMomentumOf(ii)->Phi());
+            fH_cosTheta_->Fill(event.GetFourMomentumOf(ii)->CosTheta());
         }
     }
     if(fDecayType_==TWO)
     {
-        fH_12_->Fill(event.GetFourMomentumAt(0)->Angle((event.GetFourMomentumAt(1))->Vect()), event.GetWeight());
+        fH_12_->Fill(event.GetFourMomentumOf(0)->Angle((event.GetFourMomentumOf(1))->Vect()), event.GetWeight());
     }
     else
     {
-        fH_12_23_->Fill(event.GetFourMomentumAt(0)->Angle(event.GetFourMomentumAt(1)->Vect()), \
-                        event.GetFourMomentumAt(1)->Angle(event.GetFourMomentumAt(2)->Vect()), event.GetWeight());
-        fH_12_31_->Fill(event.GetFourMomentumAt(0)->Angle(event.GetFourMomentumAt(1)->Vect()),\
-                        event.GetFourMomentumAt(2)->Angle(event.GetFourMomentumAt(0)->Vect()), event.GetWeight());
-        fH_23_31_->Fill(event.GetFourMomentumAt(1)->Angle(event.GetFourMomentumAt(2)->Vect()),\
-                        event.GetFourMomentumAt(2)->Angle(event.GetFourMomentumAt(0)->Vect()), event.GetWeight());
+        fH_12_23_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()), \
+                        event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()), event.GetWeight());
+        fH_12_31_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()),\
+                        event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
+        fH_23_31_->Fill(event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()),\
+                        event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
     }
 }
 

@@ -177,8 +177,8 @@ void ParamManager::ImportParams(std::string inFile)
     std::cout<<"[INFO] Detector length: "<<fL_<<std::endl;
     std::cout<<"[INFO] Probability to interact with detector: "<<fP_<<std::endl;
     std::cout<<"[INFO] Silent mode: ";
-    if(fSilentMode_) std::cout<<"DISABLED"<<std::endl;
-    else std::cout<<"ENABLED"<<std::endl;
+    if(fSilentMode_) std::cout<<"ENABLED"<<std::endl;
+    else std::cout<<"DISABLED"<<std::endl;
     std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
 }
 
@@ -187,7 +187,7 @@ void ParamManager::ImportParams(std::string inFile)
 /// \param index Number of the run, used to access apropriate data.
 /// \return An array with a set of source's parameters: x, y, z, px, py, pz;
 ///
-std::vector<double> ParamManager::getDataAt(int index)
+std::vector<double> ParamManager::GetDataAt(int index)
 {
     if(index >= fSimRuns_)
         throw ("[ERROR] Invalid index to get from ParamManger!");
