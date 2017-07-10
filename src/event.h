@@ -33,7 +33,7 @@ class Event
 
     private:
         std::vector<TLorentzVector> fEmissionPoint_; //x, y, z, t [m and s]
-        std::vector<TLorentzVector> fFourMomentum_; //pX, pY, pZ, E [GeV/c and MeV]
+        std::vector<TLorentzVector> fFourMomentum_; //pX, pY, pZ, E [MeV/c and MeV]
         bool* fCutPassing_; //indicates if gamma failed passing through cuts
         double fWeight_;
         DecayType fDecayType_;

@@ -19,10 +19,14 @@ class ParamManager
         inline float GetP() const {return fP_;}
         inline float GetR() const {return fR_;}
         inline float GetL() const {return fL_;}
+        inline float GetESc() const {return fESc_;} //in keV
+        inline float GetPSc() const {return fPSc_;}
         inline bool IsSilentMode() const {return fSilentMode_;}
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
         inline void SetP(float p) {fP_=p;}
+        inline void SetESc(float e) {fESc_=e;} //in keV
+        inline void SetPSc(float p) {fPSc_=p;}
         inline void SetNoOfGammas(int no) {fNoOfGammas_=no;}
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
@@ -38,6 +42,8 @@ class ParamManager
         float fP_; //interaction probability
         float fL_; //detector length
         float fR_; //detector radius
+        float fESc_; //energy in keV of additional gamma emitted in 2+1 event mode
+        float fPSc_; //probability of emitting an additional gamma in 2+1 event mode
         bool fSilentMode_;
         std::vector<std::vector<double> > fData_; //this is where source parameters are stored
 };

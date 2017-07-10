@@ -1,7 +1,7 @@
 /// @file simulate.cpp
 /// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
 /// @date 04.07.2017
-/// @version 1.3
+/// @version 1.5
 ///
 /// @section DESCRIPTION
 /// Simple simulation of positronium decay to 2 or 3 gammas.
@@ -58,7 +58,7 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
 
     //Descriptive part
     std::cout<<"[INFO] Simulating "<<type_string<<"-gamma decays"<<std::endl;
-    std::cout<<"[INFO] Source coordinates: ("<<source.X()<<", "<<source.Y()<<", "<<source.Z()<<") r="<<source.T()<<std::endl;
+    std::cout<<"[INFO] Source coordinates: ("<<source.X()<<", "<<source.Y()<<", "<<source.Z()<<") r="<<source.T()<<" [mm]"<<std::endl;
     ////////////////////////////////////////////////////////////////////////
     double* masses = new double[noOfGammas]();
     //(Momentum, Energy units are Gev/C, GeV)
@@ -106,11 +106,20 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
        }
        else if(type == TWOandONE)
        {
-           double phi = rand.Uniform(0.0, 2*TMath::Pi());
-           double theta = rand.Uniform(0.0, TMath::Pi());
-           double P = 1.022/1000.0; //GeV
-           gamma3 = new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
-           emission3 = new TLorentzVector(*emission1);
+           if(rand.Uniform() < pManag.GetPSc())
+           {
+
+               double theta = TMath::ACos(rand.Uniform(-1.0, 1.0));
+               double phi = rand.Uniform(0.0, 2*TMath::Pi());
+               double P = pManag.GetESc()/1000000.0; //GeV
+               gamma3 = new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
+               emission3 = new TLorentzVector(*emission1);
+           }
+           else
+           {
+               gamma3 = nullptr;
+               emission3=nullptr;
+           }
        }
        //Packing everything to EVENT object
        TLorentzVector* fourMomenta[3] = {gamma1, gamma2, gamma3};
@@ -131,7 +140,7 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     //Drawing results
     decay.DrawHistograms(filePrefix);
     cuts.DrawHistograms(filePrefix);
-    cs.DrawElectronDist(filePrefix); //Draw histograms with scattering angle and electron's energy distributions.
+    cs.DrawComptonHistograms(filePrefix); //Draw histograms with scattering angle and electron's energy distributions.
     delete[] masses;
 }
 
@@ -152,9 +161,16 @@ void simulate(const int simRun, ParamManager& pManag)
    px=(sourceParams)[3];
    py=(sourceParams)[4];
    pz=(sourceParams)[5];
-   r=(sourceParams)[6];
+   r=TMath::Abs((sourceParams)[6]);
 
-   Ps = TLorentzVector(px, py, pz, 1.022/1000);
+   //checking if source position is correct
+   if((TMath::Abs(x)+r)*(TMath::Abs(x)+r)+(TMath::Abs(y)+r)*(TMath::Abs(y)+r) >= pManag.GetR()*pManag.GetR() || (TMath::Abs(z)+r)>=pManag.GetL())
+   {
+       std::cerr<<"[ERROR] Source outside the barrel! Terminating current run!"<<std::endl;
+       return;
+   }
+
+   Ps = TLorentzVector(px/1000000.0, py/1000000.0, pz/1000000.0, 1.022/1000); //scaling to GeV
    sourcePos = TLorentzVector(x,y,z,r);
    subDir = to_string(x)+std::string("_")+to_string(y)+std::string("_")+to_string(z)+std::string("_")\
            +to_string(px)+std::string("_")+to_string(py)+std::string("_")+to_string(pz)+std::string("/");

@@ -14,8 +14,10 @@ ParamManager::ParamManager() :
     fSimRuns_(0),
     fNoOfGammas_(0),
     fP_(0),
-    fL_(0.7),
-    fR_(0.5),
+    fL_(700),
+    fR_(500),
+    fESc_(1160),
+    fPSc_(0.98),
     fSilentMode_(false)
     {}
 
@@ -31,6 +33,8 @@ ParamManager::ParamManager(const ParamManager &est)
     fP_=est.fP_;
     fR_=est.fP_;
     fL_=est.fL_;
+    fESc_=est.fESc_;
+    fPSc_=est.fPSc_;
     fSilentMode_=est.fSilentMode_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
@@ -49,6 +53,8 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     fP_=est.fP_;
     fR_=est.fP_;
     fL_=est.fL_;
+    fESc_=est.fESc_;
+    fPSc_=est.fPSc_;
     fSilentMode_=est.fSilentMode_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
@@ -58,12 +64,13 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
 ///
 /// \brief ParamManager::operator == Compare operator. Compares values of member fields.
 /// \param est Instance of ParamManager to be compared with this.
-/// \return True if all fields are equal.
+/// \return True if all parameter fields are equal.
 ///
 bool ParamManager::operator==(const ParamManager &est) const
 {
     return ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
-            (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && (fSilentMode_==est.fSilentMode_));
+            (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
+            (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_));
 }
 
 
@@ -154,9 +161,13 @@ void ParamManager::ImportParams(std::string inFile)
               else if (token[0]=="L")
                 fL_ = atof((token[2].c_str()));
               else if (token[0]=="gammas")
-                  fNoOfGammas_=atoi(token[2].c_str());
+                fNoOfGammas_=atoi(token[2].c_str());
+              else if (token[0]=="ESc")
+                fESc_=atof(token[2].c_str());
+              else if (token[0]=="pSc")
+                fPSc_=atof(token[2].c_str());
               else if (token[0]=="silent")
-                  fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
+                fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
               else
                 std::cerr<<"[WARNING] Unrecognized parameter in the param file: \""<<token[0]<<"\""<<std::endl;
           }
@@ -167,15 +178,22 @@ void ParamManager::ImportParams(std::string inFile)
     }
     //The number of simulation runs is determined basing on the number of data sets with source's parameters.
     fSimRuns_=fData_.size();
-    if(fNoOfGammas_!=2 && fNoOfGammas_!=3)
+    if(fNoOfGammas_==1)
+        std::cout<<"[INFO] No of decay products: 2+1"<<std::endl;
+    else if(fNoOfGammas_!=2 && fNoOfGammas_!=3)
         std::cout<<"[INFO] No of decay products: 2 and 3"<<std::endl;
     else
         std::cout<<"[INFO] No of decay products: "<<fNoOfGammas_<<std::endl;
     std::cout<<"[INFO] Events to generate: "<<fSimEvents_<<std::endl;
     std::cout<<"[INFO] Runs to simulate: "<<fSimRuns_<<std::endl;
-    std::cout<<"[INFO] Detector radius: "<<fR_<<std::endl;
-    std::cout<<"[INFO] Detector length: "<<fL_<<std::endl;
+    std::cout<<"[INFO] Detector radius: "<<fR_<<" [mm]"<<std::endl;
+    std::cout<<"[INFO] Detector length: "<<fL_<<" [mm]"<<std::endl;
     std::cout<<"[INFO] Probability to interact with detector: "<<fP_<<std::endl;
+    if(fNoOfGammas_==1)
+    {
+        std::cout<<"[INFO] Energy of additional gamma: "<<fESc_<<" [keV]"<<std::endl;
+        std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fPSc_<<std::endl;
+    }
     std::cout<<"[INFO] Silent mode: ";
     if(fSilentMode_) std::cout<<"ENABLED"<<std::endl;
     else std::cout<<"DISABLED"<<std::endl;

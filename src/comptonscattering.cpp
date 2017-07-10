@@ -12,38 +12,49 @@ ComptonScattering::ComptonScattering(DecayType type) : fSilentMode_(false), fDec
 {
     fRand_ = new TRandom3(0); //set seed for the random generator
 
-    fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 100, 0.0, 0.511);
+
+    if(fDecayType_==THREE)
+    {
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.0, 0.600);
+        fTypeString_ = "3";
+        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 0.511);
+        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 0.511);
+    }
+    else if(fDecayType_==TWO)
+    {
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 21, 0.510, 0.512);
+        fH_photon_E_depos_->GetXaxis()->SetNdivisions(7, false);
+        fTypeString_ = "2";
+        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 0.511);
+        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 0.511);
+    }
+    else if(fDecayType_==TWOandONE)
+    {
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.3, 1.3);
+        fTypeString_ = "2&1";
+        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 1.3);
+        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 1.3);
+    }
+    fH_electron_E_->SetFillColor(kBlue);
     fH_electron_E_->SetTitle("Electrons' energy distribution");
     fH_electron_E_->GetXaxis()->SetTitle("E [MeV]");
     fH_electron_E_->GetYaxis()->SetTitle("dN/dE");
     fH_electron_E_->GetYaxis()->SetTitleOffset(1.8);
 
-    fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 100, 0.0, 0.511);
+    fH_electron_E_blur_->SetFillColor(kBlue);
     fH_electron_E_blur_->SetTitle("Electrons' energy distribution, smear effect");
     fH_electron_E_blur_->GetXaxis()->SetTitle("E [MeV]");
     fH_electron_E_blur_->GetYaxis()->SetTitle("dN/dE");
     fH_electron_E_blur_->GetYaxis()->SetTitleOffset(1.8);
-    
-    if(fDecayType_!=TWO)
-    {
-        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 100, 0.0, 0.511);
-        if(fDecayType_==TWOandONE)
-            fTypeString_ = "2&1";
-        else
-            fTypeString_ = "3";
-    }
-    else
-    {
-        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 21, 0.510, 0.512);
-        fH_photon_E_depos_->GetXaxis()->SetNdivisions(7, false);
-        fTypeString_ = "2";
-    }
+
+    fH_photon_E_depos_->SetFillColor(kBlue);
     fH_photon_E_depos_->SetTitle("Incident photon energy deposition");
     fH_photon_E_depos_->GetXaxis()->SetTitle("E [MeV]");
     fH_photon_E_depos_->GetYaxis()->SetTitle("dN/dE");
     fH_photon_E_depos_->GetYaxis()->SetTitleOffset(1.8);
     
-    fH_photon_theta_ = new TH1F("fH_photon_theta_", "fH_photon_theta_", 100, 0.0, TMath::Pi());
+    fH_photon_theta_ = new TH1F("fH_photon_theta_", "fH_photon_theta_", 50, 0.0, TMath::Pi());
+    fH_photon_theta_->SetFillColor(kBlue);
     fH_photon_theta_->SetTitle("Scattering angle distribution");
     fH_photon_theta_->GetXaxis()->SetTitle("#theta");
     fH_photon_theta_->GetYaxis()->SetTitle("dN/d#theta");
@@ -196,16 +207,16 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
 /// \brief ComptonScattering::DrawElectronDist Draws and saves to file energy of Compton electrons and angle distributions for scattered photons.
 /// \param filePrefix Prefix of the output file, may contain path.
 ///
-void ComptonScattering::DrawElectronDist(std::string filePrefix)
+void ComptonScattering::DrawComptonHistograms(std::string filePrefix)
 {
     std::cout<<"\n[INFO] Drawing histograms for Compton electrons and scattered photons."<<std::endl;
     TCanvas* c = new TCanvas("c", "Compton effect distributions", 1300, 1200);
     c->Divide(2,2);
     c->cd(1);
-    fH_photon_E_depos_->Draw();
     TLine *line = new TLine(0.511, 0.0, 0.511,fH_photon_E_depos_->GetMaximum()*1.05);
-    line->SetLineColor(kViolet+2);
+    line->SetLineColor(kRed+2);
     line->Draw();
+    fH_photon_E_depos_->Draw();
     c->cd(2);
     fH_photon_theta_->Draw();
     c->cd(3);
@@ -230,7 +241,6 @@ void ComptonScattering::Scatter(const Event& event, double smearingLowLimit)
 {
     for(int ii=0; ii<3; ii++)
     {
-
         if(event.GetFourMomentumOf(ii) != nullptr && event.GetCutPassingOf(ii))
         {
             double E = event.GetFourMomentumOf(ii)->Energy();
@@ -251,7 +261,7 @@ void ComptonScattering::Scatter(const Event& event, double smearingLowLimit)
 ///
 /// \brief ComptonScattering::KleinNishina_ Klein-Nishina formula
 /// \param angle Scattering angle.
-/// \param energy Incident's photon energy.
+/// \param energy Incident's photon energy in MeV.
 /// \return Compton effect cross section.
 ///
 long double ComptonScattering::KleinNishina_(double* angle, double* energy)
@@ -265,7 +275,7 @@ long double ComptonScattering::KleinNishina_(double* angle, double* energy)
 ///
 /// \brief ComptonScattering::KleinNishinaTheta_ PDF of occuring a Compton scattering with a given angle and energy.
 /// \param angle Scattering angle.
-/// \param energy Incident's photon energy.
+/// \param energy Incident's photon energy in MeV.
 /// \return PDF function value based on Klein-Nishina formula.
 ///
 long double ComptonScattering::KleinNishinaTheta_(double* angle, double* energy)

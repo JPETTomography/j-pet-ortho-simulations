@@ -38,6 +38,8 @@ class PsDecay
 
         // histograms with relative angles for all events generated
         TH1F* fH_12_;
+        TH1F* fH_23_;
+        TH1F* fH_31_;
         TH2F* fH_12_23_;
         TH2F* fH_12_31_;
         TH2F* fH_23_31_;

@@ -20,7 +20,7 @@ class ComptonScattering
         ComptonScattering& operator=(const ComptonScattering& est);
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
-        void DrawElectronDist(std::string filePrefix="");
+        void DrawComptonHistograms(std::string filePrefix="");
         void Scatter(const Event& event, double smearingLowLimit = 0.0); //perfors scattering
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}

@@ -10,7 +10,7 @@
 class InitialCuts
 {
     public:
-        InitialCuts(DecayType type=TWO, float R=0.50, float L=0.70, float p=1.0);
+        InitialCuts(DecayType type=TWO, float R=500, float L=700, float p=1.0);
         InitialCuts(const InitialCuts&);
         InitialCuts& operator=(const InitialCuts& est);
         ~InitialCuts();
@@ -54,12 +54,16 @@ class InitialCuts
         TRandom3* fRand_; //set seed
         // histograms with relative angles for events that passed cuts
         TH1F* fH_12_pass_;
+        TH1F* fH_23_pass_;
+        TH1F* fH_31_pass_;
         TH2F* fH_12_23_pass_;
         TH2F* fH_12_31_pass_;
         TH2F* fH_23_31_pass_;
 
         // histograms with relative angles for events that failed cuts
         TH1F* fH_12_fail_;
+        TH1F* fH_23_fail_;
+        TH1F* fH_31_fail_;
         TH2F* fH_12_23_fail_;
         TH2F* fH_12_31_fail_;
         TH2F* fH_23_31_fail_;
