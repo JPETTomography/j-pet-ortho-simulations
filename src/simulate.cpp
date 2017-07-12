@@ -70,10 +70,10 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     TGenPhaseSpace event;
     event.SetDecay(Ps, noOfGammas, masses);
     // creating necessary objects
-    Event* eventDecay = new Event;
+    Event* eventDecay = nullptr;//new Event;
     PsDecay decay(type);
     InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetP());
-    ComptonScattering cs(type);
+    ComptonScattering cs(type, pManag.GetSmearLowLimit(), pManag.GetSmearHighLimit());
 
     if(pManag.IsSilentMode())
     {
@@ -84,10 +84,7 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     else
         std::cout<<"[INFO] Generation start!"<<std::endl;
     //adding branch to the tree
-    if(tree)
-    {
-        tree->Branch("event_split", "Event", &eventDecay, 32000, 99);
-    }
+
     //***   EVENT LOOP  ***
     for (Int_t n=0; n<pManag.GetSimEvents(); n++)
     {
@@ -142,10 +139,16 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
 //       //Applying cuts
        cuts.AddCuts(eventDecay);
 //       //Performing the Compton Scattering
-       cs.Scatter(eventDecay, 0.0);
+       cs.Scatter(eventDecay);
        //we select what kind of events will be saved to the tree
        if(tree!=nullptr && ((pManag.GetEventTypeToSave()==PASS && eventDecay->GetPassFlag()) || (pManag.GetEventTypeToSave()==FAIL && !(eventDecay->GetPassFlag())) || (pManag.GetEventTypeToSave()==ALL)))
        {
+           if(n==0)
+           {
+               if(!pManag.IsSilentMode())
+                   std::cout<<"[INFO] Creating a new branch for storing events.\n"<<std::endl;
+               tree->Branch("event_split", "Event", &eventDecay, 32000, 99);
+           }
            tree->Fill();
        }
        delete eventDecay;
@@ -248,7 +251,7 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
 ///
 int main(int argc, char* argv[])
 {
-
+  PrintConstants();
   ParamManager par_man;
   bool pars_imported = false;
   //default name of the output file is current date and time

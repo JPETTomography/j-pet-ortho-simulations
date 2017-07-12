@@ -884,7 +884,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
         outFileDiffEn = prefix+fTypeString_+"-gammas_diff_energies_.png";
     }
 
-    if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for passed events"<<std::endl;
+    if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for passed events."<<std::endl;
     if(output==BOTH || output==PNG)
     {
         TImage *img = TImage::Create();
@@ -977,7 +977,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
             outFile2 = prefix+fTypeString_+std::string("-gammas_angles_fail.png");
         }
         angles_fail->Update();
-        if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for failed events"<<std::endl;
+        if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for failed events."<<std::endl;
         if(output==BOTH || output==PNG)
         {
             TImage *img = TImage::Create();

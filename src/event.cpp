@@ -2,11 +2,15 @@
 #include <iostream>
 ClassImp(Event)
 
+long Event::fCounter_ = 0;
+
 Event::Event()
 {
     fWeight_=0;
     fDecayType_=TWO;
     fPassFlag_=false;
+    fCounter_++;
+    fId = fCounter_;
     for(int ii=0; ii<2; ii++)
     {
         fFourMomentum_.push_back(TLorentzVector(0.0, 0.0, 1.022, 1.022)); //scale from GeV to MeV
@@ -14,6 +18,7 @@ Event::Event()
         fPhi_.push_back(0.0);
         fTheta_.push_back(0.0);
     }
+    std::cerr<<"[WARNING] Default constructor used for Event class!"<<std::endl;
 }
 
 Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weights, DecayType type) :
@@ -21,6 +26,8 @@ Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum
     fDecayType_(type),
     fPassFlag_(true)
 {
+    fCounter_++;
+    fId = fCounter_;
     int totalGammaNo = type ==TWO ? 2 : 3;
     for(int ii=0; ii<totalGammaNo; ii++)
     {
@@ -39,6 +46,7 @@ Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum
 
 Event::Event(const Event& est) : TObject(est)
 {
+    fId = est.fId;
     fDecayType_ = est.fDecayType_;
     fEmissionPoint_.resize(est.fEmissionPoint_.size());
     std::copy(est.fEmissionPoint_.begin(), est.fEmissionPoint_.end(), fEmissionPoint_.begin());
@@ -54,6 +62,7 @@ Event::Event(const Event& est) : TObject(est)
 
 Event& Event::operator=(const Event& est)
 {
+    fId = est.fId;
     fDecayType_ = est.fDecayType_;
     fEmissionPoint_.resize(est.fEmissionPoint_.size());
     std::copy(est.fEmissionPoint_.begin(), est.fEmissionPoint_.end(), fEmissionPoint_.begin());

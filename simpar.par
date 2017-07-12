@@ -1,14 +1,16 @@
 #Lines that start with '#' are treated as comments.
-gammas := 0 #no of decay products, select 2 or 3, or 1 if you want to have 2+1 decay, if other number provided both types will be simulated
-events := 10000 #no of decays to be simulated
+gammas := 3 #no of decay products, select 2 or 3, or 1 if you want to have 2+1 decay, if other number provided both types will be simulated
+events := 50000 #no of decays to be simulated
 p := 0.17 #probability that gamma will be scattered after hitting a detector
 R := 500 #radius of the detector
 L := 700 #length of the detector
 ESc := 1160 #energy in keV of additional gamma in 2+1 event
 pSc := 0.98 #probability that additional gamma will be emitted in 2+1 event mode
+smearLow := 0.0 #lower limit in MeV for phenomenological smearing
+smearHigh := 2.0 #higher limit in MeV for phenomenological smearing
 silent := 0 #set to 1/0 to enable/disable silent mode; in silent mode less text is shown on std::out
-eventType := all #set to "all", "pass" or "fail"
-output := png #set "tree" for ROOT tree, set "png" for writing image files, set "both" for both output options
+eventType := all #types of events saved to tree, set to "all", "pass" or "fail"
+output := both #set "tree" for ROOT tree, set "png" for writing image files, set "both" for both output options
 #
 #
 #LINES BELOW CONTAIN SOURCE PARAMETERS:

@@ -35,12 +35,16 @@ class ParamManager
         inline float GetL() const {return fL_;}
         inline float GetESc() const {return fESc_;} //in keV
         inline float GetPSc() const {return fPSc_;}
+        inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
+        inline float GetSmearHighLimit() const {return fSmearHighLimit_;}
         inline bool IsSilentMode() const {return fSilentMode_;}
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
         inline void SetP(float p) {fP_=p;}
         inline void SetESc(float e) {fESc_=e;} //in keV
         inline void SetPSc(float p) {fPSc_=p;}
+        inline void SetSmearLowLimit(float limit) {fSmearLowLimit_=limit;}
+        inline void SetSmearHighLimit(float limit) {fSmearHighLimit_=limit;}
         inline void SetNoOfGammas(int no) {fNoOfGammas_=no;}
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
@@ -61,6 +65,8 @@ class ParamManager
         float fR_; //detector radius
         float fESc_; //energy in keV of additional gamma emitted in 2+1 event mode
         float fPSc_; //probability of emitting an additional gamma in 2+1 event mode
+        float fSmearLowLimit_;
+        float fSmearHighLimit_;
         bool fSilentMode_; //if set to true, less output to std::cout will be printed
         OutputOptions fOutput_; //what kind of output will be produced
         EventTypeToSave fEventTypeToSave_; //what kind of events should be saved

@@ -16,15 +16,19 @@
 class ComptonScattering
 {
     public:
-        ComptonScattering(DecayType type);
+        ComptonScattering(DecayType type, float low=0.0, float high=2.0);
         ComptonScattering(const ComptonScattering& est);
         ComptonScattering& operator=(const ComptonScattering& est);
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
         void DrawComptonHistograms(std::string filePrefix, OutputOptions output=PNG);
-        void Scatter(const Event* event, double smearingLowLimit = 0.0, double smearingHighLimit = 2.0); //perfors scattering
+        void Scatter(const Event* event); //perfors scattering
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
+        inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
+        inline float GetSmearHighLimit() const {return fSmearLowLimit_;}
+        inline void SetSmearLowLimit(float limit) {fSmearLowLimit_=limit;}
+        inline void SetSmearHighLimit(float limit) {fSmearHighLimit_=limit;}
         TF1* fPDF;  //root function wrapper, Klein-Nishina formula
         TF1* fPDF_Theta;  //root function wrapper, dN/d theta
 
@@ -41,6 +45,8 @@ class ComptonScattering
         TH1D* fH_PDF_cross; //Klein-Nishina function for specified value of incident's photon energy
         TH2D* fH_PDF_Theta_; //Klein-Nishina based theta PDF function
         TH1D* fH_PDF_Theta_cross; //Klein-Nishina based theta PDF function for specified value of incident's photon energy
+        float fSmearLowLimit_;
+        float fSmearHighLimit_;
         static long double KleinNishina_(double* angle, double* energy);
         static long double KleinNishinaTheta_(double* angle, double* energy); //Klein-Nishina based theta PDF
         double sigmaE(double E, double coeff=0.0444);

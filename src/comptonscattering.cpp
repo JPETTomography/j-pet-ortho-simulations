@@ -8,7 +8,7 @@
 /// \param prefix File prefix.
 /// \param noOfGammas No of gammas (only for file naming).
 ///
-ComptonScattering::ComptonScattering(DecayType type) : fSilentMode_(false), fDecayType_(type)
+ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fSilentMode_(false), fDecayType_(type), fSmearLowLimit_(low), fSmearHighLimit_(high)
 {
     fRand_ = new TRandom3(0); //set seed for the random generator
 
@@ -93,6 +93,8 @@ ComptonScattering::ComptonScattering(const ComptonScattering &est)
     fDecayType_=est.fDecayType_;
     fSilentMode_=est.fSilentMode_;
     fTypeString_=est.fTypeString_;
+    fSmearLowLimit_=est.fSmearLowLimit_;
+    fSmearHighLimit_=est.fSmearHighLimit_;
     fPDF = new TF1(*est.fPDF);  //special root object
     fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
@@ -115,6 +117,8 @@ ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
     fDecayType_=est.fDecayType_;
     fSilentMode_=est.fSilentMode_;
     fTypeString_=est.fTypeString_;
+    fSmearLowLimit_=est.fSmearLowLimit_;
+    fSmearHighLimit_=est.fSmearHighLimit_;
     fPDF = new TF1(*est.fPDF);  //special root object
     fPDF_Theta = new TF1(*est.fPDF_Theta);
     fH_photon_E_depos_=new TH1F(*est.fH_photon_E_depos_); //distribution of energy deposited by incident photons
@@ -205,20 +209,30 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
 
 void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOptions output)
 {
-    std::cout<<"\n[INFO] Drawing histograms for Compton electrons and scattered photons."<<std::endl;
+    if(!fSilentMode_)
+        std::cout<<"[INFO] Drawing histograms for Compton electrons and scattered photons."<<std::endl;
     TCanvas* c = new TCanvas((fTypeString_+"-gammas_compton_distr").c_str(), "Compton effect distributions", 1300, 1200);
-    c->Divide(2,2);
-    c->cd(1);
     TLine *line = new TLine(0.511, 0.0, 0.511,fH_photon_E_depos_->GetMaximum()*1.05);
     line->SetLineColor(kRed+2);
-    line->Draw();
+    line->SetLineWidth(4);
+    TLine *lowLimit = new TLine(fSmearLowLimit_, 0.0, fSmearLowLimit_,fH_electron_E_blur_->GetMaximum()*1.05);
+    lowLimit->SetLineColor(kRed+2);
+    lowLimit->SetLineWidth(4);
+    TLine *highLimit = new TLine(fSmearHighLimit_, 0.0, fSmearHighLimit_,fH_electron_E_blur_->GetMaximum()*1.05);
+    highLimit->SetLineColor(kRed+2);
+    highLimit->SetLineWidth(4);
+    c->Divide(2,2);
+    c->cd(1);   
     fH_photon_E_depos_->Draw();
+    line->Draw();
     c->cd(2);
     fH_photon_theta_->Draw();
     c->cd(3);
     fH_electron_E_ ->Draw();
     c->cd(4);
     fH_electron_E_blur_->Draw();
+    lowLimit->Draw();
+    highLimit->Draw();
     if(output==BOTH || output==PNG)
     {
         TImage *img = TImage::Create();
@@ -232,15 +246,18 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
     }
     delete c;
     delete line;
+    delete lowLimit;
+    delete highLimit;
 
-    std::cout<<"[INFO] Distributions of electrons' energy, incident photons' energy and Compton scattering angle saved.\n"<<std::endl;
+    if(!fSilentMode_)
+        std::cout<<"[INFO] Saving histograms for Compton effect.\n"<<std::endl;
 }
 
 ///
 /// \brief ComptonScattering::Scatter Scatters a photon according to Klein-Nishina formula and fills histograms for electrons.
 /// \param E Energy of incident photon.
 ///
-void ComptonScattering::Scatter(const Event* event, double smearingLowLimit, double smearingHighLimit)
+void ComptonScattering::Scatter(const Event* event)
 {
     for(int ii=0; ii<3; ii++)
     {
@@ -253,10 +270,12 @@ void ComptonScattering::Scatter(const Event* event, double smearingLowLimit, dou
             fH_photon_theta_->Fill(theta);
             double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
             fH_electron_E_->Fill(new_E);
-            if(E >= smearingLowLimit && E<= smearingHighLimit)
+            if((new_E >= fSmearLowLimit_) && (new_E <= fSmearHighLimit_))
                 fH_electron_E_blur_->Fill(fRand_->Gaus(new_E, sigmaE(E)));
             else
-                fH_electron_E_blur_->Fill(E);
+            {
+                fH_electron_E_blur_->Fill(new_E);
+            }
         }
     }
 }

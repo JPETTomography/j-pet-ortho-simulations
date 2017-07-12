@@ -28,9 +28,8 @@ $(OBJDIR)/parammanager.o: $(SRCDIR)/parammanager.cpp $(SRCDIR)/parammanager.h
 	$(CC) $(CFLAGS) $(SRCDIR)/parammanager.cpp -o $(OBJDIR)/parammanager.o
 
 $(OBJDIR)/simulate.o: $(SRCDIR)/simulate.cpp $(SRCDIR)/psdecay.h $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h $(SRCDIR)/parammanager.h
-	#root -l -b -n -q $(SRCDIR)/simulate.cpp++
 	$(CC) $(CFLAGS) $(SRCDIR)/simulate.cpp -o $(OBJDIR)/simulate.o
 
 clean: 
-	rm $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(OBJDIR)/*.o sim
+	rm $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(OBJDIR)/*.o sim $(SRCDIR)/Auto*
 

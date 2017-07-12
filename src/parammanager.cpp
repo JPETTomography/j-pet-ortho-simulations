@@ -18,6 +18,8 @@ ParamManager::ParamManager() :
     fR_(500),
     fESc_(1160),
     fPSc_(0.98),
+    fSmearLowLimit_(0.0),
+    fSmearHighLimit_(2.0),
     fSilentMode_(false),
     fOutput_(PNG),
     fEventTypeToSave_(ALL)
@@ -37,6 +39,8 @@ ParamManager::ParamManager(const ParamManager &est)
     fL_=est.fL_;
     fESc_=est.fESc_;
     fPSc_=est.fPSc_;
+    fSmearLowLimit_=est.fSmearLowLimit_;
+    fSmearHighLimit_=est.fSmearHighLimit_;
     fSilentMode_=est.fSilentMode_;
     fOutput_=est.fOutput_;
     fEventTypeToSave_=est.fEventTypeToSave_;
@@ -59,6 +63,8 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     fL_=est.fL_;
     fESc_=est.fESc_;
     fPSc_=est.fPSc_;
+    fSmearLowLimit_=est.fSmearLowLimit_;
+    fSmearHighLimit_=est.fSmearHighLimit_;
     fSilentMode_=est.fSilentMode_;
     fOutput_=est.fOutput_;
     fEventTypeToSave_=est.fEventTypeToSave_;
@@ -77,7 +83,7 @@ bool ParamManager::operator==(const ParamManager &est) const
     return ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
             (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
             (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
-            (fEventTypeToSave_==est.fEventTypeToSave_);
+            (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && (fSmearHighLimit_==est.fSmearHighLimit_);
 }
 
 
@@ -173,6 +179,10 @@ void ParamManager::ImportParams(std::string inFile)
                 fESc_=atof(token[2].c_str());
               else if (token[0]=="pSc")
                 fPSc_=atof(token[2].c_str());
+              else if(token[0]=="smearLow")
+                fSmearLowLimit_=atof(token[2].c_str());
+              else if(token[0]=="smearHigh")
+                fSmearHighLimit_=atof(token[2].c_str());
               else if (token[0]=="silent")
                 fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
               else if (token[0]=="output")
@@ -229,6 +239,8 @@ void ParamManager::ImportParams(std::string inFile)
         std::cout<<"[INFO] Energy of additional gamma: "<<fESc_<<" [keV]"<<std::endl;
         std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fPSc_<<std::endl;
     }
+    std::cout<<"[INFO] Smearing lower limit: "<<fSmearLowLimit_<<" [MeV]"<<std::endl;
+    std::cout<<"[INFO] Smearing higher limit: "<<fSmearHighLimit_<<" [MeV]"<<std::endl;
     std::cout<<"[INFO] Silent mode: ";
     if(fSilentMode_) std::cout<<"ENABLED"<<std::endl;
     else std::cout<<"DISABLED"<<std::endl;
@@ -243,6 +255,21 @@ void ParamManager::ImportParams(std::string inFile)
             break;
         case BOTH:
             std::cout<<"ROOT TREE & PNG IMAGES"<<std::endl;
+            break;
+        default:
+            break;
+    }
+    std::cout<<"[INFO] Event type saved to tree: ";
+    switch (fEventTypeToSave_)
+    {
+        case ALL:
+            std::cout<<"ALL"<<std::endl;
+            break;
+        case PASS:
+            std::cout<<"PASS"<<std::endl;
+            break;
+        case FAIL:
+            std::cout<<"FAIL"<<std::endl;
             break;
         default:
             break;

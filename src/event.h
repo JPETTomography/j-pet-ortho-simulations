@@ -34,9 +34,11 @@ class Event : public TObject
         inline double GetPhiOf(const unsigned index) const {return fPhi_[index];}
         inline double GetThetaOf(const unsigned index) const {return fTheta_[index];}
         void DeducePassFlag();
+        long fId;
         ClassDef(Event, 8)
 
     private:
+        static long fCounter_;
         std::vector<TLorentzVector> fEmissionPoint_; //x, y, z, t [m and s]
         std::vector<TLorentzVector> fFourMomentum_; //pX, pY, pZ, E [MeV/c and MeV]
         std::vector<bool> fCutPassing_; //indicates if gamma failed passing through cuts

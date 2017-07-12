@@ -45,6 +45,9 @@ class PsDecay
         TH2F* fH_12_23_;
         TH2F* fH_12_31_;
         TH2F* fH_23_31_;
+        TH2F* fH_min_mid_;
+        TH2F* fH_min_max_;
+        TH2F* fH_mid_max_;
 
         // histograms with distributions of basic quantities for all events generated
         TH1F* fH_en_;
