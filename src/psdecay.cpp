@@ -249,54 +249,55 @@ PsDecay::~PsDecay()
 }
 
 
-void PsDecay::AddEvent(const Event& event)
+void PsDecay::AddEvent(const Event* event)
 {
     bool thirdGammaExists = false;
     for(int ii=0; ii<3; ii++)
     {
-        if(event.GetFourMomentumOf(ii)!=nullptr)
+        if(event->GetFourMomentumOf(ii)!=nullptr)
         {
             //filling histograms for all gammas
             if(ii==2) {thirdGammaExists = true;}
-            fH_en_->Fill(event.GetFourMomentumOf(ii)->Energy());
-            fH_p_->Fill(event.GetFourMomentumOf(ii)->P());
-            fH_phi_->Fill(event.GetFourMomentumOf(ii)->Phi());
-            fH_cosTheta_->Fill(event.GetFourMomentumOf(ii)->CosTheta());
+            fH_en_->Fill(event->GetFourMomentumOf(ii)->Energy());
+            fH_p_->Fill(event->GetFourMomentumOf(ii)->P());
+            fH_phi_->Fill(event->GetFourMomentumOf(ii)->Phi());
+            fH_cosTheta_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
         }
     }
     if(fDecayType_==TWO)
     {
-        fH_12_->Fill(event.GetFourMomentumOf(0)->Angle((event.GetFourMomentumOf(1))->Vect()), event.GetWeight());
+        fH_12_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
     }
     else if(fDecayType_==THREE)
     {
-        fH_12_23_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()), \
-                        event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()), event.GetWeight());
-        fH_12_31_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()),\
-                        event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
-        fH_23_31_->Fill(event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()),\
-                        event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
+        fH_12_23_->Fill(event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect()), \
+                        event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()), event->GetWeight());
+        fH_12_31_->Fill(event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect()),\
+                        event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
+        fH_23_31_->Fill(event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()),\
+                        event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
     }
     if(fDecayType_==TWOandONE)
     {
-        fH_12_->Fill(event.GetFourMomentumOf(0)->Angle((event.GetFourMomentumOf(1))->Vect()), event.GetWeight());
+        fH_12_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
         if(thirdGammaExists)
         {
-            fH_23_->Fill(event.GetFourMomentumOf(1)->Angle((event.GetFourMomentumOf(2))->Vect()), event.GetWeight());
-            fH_31_->Fill(event.GetFourMomentumOf(2)->Angle((event.GetFourMomentumOf(0))->Vect()), event.GetWeight());
+            fH_23_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
+            fH_31_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
         }
     }
 }
 
 
-void PsDecay::DrawHistograms(std::string prefix)
+void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
 {
-    std::string outFile;
+    std::string outFile1;
+    std::string outFile2;
 
     if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for all generated events."<<std::endl;
     TCanvas* angles_all;
 
-    TCanvas* dist_all = new TCanvas((std::string("dist_all")+fTypeString_).c_str(), \
+    TCanvas* dist_all = new TCanvas((fTypeString_+"-gammas_dist_all").c_str(), \
                                     (std::string("Basic distributions for all generated ")\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
     dist_all->Divide(2, 2);
@@ -309,54 +310,64 @@ void PsDecay::DrawHistograms(std::string prefix)
     dist_all->cd(4);
     fH_cosTheta_->Draw();
     dist_all->Update();
-
-    if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for all events"<<std::endl;
-    TImage *img = TImage::Create();
-    img->FromPad(dist_all);
-    outFile=prefix+std::string("dist_all_")+fTypeString_+std::string("gammas.png");
-    img->WriteImage(outFile.c_str());
+    outFile1=prefix+fTypeString_+std::string("-gammas_dist_all_.png");
 
     //angle distribution depends on the number of decay products
     if(fDecayType_==THREE)
     {
-        angles_all = new TCanvas((std::string("angles_all")+fTypeString_).c_str(), \
+        angles_all = new TCanvas((fTypeString_+"-gammas_angles_all").c_str(), \
                                                   (std::string("Angle ditribution for all generated ")\
                                                   +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_all->Divide(3,1);
         angles_all->cd(1);
-        outFile = prefix+std::string("angles_all_3gammas.png");
         fH_12_23_->Draw("colz");
         angles_all->cd(2);
         fH_12_31_->Draw("colz");
         angles_all->cd(3);
         fH_23_31_->Draw("colz");
+        outFile2 = prefix+std::string("3-gammas_angles_all.png");
     }
     else if(fDecayType_==TWO)
     {
-        angles_all = new TCanvas((std::string("angles_all")+fTypeString_).c_str(), \
+        angles_all = new TCanvas((fTypeString_+"-gammas_angles_all").c_str(), \
                                                (std::string("Angle ditribution for all generated ")\
                                                +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
         fH_12_->Draw();
-        outFile = prefix+std::string("angles_all_2gammas.png");
+        outFile2 = prefix+std::string("2-gammas_angles_all.png");
     }
     else if(fDecayType_==TWOandONE)
     {
-        angles_all = new TCanvas((std::string("angles_all")+fTypeString_).c_str(), \
+        angles_all = new TCanvas((fTypeString_+"-gammas_angles_all").c_str(), \
                                                   (std::string("Angle ditribution for all generated ")\
                                                   +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_all->Divide(3,1);
         angles_all->cd(1);
-        outFile = prefix+std::string("angles_all_2&1gammas.png");
         fH_12_->Draw();
         angles_all->cd(2);
         fH_23_->Draw();
         angles_all->cd(3);
         fH_31_->Draw();
+        outFile2 = prefix+std::string("2&1-gammas_angles_all.png");
     }
     angles_all->Update();
-    TImage *img2 = TImage::Create();
-    img2->FromPad(angles_all);
-    img2->WriteImage(outFile.c_str());
+
+    if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for all events"<<std::endl;
+    if(output==BOTH || output==PNG)
+    {
+        TImage *img = TImage::Create();
+        img->FromPad(dist_all);
+        img->WriteImage(outFile1.c_str());
+        TImage *img2 = TImage::Create();
+        img2->FromPad(angles_all);
+        img2->WriteImage(outFile2.c_str());
+        delete img;
+        delete img2;
+    }
+    if(output==BOTH || output==TREE)
+    {
+        dist_all->Write();
+        angles_all->Write();
+    }
 
     delete dist_all;
     delete angles_all;

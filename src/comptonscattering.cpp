@@ -203,14 +203,10 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
     delete img2;
 }
 
-///
-/// \brief ComptonScattering::DrawElectronDist Draws and saves to file energy of Compton electrons and angle distributions for scattered photons.
-/// \param filePrefix Prefix of the output file, may contain path.
-///
-void ComptonScattering::DrawComptonHistograms(std::string filePrefix)
+void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOptions output)
 {
     std::cout<<"\n[INFO] Drawing histograms for Compton electrons and scattered photons."<<std::endl;
-    TCanvas* c = new TCanvas("c", "Compton effect distributions", 1300, 1200);
+    TCanvas* c = new TCanvas((fTypeString_+"-gammas_compton_distr").c_str(), "Compton effect distributions", 1300, 1200);
     c->Divide(2,2);
     c->cd(1);
     TLine *line = new TLine(0.511, 0.0, 0.511,fH_photon_E_depos_->GetMaximum()*1.05);
@@ -223,13 +219,20 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix)
     fH_electron_E_ ->Draw();
     c->cd(4);
     fH_electron_E_blur_->Draw();
-    TImage *img = TImage::Create();
-    img->FromPad(c);
-    img->WriteImage((filePrefix+std::string("_compton_distr_")+fTypeString_\
-                      +std::string("gammas.png")).c_str());
+    if(output==BOTH || output==PNG)
+    {
+        TImage *img = TImage::Create();
+        img->FromPad(c);
+        img->WriteImage((filePrefix+fTypeString_+"-gammas_compton_distr.png").c_str());
+        delete img;
+    }
+    if(output==BOTH || output==TREE)
+    {
+        c->Write();
+    }
     delete c;
     delete line;
-    delete img;
+
     std::cout<<"[INFO] Distributions of electrons' energy, incident photons' energy and Compton scattering angle saved.\n"<<std::endl;
 }
 
@@ -237,20 +240,20 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix)
 /// \brief ComptonScattering::Scatter Scatters a photon according to Klein-Nishina formula and fills histograms for electrons.
 /// \param E Energy of incident photon.
 ///
-void ComptonScattering::Scatter(const Event& event, double smearingLowLimit)
+void ComptonScattering::Scatter(const Event* event, double smearingLowLimit, double smearingHighLimit)
 {
     for(int ii=0; ii<3; ii++)
     {
-        if(event.GetFourMomentumOf(ii) != nullptr && event.GetCutPassingOf(ii))
+        if(event->GetFourMomentumOf(ii) != nullptr && event->GetCutPassingOf(ii))
         {
-            double E = event.GetFourMomentumOf(ii)->Energy();
+            double E = event->GetFourMomentumOf(ii)->Energy();
             fH_photon_E_depos_->Fill(E);
             fPDF_Theta->SetParameter(0, E); //set incident photon energy
             double theta = fPDF_Theta->GetRandom(); //get scattering angle
             fH_photon_theta_->Fill(theta);
             double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
             fH_electron_E_->Fill(new_E);
-            if(E >= smearingLowLimit)
+            if(E >= smearingLowLimit && E<= smearingHighLimit)
                 fH_electron_E_blur_->Fill(fRand_->Gaus(new_E, sigmaE(E)));
             else
                 fH_electron_E_blur_->Fill(E);

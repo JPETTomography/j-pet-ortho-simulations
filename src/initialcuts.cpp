@@ -499,7 +499,7 @@ InitialCuts::~InitialCuts()
     if(fRand_) delete fRand_;
 }
 
-void InitialCuts::AddCuts(Event& event)
+void InitialCuts::AddCuts(Event* event)
 {
     fNumberOfEvents_++;
     bool geo_event_pass = true;
@@ -508,28 +508,28 @@ void InitialCuts::AddCuts(Event& event)
     for(int ii=0; ii<3; ii++)
     {
         fH_gamma_cuts_->Fill(0); //gammas at the beginning
-        if(event.GetEmissionPointOf(ii)!=nullptr && event.GetFourMomentumOf(ii)!=nullptr)
+        if(event->GetEmissionPointOf(ii)!=nullptr && event->GetFourMomentumOf(ii)!=nullptr)
         {
             fNumberOfGammas_++;
-            bool geo_pass = GeometricalAcceptance_(event.GetEmissionPointOf(ii), event.GetFourMomentumOf(ii));
+            bool geo_pass = GeometricalAcceptance_(event->GetEmissionPointOf(ii), event->GetFourMomentumOf(ii));
             bool inter_pass = geo_pass ? DetectionCut_() : false;
-            event.SetCutPassing(ii, geo_pass && inter_pass);
+            event->SetCutPassing(ii, geo_pass && inter_pass);
             geo_event_pass &= geo_pass;
             inter_event_pass &= inter_pass;
             if(geo_pass && inter_pass)
             {
                 fAcceptedGammas_++;
-                fH_en_pass_->Fill(event.GetFourMomentumOf(ii)->Energy());
-                fH_p_pass_->Fill(event.GetFourMomentumOf(ii)->P());
-                fH_phi_pass_->Fill(event.GetFourMomentumOf(ii)->Phi());
-                fH_cosTheta_pass_->Fill(event.GetFourMomentumOf(ii)->CosTheta());
+                fH_en_pass_->Fill(event->GetFourMomentumOf(ii)->Energy());
+                fH_p_pass_->Fill(event->GetFourMomentumOf(ii)->P());
+                fH_phi_pass_->Fill(event->GetFourMomentumOf(ii)->Phi());
+                fH_cosTheta_pass_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
             }
             else
             {
-                fH_en_fail_->Fill(event.GetFourMomentumOf(ii)->Energy());
-                fH_p_fail_->Fill(event.GetFourMomentumOf(ii)->P());
-                fH_phi_fail_->Fill(event.GetFourMomentumOf(ii)->Phi());
-                fH_cosTheta_fail_->Fill(event.GetFourMomentumOf(ii)->CosTheta());
+                fH_en_fail_->Fill(event->GetFourMomentumOf(ii)->Energy());
+                fH_p_fail_->Fill(event->GetFourMomentumOf(ii)->P());
+                fH_phi_fail_->Fill(event->GetFourMomentumOf(ii)->Phi());
+                fH_cosTheta_fail_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
             }
         }
     }
@@ -544,7 +544,7 @@ void InitialCuts::AddCuts(Event& event)
     FillDistributionHistograms_(event);
 
     //Let event deduce its flag!
-    event.DeducePassFlag();
+    event->DeducePassFlag();
 }
 
 bool InitialCuts::GeometricalAcceptance_(const TLorentzVector* source, const TLorentzVector* gamma)
@@ -577,7 +577,7 @@ bool InitialCuts::DetectionCut_()
     return pass;
 }
 
-void InitialCuts::FillValidEventHistograms_(const Event& event)
+void InitialCuts::FillValidEventHistograms_(const Event* event)
 {
     fAcceptedEvents_++;
     bool thirdGammaSc = false;
@@ -585,41 +585,41 @@ void InitialCuts::FillValidEventHistograms_(const Event& event)
     int maxIndex=0;
     for(int ii=0; ii<3; ii++)
     {
-        if(event.GetFourMomentumOf(ii) != nullptr)
+        if(event->GetFourMomentumOf(ii) != nullptr)
         {
             if(ii==2 && fDecayType_==TWOandONE)
             {
                 thirdGammaSc = true;
                 break;
             }
-            fH_en_pass_event_->Fill(event.GetFourMomentumOf(ii)->Energy());
-            minIndex = event.GetFourMomentumOf(ii)->E() < event.GetFourMomentumOf(minIndex)->E() ? ii : minIndex;
-            maxIndex = event.GetFourMomentumOf(ii)->E() > event.GetFourMomentumOf(maxIndex)->E() ? ii : maxIndex;
+            fH_en_pass_event_->Fill(event->GetFourMomentumOf(ii)->Energy());
+            minIndex = event->GetFourMomentumOf(ii)->E() < event->GetFourMomentumOf(minIndex)->E() ? ii : minIndex;
+            maxIndex = event->GetFourMomentumOf(ii)->E() > event->GetFourMomentumOf(maxIndex)->E() ? ii : maxIndex;
         }
     }
-    fH_en_pass_low_->Fill(event.GetFourMomentumOf(minIndex)->Energy());
-    fH_en_pass_high_->Fill(event.GetFourMomentumOf(maxIndex)->Energy());
+    fH_en_pass_low_->Fill(event->GetFourMomentumOf(minIndex)->Energy());
+    fH_en_pass_high_->Fill(event->GetFourMomentumOf(maxIndex)->Energy());
     if(fDecayType_==THREE)
     {
 
         int midIndex = minIndex==maxIndex ? minIndex : 3-minIndex-maxIndex;
-        fH_en_pass_mid_->Fill(event.GetFourMomentumOf(midIndex)->Energy());
-        fH_12_23_pass_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()), \
-                             event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()), event.GetWeight());
-        fH_12_31_pass_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()), \
-                             event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
-        fH_23_31_pass_->Fill(event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()), \
-                             event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
+        fH_en_pass_mid_->Fill(event->GetFourMomentumOf(midIndex)->Energy());
+        fH_12_23_pass_->Fill(event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect()), \
+                             event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()), event->GetWeight());
+        fH_12_31_pass_->Fill(event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect()), \
+                             event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
+        fH_23_31_pass_->Fill(event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()), \
+                             event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
     }
     else if(fDecayType_ == TWO)
-        fH_12_pass_->Fill(event.GetFourMomentumOf(0)->Angle((event.GetFourMomentumOf(1))->Vect()), event.GetWeight());
+        fH_12_pass_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
     else if(fDecayType_ == TWOandONE)
     {
-        fH_12_pass_->Fill(event.GetFourMomentumOf(0)->Angle((event.GetFourMomentumOf(1))->Vect()), event.GetWeight());
+        fH_12_pass_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
         if(thirdGammaSc)
         {
-            fH_23_pass_->Fill(event.GetFourMomentumOf(1)->Angle((event.GetFourMomentumOf(2))->Vect()), event.GetWeight());
-            fH_31_pass_->Fill(event.GetFourMomentumOf(2)->Angle((event.GetFourMomentumOf(0))->Vect()), event.GetWeight());
+            fH_23_pass_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
+            fH_31_pass_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
         }
     }
     else
@@ -628,27 +628,27 @@ void InitialCuts::FillValidEventHistograms_(const Event& event)
     }
 }
 
-void InitialCuts::FillInvalidEventHistograms_(const Event& event)
+void InitialCuts::FillInvalidEventHistograms_(const Event* event)
 {
 
     if(fDecayType_==THREE)
     {
-        fH_12_23_fail_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()), \
-                             event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()), event.GetWeight());
-        fH_12_31_fail_->Fill(event.GetFourMomentumOf(0)->Angle(event.GetFourMomentumOf(1)->Vect()), \
-                             event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
-        fH_23_31_fail_->Fill(event.GetFourMomentumOf(1)->Angle(event.GetFourMomentumOf(2)->Vect()), \
-                             event.GetFourMomentumOf(2)->Angle(event.GetFourMomentumOf(0)->Vect()), event.GetWeight());
+        fH_12_23_fail_->Fill(event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect()), \
+                             event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()), event->GetWeight());
+        fH_12_31_fail_->Fill(event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect()), \
+                             event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
+        fH_23_31_fail_->Fill(event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()), \
+                             event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
     }
     else if(fDecayType_ == TWO)
-        fH_12_fail_->Fill(event.GetFourMomentumOf(0)->Angle((event.GetFourMomentumOf(1))->Vect()), event.GetWeight());
+        fH_12_fail_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
     else if(fDecayType_ == TWOandONE)
     {
-        fH_12_fail_->Fill(event.GetFourMomentumOf(0)->Angle((event.GetFourMomentumOf(1))->Vect()), event.GetWeight());
-        if(event.GetFourMomentumOf(2) != nullptr)
+        fH_12_fail_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
+        if(event->GetFourMomentumOf(2) != nullptr)
         {
-                fH_23_fail_->Fill(event.GetFourMomentumOf(1)->Angle((event.GetFourMomentumOf(2))->Vect()), event.GetWeight());
-                fH_31_fail_->Fill(event.GetFourMomentumOf(2)->Angle((event.GetFourMomentumOf(0))->Vect()), event.GetWeight());
+                fH_23_fail_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
+                fH_31_fail_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
         }
     }
     else
@@ -658,42 +658,42 @@ void InitialCuts::FillInvalidEventHistograms_(const Event& event)
 }
 
 
-void InitialCuts::FillDistributionHistograms_(const Event& event)
+void InitialCuts::FillDistributionHistograms_(const Event* event)
 {
     for(int ii=0; ii<3; ii++)
     {
-        if(event.GetFourMomentumOf(ii)!=nullptr)
+        if(event->GetFourMomentumOf(ii)!=nullptr)
         {
-            if(event.GetCutPassingOf(ii))
+            if(event->GetCutPassingOf(ii))
             {
-                fH_en_pass_->Fill(event.GetFourMomentumOf(ii)->Energy());
-                fH_p_pass_->Fill(event.GetFourMomentumOf(ii)->P());
-                fH_phi_pass_->Fill(event.GetFourMomentumOf(ii)->Phi());
-                fH_cosTheta_pass_->Fill(event.GetFourMomentumOf(ii)->CosTheta());
+                fH_en_pass_->Fill(event->GetFourMomentumOf(ii)->Energy());
+                fH_p_pass_->Fill(event->GetFourMomentumOf(ii)->P());
+                fH_phi_pass_->Fill(event->GetFourMomentumOf(ii)->Phi());
+                fH_cosTheta_pass_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
             }
             else
             {
-                fH_en_fail_->Fill(event.GetFourMomentumOf(ii)->Energy());
-                fH_p_fail_->Fill(event.GetFourMomentumOf(ii)->P());
-                fH_phi_fail_->Fill(event.GetFourMomentumOf(ii)->Phi());
-                fH_cosTheta_fail_->Fill(event.GetFourMomentumOf(ii)->CosTheta());
+                fH_en_fail_->Fill(event->GetFourMomentumOf(ii)->Energy());
+                fH_p_fail_->Fill(event->GetFourMomentumOf(ii)->P());
+                fH_phi_fail_->Fill(event->GetFourMomentumOf(ii)->Phi());
+                fH_cosTheta_fail_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
             }
         }
     }
 }
 
-void InitialCuts::DrawHistograms(std::string prefix)
+void InitialCuts::DrawHistograms(std::string prefix, OutputOptions output)
 {
-    DrawCutsHistograms(prefix);
-    DrawPassHistograms(prefix);
-    DrawFailHistograms(prefix);
+    DrawCutsHistograms(prefix, output);
+    DrawPassHistograms(prefix, output);
+    DrawFailHistograms(prefix, output);
 }
 
-void InitialCuts::DrawCutsHistograms(std::string prefix)
+void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
 {
     std::string outFile;
     if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for cuts passing."<<std::endl;
-    TCanvas* cuts = new TCanvas((std::string("cuts_passed")+fTypeString_).c_str(),\
+    TCanvas* cuts = new TCanvas((fTypeString_+"-gammas_cuts_passed").c_str(),\
                                 (std::string("Fraction of events/gammas that passed cuts, ")+fTypeString_+std::string("-gamma")).c_str(),\
                                 800,400);
     cuts->Divide(2,1);
@@ -740,27 +740,34 @@ void InitialCuts::DrawCutsHistograms(std::string prefix)
     labelPercent->DrawText(0.75, 0.2, (ss.str()+std::string("%")).c_str());
 
     if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for cuts passing."<<std::endl;
-    TImage *img_cut = TImage::Create();
-    img_cut->FromPad(cuts);
-    outFile=prefix+std::string("cuts_")+fTypeString_+std::string("gammas.png");
-    img_cut->WriteImage(outFile.c_str());
-
+    if(output==BOTH || output==PNG)
+    {
+        TImage *img_cut = TImage::Create();
+        img_cut->FromPad(cuts);
+        outFile=prefix+fTypeString_+"-gammas_cuts.png";
+        img_cut->WriteImage(outFile.c_str());
+        delete img_cut;
+    }
+    if(output==BOTH || output==TREE)
+    {
+        cuts->Write();
+    }
     delete cuts;
     delete labelBefore;
     delete labelGeo;
     delete labelP;
     delete labelPercent;
-    delete img_cut;
 }
 
 
-void InitialCuts::DrawPassHistograms(std::string prefix)
+void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
 {
-    std::string outFile;
+    std::string outFile1;
+    std::string outFile2;
     if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for events that passed cuts."<<std::endl;
     TCanvas* angles_pass;
 
-    TCanvas* dist_pass = new TCanvas((std::string("dist_pass")+fTypeString_).c_str(),\
+    TCanvas* dist_pass = new TCanvas((fTypeString_+"-gammas_dist_pass").c_str(),\
                                      ("Basic distributions for passed "\
                                      +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
     //differentation of low, mid and high energy gammas
@@ -778,12 +785,6 @@ void InitialCuts::DrawPassHistograms(std::string prefix)
     fH_cosTheta_pass_->Draw();
     dist_pass->Update();
 
-    if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for passed events"<<std::endl;
-    TImage *img = TImage::Create();
-    img->FromPad(dist_pass);
-    outFile=prefix+std::string("dist_pass_")+fTypeString_+std::string("_gammas.png");
-    img->WriteImage(outFile.c_str());
-
     //setting fill colors for histograms that differentiate gammas with low, mid and high energies
     fH_en_pass_event_->SetFillColor(kBlack);
     fH_en_pass_low_->SetFillColor(kBlue);
@@ -796,7 +797,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix)
     //angle distribution depends on the number of decay products
     if(fDecayType_ == THREE)
     {
-        angles_pass = new TCanvas((std::string("angles_pass")+fTypeString_).c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
                                     ("Angle ditribution for all generated "\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_pass->Divide(3,1);
@@ -806,19 +807,19 @@ void InitialCuts::DrawPassHistograms(std::string prefix)
         fH_12_31_pass_->Draw("colz");
         angles_pass->cd(3);
         fH_23_31_pass_->Draw("colz");
-        outFile = prefix+std::string("angles_pass_3gammas.png");
+        outFile2 = prefix+fTypeString_+"-gammas_angles_pass_.png";
     }
     else if(fDecayType_ == TWO)
     {
-        angles_pass = new TCanvas((std::string("angles_pass")+fTypeString_).c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
                                   ("Angle ditribution for all generated "\
                                   +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
         fH_12_pass_->Draw();
-        outFile = prefix+std::string("angles_pass_2gammas.png");
+        outFile2 = prefix+fTypeString_+"-gammas_angles_pass_.png";
     }
     else if(fDecayType_ == TWOandONE)
     {
-        angles_pass = new TCanvas((std::string("angles_pass")+fTypeString_).c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
                                     ("Angle ditribution for all generated "\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_pass->Divide(3,1);
@@ -828,14 +829,13 @@ void InitialCuts::DrawPassHistograms(std::string prefix)
         fH_23_pass_->Draw();
         angles_pass->cd(3);
         fH_31_pass_->Draw();
-        outFile = prefix+std::string("angles_pass_2&1gammas.png");
-
+        outFile2 = prefix+fTypeString_+"-gammas_angles_pass_.png";
     }
 
     if(fDecayType_==THREE)
     {
         //Drawing energy distribution of gammas from valid events
-        diff_en= new TCanvas((std::string("diff_energies")+fTypeString_).c_str(),\
+        diff_en= new TCanvas((fTypeString_+"-gammas_diff_energies").c_str(),\
                                       ("Distribution of energy for incident photons from "\
                                        +fTypeString_+std::string("-gamma events")).c_str(), 1000, 900);
         fH_en_pass_mid_->SetFillColor(kGreen);
@@ -858,14 +858,13 @@ void InitialCuts::DrawPassHistograms(std::string prefix)
         fH_en_pass_high_->Draw("same");
         diff_en->Update();
         legend->Draw();
-
-        outFileDiffEn = prefix+std::string("diff_energies_")+fTypeString_+std::string("gammas.png");
+        outFileDiffEn = prefix+fTypeString_+"-gammas_diff_energies_.png";
     }
     else
     {
 
         //Drawing energy distribution of gammas from valid events
-        diff_en= new TCanvas((std::string("diff_energies")+fTypeString_).c_str(),\
+        diff_en= new TCanvas((fTypeString_+"-gammas_diff_energies").c_str(),\
                                       ("Distribution of energy for incident photons from "\
                                        +fTypeString_+std::string("-gamma events")).c_str(), 1200, 450);
         diff_en->Divide(3,1);
@@ -882,34 +881,48 @@ void InitialCuts::DrawPassHistograms(std::string prefix)
         fH_en_pass_high_->Draw("same");
         legend->Draw();
         diff_en->Update();
-        outFileDiffEn = prefix+std::string("diff_energies_")+fTypeString_+std::string("gammas.png");
+        outFileDiffEn = prefix+fTypeString_+"-gammas_diff_energies_.png";
     }
 
-    angles_pass->Update();
-    TImage *img2 = TImage::Create();
-    img2->FromPad(angles_pass);
-    img2->WriteImage(outFile.c_str());
-
-    diff_en->Update();
-    TImage *img3 = TImage::Create();
-    img3->FromPad(diff_en);
-    img3->WriteImage(outFileDiffEn.c_str());
-
+    if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for passed events"<<std::endl;
+    if(output==BOTH || output==PNG)
+    {
+        TImage *img = TImage::Create();
+        img->FromPad(dist_pass);
+        outFile1=prefix+fTypeString_+"-gammas_dist_pass_.png";
+        img->WriteImage(outFile1.c_str());
+        angles_pass->Update();
+        TImage *img2 = TImage::Create();
+        img2->FromPad(angles_pass);
+        img2->WriteImage(outFile2.c_str());
+        diff_en->Update();
+        TImage *img3 = TImage::Create();
+        img3->FromPad(diff_en);
+        img3->WriteImage(outFileDiffEn.c_str());
+        delete img;
+        delete img2;
+        delete img3;
+    }
+    if(output==BOTH ||output==TREE)
+    {
+        dist_pass->Write();
+        angles_pass->Write();
+        diff_en->Write();
+    }
     delete dist_pass;
     delete angles_pass;
     delete diff_en;
     delete legend;
-    delete img;
-    delete img2;
-    delete img3;
+
 }
 
-void InitialCuts::DrawFailHistograms(std::string prefix)
+void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
 {
-        std::string outFile;
+        std::string outFile1;
+        std::string outFile2;
         if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for events that did not pass cuts."<<std::endl;
         TCanvas* angles_fail;
-        TCanvas* dist_fail= new TCanvas((std::string("dist_fail")+fTypeString_).c_str(), ("Basic distributions for passed "\
+        TCanvas* dist_fail= new TCanvas((fTypeString_+"-gammas_dist_fail").c_str(), ("Basic distributions for passed "\
                                          +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
         dist_fail->Divide(2, 2);
         dist_fail->cd(1);
@@ -922,16 +935,10 @@ void InitialCuts::DrawFailHistograms(std::string prefix)
         fH_cosTheta_fail_->Draw();
         dist_fail->Update();
 
-        if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for failed events"<<std::endl;
-        TImage *img = TImage::Create();
-        img->FromPad(dist_fail);
-        outFile=prefix+std::string("dist_fail_")+fTypeString_+std::string("_gammas.png");
-        img->WriteImage(outFile.c_str());
-
         //angle distribution depends on the number of decay products
         if(fDecayType_ == THREE)
         {
-            angles_fail = new TCanvas((std::string("angles_fail")+fTypeString_).c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
 
@@ -942,21 +949,21 @@ void InitialCuts::DrawFailHistograms(std::string prefix)
             fH_12_31_fail_->Draw("colz");
             angles_fail->cd(3);
             fH_23_31_fail_->Draw("colz");
-            outFile = prefix+std::string("angles_fail_")+fTypeString_+std::string("gammas.png");
+            outFile2 = prefix+fTypeString_+std::string("-gammas_angles_fail.png");
 
         }
         else if(fDecayType_ == TWO)
         {
-            angles_fail = new TCanvas((std::string("angles_fail")+fTypeString_).c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
 
             fH_12_fail_->Draw();
-            outFile = prefix+std::string("angles_fail_")+fTypeString_+std::string("gammas.png");
+            outFile2 = prefix+fTypeString_+std::string("-gammas_angles_fail.png");
         }
         else if(fDecayType_ == TWOandONE)
         {
-            angles_fail = new TCanvas((std::string("angles_fail")+fTypeString_).c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
 
@@ -967,15 +974,28 @@ void InitialCuts::DrawFailHistograms(std::string prefix)
             fH_23_fail_->Draw();
             angles_fail->cd(3);
             fH_31_fail_->Draw();
-            outFile = prefix+std::string("angles_fail_")+fTypeString_+std::string("gammas.png");
+            outFile2 = prefix+fTypeString_+std::string("-gammas_angles_fail.png");
         }
         angles_fail->Update();
-        TImage *img2 = TImage::Create();
-        img2->FromPad(angles_fail);
-        img2->WriteImage(outFile.c_str());
-
+        if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for failed events"<<std::endl;
+        if(output==BOTH || output==PNG)
+        {
+            TImage *img = TImage::Create();
+            img->FromPad(dist_fail);
+            outFile1=prefix+fTypeString_+std::string("-gammas_dist_fail.png");
+            img->WriteImage(outFile1.c_str());
+            TImage *img2 = TImage::Create();
+            img2->FromPad(angles_fail);
+            img2->WriteImage(outFile2.c_str());
+            delete img;
+            delete img2;
+        }
+        if(output==BOTH || output==TREE)
+        {
+            dist_fail->Write();
+            angles_fail->Write();
+        }
         delete dist_fail;
         delete angles_fail;
-        delete img;
-        delete img2;
+
 }

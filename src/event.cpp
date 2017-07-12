@@ -1,5 +1,20 @@
 #include "event.h"
 #include <iostream>
+ClassImp(Event)
+
+Event::Event()
+{
+    fWeight_=0;
+    fDecayType_=TWO;
+    fPassFlag_=false;
+    for(int ii=0; ii<2; ii++)
+    {
+        fFourMomentum_.push_back(TLorentzVector(0.0, 0.0, 1.022, 1.022)); //scale from GeV to MeV
+        fCutPassing_.push_back(false);
+        fPhi_.push_back(0.0);
+        fTheta_.push_back(0.0);
+    }
+}
 
 Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weights, DecayType type) :
     fWeight_(weights),
@@ -7,9 +22,6 @@ Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum
     fPassFlag_(true)
 {
     int totalGammaNo = type ==TWO ? 2 : 3;
-    fCutPassing_ = new bool[totalGammaNo]{true};
-    fPhi_ = new double[totalGammaNo];
-    fTheta_ = new double[totalGammaNo];
     for(int ii=0; ii<totalGammaNo; ii++)
     {
         if(emissionCoordinates[ii])
@@ -17,59 +29,48 @@ Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum
         if(fourMomentum[ii])
         {
             fFourMomentum_.push_back(*fourMomentum[ii]*1000); //scale from GeV to MeV
-            fPhi_[ii] = fourMomentum[ii]->Phi();
-            fTheta_[ii] = fourMomentum[ii]->Theta();
+            fPhi_.push_back(fourMomentum[ii]->Phi());
+            fTheta_.push_back(fourMomentum[ii]->Theta());
+            fCutPassing_.push_back(true);
         }
 
     }
 }
 
-Event::Event(const Event& est)
+Event::Event(const Event& est) : TObject(est)
 {
     fDecayType_ = est.fDecayType_;
-    int totalGammaNo = fDecayType_ ==TWO ? 2 : 3;
-    fCutPassing_ = new bool[totalGammaNo]{true};
-    fPhi_ = new double[totalGammaNo];
-    fTheta_ = new double[totalGammaNo];
-
     fEmissionPoint_.resize(est.fEmissionPoint_.size());
     std::copy(est.fEmissionPoint_.begin(), est.fEmissionPoint_.end(), fEmissionPoint_.begin());
     fFourMomentum_.resize(est.fFourMomentum_.size());
     std::copy(est.fFourMomentum_.begin(), est.fFourMomentum_.end(), fFourMomentum_.begin());
-    for(int ii=0; ii<totalGammaNo; ii++)
-    {
-        fCutPassing_[ii] = est.fCutPassing_[ii];
-        fPhi_[ii] = est.fPhi_[ii];
-        fTheta_[ii] = est.fTheta_[ii];
-    }
+    fCutPassing_.resize(est.fCutPassing_.size());
+    std::copy(est.fCutPassing_.begin(), est.fCutPassing_.end(), fCutPassing_.begin());
+    fPhi_.resize(est.fPhi_.size());
+    std::copy(est.fPhi_.begin(), est.fPhi_.end(), fPhi_.begin());
+    fTheta_.resize(est.fTheta_.size());
+    std::copy(est.fTheta_.begin(), est.fTheta_.end(), fTheta_.begin());
 }
 
 Event& Event::operator=(const Event& est)
 {
     fDecayType_ = est.fDecayType_;
-    int totalGammaNo = fDecayType_ ==TWO ? 2 : 3;
-    fCutPassing_ = new bool[totalGammaNo]{true};
-    fPhi_ = new double[totalGammaNo];
-    fTheta_ = new double[totalGammaNo];
-
     fEmissionPoint_.resize(est.fEmissionPoint_.size());
     std::copy(est.fEmissionPoint_.begin(), est.fEmissionPoint_.end(), fEmissionPoint_.begin());
     fFourMomentum_.resize(est.fFourMomentum_.size());
     std::copy(est.fFourMomentum_.begin(), est.fFourMomentum_.end(), fFourMomentum_.begin());
-    for(int ii=0; ii<totalGammaNo; ii++)
-    {
-        fCutPassing_[ii] = est.fCutPassing_[ii];
-        fPhi_[ii] = est.fPhi_[ii];
-        fTheta_[ii] = est.fTheta_[ii];
-    }
+    fCutPassing_.resize(est.fCutPassing_.size());
+    std::copy(est.fCutPassing_.begin(), est.fCutPassing_.end(), fCutPassing_.begin());
+    fPhi_.resize(est.fPhi_.size());
+    std::copy(est.fPhi_.begin(), est.fPhi_.end(), fPhi_.begin());
+    fTheta_.resize(est.fTheta_.size());
+    std::copy(est.fTheta_.begin(), est.fTheta_.end(), fTheta_.begin());
     return *this;
 }
 
 Event::~Event()
 {
-    if(fCutPassing_) delete[] fCutPassing_;
-    if(fPhi_) delete[] fPhi_;
-    if(fTheta_) delete[] fTheta_;
+
 }
 
 void Event::DeducePassFlag()

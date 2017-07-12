@@ -11,8 +11,10 @@
 #include "TH2.h"
 #include "TCanvas.h"
 #include "TImage.h"
+#include "TTree.h"
 #include "event.h"
 #include "comptonscattering.h"
+#include "parammanager.h"
 ///
 /// \brief The PsDecay class Contains histograms with gammas' characteristics and inforamtion about passed cuts..
 ///
@@ -23,8 +25,8 @@ class PsDecay
         PsDecay(const PsDecay&);
         PsDecay& operator=(const PsDecay& est);
         ~PsDecay();
-        void AddEvent(const Event& event);
-        void DrawHistograms(std::string prefix="RM");
+        void AddEvent(const Event* event);
+        void DrawHistograms(std::string prefix="RM", OutputOptions output=PNG);
 
         //silent mode switch on/off
         inline void EnableSilentMode(){fSilentMode_=true;}

@@ -3,8 +3,22 @@
 #include <string>
 #include<vector>
 
+enum OutputOptions
+{
+    TREE = 0,
+    PNG = 1,
+    BOTH = 2
+};
+
+enum EventTypeToSave
+{
+    PASS = 0,
+    FAIL = 1,
+    ALL = 2
+};
+
 ///
-/// \brief The ParamManager class Class responsible for loadind simulation parameters from external file. (by default simulation_parameters.par)
+/// \brief The ParamManager class Class responsible for loadind simulation parameters from external file. (by default simpar.par)
 ///
 class ParamManager
 {
@@ -30,7 +44,10 @@ class ParamManager
         inline void SetNoOfGammas(int no) {fNoOfGammas_=no;}
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
-
+        inline OutputOptions GetOutputType() const {return fOutput_;}
+        inline void SetOutputType(OutputOptions type) {fOutput_=type;}
+        inline EventTypeToSave GetEventTypeToSave() const {return fEventTypeToSave_;}
+        inline void SetEventTypeToSave(EventTypeToSave type) {fEventTypeToSave_=type;}
         std::vector<double> GetDataAt(int index=0);
         void ImportParams(std::string inFile="simpar.par");
         bool operator==(const ParamManager &pm) const;
@@ -44,7 +61,9 @@ class ParamManager
         float fR_; //detector radius
         float fESc_; //energy in keV of additional gamma emitted in 2+1 event mode
         float fPSc_; //probability of emitting an additional gamma in 2+1 event mode
-        bool fSilentMode_;
+        bool fSilentMode_; //if set to true, less output to std::cout will be printed
+        OutputOptions fOutput_; //what kind of output will be produced
+        EventTypeToSave fEventTypeToSave_; //what kind of events should be saved
         std::vector<std::vector<double> > fData_; //this is where source parameters are stored
 };
 

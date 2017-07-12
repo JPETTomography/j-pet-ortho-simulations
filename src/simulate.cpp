@@ -10,13 +10,18 @@
 /// To use, compile using Makefile, then run.
 
 #include <iomanip>
+#include <unistd.h>
 #include <sys/stat.h>
 #include <sstream>
+#include <ctime>
 #include "TGenPhaseSpace.h"
+#include "TFile.h"
+#include "TROOT.h"
+#include "TList.h"
+#include "event.h"
 #include "parammanager.h"
 #include "psdecay.h"
 #include "initialcuts.h"
-
 
 // Paths to folders containing results.
 static std::string generalPrefix("results/");
@@ -35,7 +40,7 @@ std::string to_string(const T a_value)
 }
 
 
-void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamManager& pManag, const DecayType type, const std::string filePrefix = "")
+void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamManager& pManag, const DecayType type, const std::string filePrefix = "", TTree* tree = nullptr)
 {
     std::string type_string;
     int noOfGammas = 0;
@@ -65,9 +70,11 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     TGenPhaseSpace event;
     event.SetDecay(Ps, noOfGammas, masses);
     // creating necessary objects
+    Event* eventDecay = new Event;
     PsDecay decay(type);
     InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetP());
     ComptonScattering cs(type);
+
     if(pManag.IsSilentMode())
     {
         decay.EnableSilentMode();
@@ -76,6 +83,11 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     }
     else
         std::cout<<"[INFO] Generation start!"<<std::endl;
+    //adding branch to the tree
+    if(tree)
+    {
+        tree->Branch("event_split", "Event", &eventDecay, 32000, 99);
+    }
     //***   EVENT LOOP  ***
     for (Int_t n=0; n<pManag.GetSimEvents(); n++)
     {
@@ -108,7 +120,6 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
        {
            if(rand.Uniform() < pManag.GetPSc())
            {
-
                double theta = TMath::ACos(rand.Uniform(-1.0, 1.0));
                double phi = rand.Uniform(0.0, 2*TMath::Pi());
                double P = pManag.GetESc()/1000000.0; //GeV
@@ -124,34 +135,44 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
        //Packing everything to EVENT object
        TLorentzVector* fourMomenta[3] = {gamma1, gamma2, gamma3};
        TLorentzVector* sourcePar[3] = {emission1, emission2, emission3};
-       Event eventDecay(sourcePar, fourMomenta, weight, type);
+       eventDecay = new Event(sourcePar, fourMomenta, weight, type);
+
        //Getting initial distributions
        decay.AddEvent(eventDecay);
 //       //Applying cuts
        cuts.AddCuts(eventDecay);
 //       //Performing the Compton Scattering
        cs.Scatter(eventDecay, 0.0);
-
+       //we select what kind of events will be saved to the tree
+       if(tree!=nullptr && ((pManag.GetEventTypeToSave()==PASS && eventDecay->GetPassFlag()) || (pManag.GetEventTypeToSave()==FAIL && !(eventDecay->GetPassFlag())) || (pManag.GetEventTypeToSave()==ALL)))
+       {
+           tree->Fill();
+       }
+       delete eventDecay;
        delete emission1;
        delete emission2;
        if(emission3) delete emission3;
     }
     //***   END OF EVENT LOOP   ***
     //Drawing results
-    decay.DrawHistograms(filePrefix);
-    cuts.DrawHistograms(filePrefix);
-    cs.DrawComptonHistograms(filePrefix); //Draw histograms with scattering angle and electron's energy distributions.
+    decay.DrawHistograms(filePrefix, pManag.GetOutputType());
+    cuts.DrawHistograms(filePrefix, pManag.GetOutputType());
+    cs.DrawComptonHistograms(filePrefix, pManag.GetOutputType()); //Draw histograms with scattering angle and electron's energy distributions.
     delete[] masses;
 }
 
-void simulate(const int simRun, ParamManager& pManag)
+TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::string outputFileAndDirName="")
 {
+
    // Settings
    TLorentzVector Ps;
    TLorentzVector sourcePos; //x,y,z,r !
    int noOfGammas = 0;
    double x,y,z,px,py,pz,r;
    std::string subDir;
+   TTree* tree = nullptr;
+   TDirectory* runDir = nullptr;
+   TDirectory* histDir = nullptr;
 
    noOfGammas = pManag.GetNoOfGammas();
    std::vector<double> sourceParams = (pManag.GetDataAt(simRun));
@@ -167,61 +188,95 @@ void simulate(const int simRun, ParamManager& pManag)
    if((TMath::Abs(x)+r)*(TMath::Abs(x)+r)+(TMath::Abs(y)+r)*(TMath::Abs(y)+r) >= pManag.GetR()*pManag.GetR() || (TMath::Abs(z)+r)>=pManag.GetL())
    {
        std::cerr<<"[ERROR] Source outside the barrel! Terminating current run!"<<std::endl;
-       return;
+       return nullptr;
    }
 
+   //setting the parameters of the source and subdirectory name
    Ps = TLorentzVector(px/1000000.0, py/1000000.0, pz/1000000.0, 1.022/1000); //scaling to GeV
    sourcePos = TLorentzVector(x,y,z,r);
    subDir = to_string(x)+std::string("_")+to_string(y)+std::string("_")+to_string(z)+std::string("_")\
            +to_string(px)+std::string("_")+to_string(py)+std::string("_")+to_string(pz)+std::string("/");
 
-   // creating new directories see https://linux.die.net/man/3/mkdir
-   mkdir((generalPrefix+subDir).c_str(), ACCESSPERMS);
-   chmod((generalPrefix+subDir).c_str(), ACCESSPERMS);
-//   mkdir((decaysPrefix+subDir).c_str(), ACCESSPERMS);
-//   chmod((decaysPrefix+subDir).c_str(), ACCESSPERMS);
+   //setting the right output
+   if(pManag.GetOutputType()==BOTH || pManag.GetOutputType()==PNG)
+   {
+        // creating new directories see https://linux.die.net/man/3/mkdir
+       mkdir((generalPrefix+outputFileAndDirName+subDir).c_str(), ACCESSPERMS);
+       chmod((generalPrefix+outputFileAndDirName+subDir).c_str(), ACCESSPERMS);
+   }
+   if(pManag.GetOutputType()==BOTH || pManag.GetOutputType()==TREE)
+   {
+       tree = new TTree("tree", "Tree with events and histograms");
+       runDir = treeFile->mkdir(subDir.c_str());
+       runDir->cd();
+       histDir = runDir->mkdir("Histograms");
+       histDir->cd();
+   }
 
    //Performing simulations based on the provided number of gammas
-    if(noOfGammas==1)
-    {
+   if(noOfGammas==1)
+   {
         std::cout<<"::::::::::::Simulating 2+1-gamma decays::::::::::::"<<std::endl;
-        simulateDecay(Ps, sourcePos, pManag, TWOandONE, generalPrefix+subDir);
-    }
+        simulateDecay(Ps, sourcePos, pManag, TWOandONE, generalPrefix+outputFileAndDirName+subDir, tree);
+   }
    else if(noOfGammas==2)
    {
        std::cout<<"::::::::::::Simulating 2-gamma decays::::::::::::"<<std::endl;
-       simulateDecay(Ps, sourcePos, pManag, TWO, generalPrefix+subDir);
+       simulateDecay(Ps, sourcePos, pManag, TWO, generalPrefix+outputFileAndDirName+subDir, tree);
    }
    else if(noOfGammas==3)
    {
        std::cout<<"::::::::::::Simulating 3-gamma decays::::::::::::"<<std::endl;
-       simulateDecay(Ps, sourcePos, pManag, THREE, generalPrefix+subDir);
+       simulateDecay(Ps, sourcePos, pManag, THREE, generalPrefix+outputFileAndDirName+subDir, tree);
    }
    else
    {
        std::cout<<"::::::::::::Simulating both 2-gamma and 3-gammas decays::::::::::::"<<std::endl;
-       simulateDecay(Ps, sourcePos, pManag, TWO, generalPrefix+subDir);
-       simulateDecay(Ps, sourcePos, pManag, THREE, generalPrefix+subDir);
+       simulateDecay(Ps, sourcePos, pManag, TWO, generalPrefix+outputFileAndDirName+subDir, tree);
+       simulateDecay(Ps, sourcePos, pManag, THREE, generalPrefix+outputFileAndDirName+subDir, tree);
    }
+   if(pManag.GetOutputType()==BOTH || pManag.GetOutputType()==TREE)
+       runDir->cd();
+   return tree;
 }
 
-# ifndef __CINT__
 ///
-/// \brief main C++ wrapper of simulate function.
+/// \brief main Main function of the program.
 /// \param argc Number of provided arguments.
 /// \param argv Array of arguments.
 /// \return 0
 ///
 int main(int argc, char* argv[])
 {
-  PrintConstants();
+
   ParamManager par_man;
   bool pars_imported = false;
-  if(argc == 3 && std::string(argv[2]) == "-i") //parsing command line arguments
+  //default name of the output file is current date and time
+  auto t = std::time(nullptr);
+  auto tm = *std::localtime(&t);
+
+  std::ostringstream oss;
+  oss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
+  std::string outputFileAndDirName = oss.str();
+
+  for(int nn=1; nn<argc; nn++)
   {
-        //importing source parameters from external file
-          par_man.ImportParams(argv[3]);
-          pars_imported=true;
+      if(argc >= 3)
+      {
+          if(std::string(argv[nn]) == "-i") //parsing command line arguments
+          {
+            //importing source parameters from external file
+              par_man.ImportParams(argv[nn+1]);
+              pars_imported=true;
+              nn +=1;
+          }
+          else if(std::string(argv[nn]) == "-n") //parsing command line arguments
+          {
+            //importing source parameters from external file
+              outputFileAndDirName = std::string(argv[nn+1]);
+              nn +=1;
+          }
+      }
   }
 
   if(!pars_imported)
@@ -232,19 +287,26 @@ int main(int argc, char* argv[])
   //creating directories for storing the results
   mkdir(generalPrefix.c_str(), ACCESSPERMS);
   chmod(generalPrefix.c_str(), ACCESSPERMS);
-//  mkdir(comptonPrefix.c_str(), ACCESSPERMS);
-//  chmod(comptonPrefix.c_str(), ACCESSPERMS);
-//  mkdir(decaysPrefix.c_str(), ACCESSPERMS);
-//  chmod(decaysPrefix.c_str(), ACCESSPERMS);
+  mkdir((generalPrefix+outputFileAndDirName).c_str(), ACCESSPERMS);
+  chmod((generalPrefix+outputFileAndDirName).c_str(), ACCESSPERMS);
+
+  TFile *treeFile = nullptr;
+  TTree *tree = nullptr;
+  if(par_man.GetOutputType() != PNG)
+  {
+    treeFile = new TFile((generalPrefix+outputFileAndDirName+"/"+outputFileAndDirName+".root").c_str(), "recreate");
+    treeFile->cd();
+  }
 
   //loop with simulation runs
   for(int ii=0; ii< (par_man.GetSimRuns()); ii++)
   {
       std::cout<<":::::::::::: START OF RUN NO: "<<ii+1<<" ::::::::::::"<<std::endl;
-      simulate(ii, par_man);
+      tree = simulate(ii, par_man, treeFile, outputFileAndDirName+"/");
+      if(tree)
+          tree->Write();
       std::cout<<":::::::::::: END OF RUN NO:  "<<ii+1<<" ::::::::::::"<<"\n"<<std::endl;
   }
   std::cout<<"\n:::::::::::: END OF PROGRAM. ::::::::::::\n"<<std::endl;
   return 0;
 }
-# endif

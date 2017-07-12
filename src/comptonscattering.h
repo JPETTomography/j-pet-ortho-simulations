@@ -8,6 +8,7 @@
 #include "TRandom3.h"
 #include "constants.h"
 #include "event.h"
+#include "parammanager.h"
 
 ///
 /// \brief The ComptonScattering class Class responsible for Compton scattering according to the Klein-Nishina formula.
@@ -20,8 +21,8 @@ class ComptonScattering
         ComptonScattering& operator=(const ComptonScattering& est);
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
-        void DrawComptonHistograms(std::string filePrefix="");
-        void Scatter(const Event& event, double smearingLowLimit = 0.0); //perfors scattering
+        void DrawComptonHistograms(std::string filePrefix, OutputOptions output=PNG);
+        void Scatter(const Event* event, double smearingLowLimit = 0.0, double smearingHighLimit = 2.0); //perfors scattering
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
         TF1* fPDF;  //root function wrapper, Klein-Nishina formula

@@ -18,7 +18,9 @@ ParamManager::ParamManager() :
     fR_(500),
     fESc_(1160),
     fPSc_(0.98),
-    fSilentMode_(false)
+    fSilentMode_(false),
+    fOutput_(PNG),
+    fEventTypeToSave_(ALL)
     {}
 
 ///
@@ -36,6 +38,8 @@ ParamManager::ParamManager(const ParamManager &est)
     fESc_=est.fESc_;
     fPSc_=est.fPSc_;
     fSilentMode_=est.fSilentMode_;
+    fOutput_=est.fOutput_;
+    fEventTypeToSave_=est.fEventTypeToSave_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
 }
@@ -56,6 +60,8 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     fESc_=est.fESc_;
     fPSc_=est.fPSc_;
     fSilentMode_=est.fSilentMode_;
+    fOutput_=est.fOutput_;
+    fEventTypeToSave_=est.fEventTypeToSave_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
     return *this;
@@ -70,7 +76,8 @@ bool ParamManager::operator==(const ParamManager &est) const
 {
     return ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
             (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
-            (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_));
+            (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
+            (fEventTypeToSave_==est.fEventTypeToSave_);
 }
 
 
@@ -168,6 +175,34 @@ void ParamManager::ImportParams(std::string inFile)
                 fPSc_=atof(token[2].c_str());
               else if (token[0]=="silent")
                 fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
+              else if (token[0]=="output")
+              {
+                  if(token[2]=="tree")
+                      fOutput_=TREE;
+                  else if(token[2]=="png")
+                      fOutput_=PNG;
+                  else if(token[2]=="both")
+                      fOutput_=BOTH;
+                  else
+                  {
+                      std::cerr<<"[WARNING] Unrecognized output type! Setting to default (png)."<<std::endl;
+                      fOutput_=PNG;
+                  }
+              }
+              else if (token[0]=="eventType")
+              {
+                  if(token[2]=="all")
+                      fEventTypeToSave_=ALL;
+                  else if(token[2]=="pass")
+                      fEventTypeToSave_=PASS;
+                  else if(token[2]=="fail")
+                      fEventTypeToSave_=FAIL;
+                  else
+                  {
+                      std::cerr<<"[WARNING] Unrecognized event type to save! Setting to default (all)."<<std::endl;
+                      fEventTypeToSave_=ALL;
+                  }
+              }
               else
                 std::cerr<<"[WARNING] Unrecognized parameter in the param file: \""<<token[0]<<"\""<<std::endl;
           }
@@ -197,6 +232,21 @@ void ParamManager::ImportParams(std::string inFile)
     std::cout<<"[INFO] Silent mode: ";
     if(fSilentMode_) std::cout<<"ENABLED"<<std::endl;
     else std::cout<<"DISABLED"<<std::endl;
+    std::cout<<"[INFO] Output type: ";
+    switch (fOutput_)
+    {
+        case TREE:
+            std::cout<<"ROOT TREE"<<std::endl;
+            break;
+        case PNG:
+            std::cout<<"PNG IMAGES"<<std::endl;
+            break;
+        case BOTH:
+            std::cout<<"ROOT TREE & PNG IMAGES"<<std::endl;
+            break;
+        default:
+            break;
+    }
     std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
 }
 

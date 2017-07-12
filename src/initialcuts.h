@@ -1,10 +1,11 @@
 #ifndef INITIALCUTS_H
 #define INITIALCUTS_H
 #include <string>
-#include "event.h"
-//#include "TH1.h"
 #include "TH2.h"
 #include "TRandom3.h"
+#include "event.h"
+#include "parammanager.h"
+
 
 
 class InitialCuts
@@ -29,12 +30,12 @@ class InitialCuts
         inline void EnableSilentMode(){fSilentMode_=true;}
         inline void DisableSilentMode(){fSilentMode_=false;}
         //adding cuts
-        void AddCuts(Event& event);
+        void AddCuts(Event* event);
         //drawing histograms
-        void DrawHistograms(std::string prefix);
-        void DrawCutsHistograms(std::string prefix);
-        void DrawPassHistograms(std::string prefix);
-        void DrawFailHistograms(std::string prefix);
+        void DrawHistograms(std::string prefix, OutputOptions output=PNG);
+        void DrawCutsHistograms(std::string prefix, OutputOptions output);
+        void DrawPassHistograms(std::string prefix, OutputOptions output);
+        void DrawFailHistograms(std::string prefix, OutputOptions output);
     private:
         //if set to true, no output is generated to std::cout
         bool fSilentMode_; //false by default
@@ -90,9 +91,9 @@ class InitialCuts
 
         bool GeometricalAcceptance_(const TLorentzVector *source, const TLorentzVector* gamma);
         bool DetectionCut_();
-        void FillValidEventHistograms_(const Event& event);
-        void FillInvalidEventHistograms_(const Event& event);
-        void FillDistributionHistograms_(const Event& event);
+        void FillValidEventHistograms_(const Event* event);
+        void FillInvalidEventHistograms_(const Event* event);
+        void FillDistributionHistograms_(const Event* event);
 
 };
 
