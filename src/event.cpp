@@ -1,9 +1,16 @@
-#include "event.h"
+/// @file event.cpp
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #include <iostream>
+#include "event.h"
+//ROOT stuff
 ClassImp(Event)
 
 long Event::fCounter_ = 0;
 
+///
+/// \brief Event::Event Basic constructor. Should not be used!
+///
 Event::Event()
 {
     fWeight_=0;
@@ -21,8 +28,15 @@ Event::Event()
     std::cerr<<"[WARNING] Default constructor used for Event class!"<<std::endl;
 }
 
-Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weights, DecayType type) :
-    fWeight_(weights),
+///
+/// \brief Event::Event The main constructor.
+/// \param emissionCoordinates Coordinates of the emission point in mm.
+/// \param fourMomentum Fourmomenta of gammas in GeV.
+/// \param weights Weight of the event.
+/// \param type Type of the event.
+///
+Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weight, DecayType type) :
+    fWeight_(weight),
     fDecayType_(type),
     fPassFlag_(true)
 {
@@ -44,6 +58,10 @@ Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum
     }
 }
 
+///
+/// \brief Event::Event Copy constructor.
+/// \param est An instance of Event class to be copied.
+///
 Event::Event(const Event& est) : TObject(est)
 {
     fId = est.fId;
@@ -60,6 +78,11 @@ Event::Event(const Event& est) : TObject(est)
     std::copy(est.fTheta_.begin(), est.fTheta_.end(), fTheta_.begin());
 }
 
+///
+/// \brief Event::operator = Assignement operator.
+/// \param est An instance of Event class to be copied.
+/// \return Reference to an object identical with the given one.
+///
 Event& Event::operator=(const Event& est)
 {
     fId = est.fId;
@@ -77,11 +100,17 @@ Event& Event::operator=(const Event& est)
     return *this;
 }
 
+///
+/// \brief Event::~Event Dummy destructor.
+///
 Event::~Event()
 {
 
 }
 
+///
+/// \brief Event::DeducePassFlag Checks if relevant gammas passed through cuts and sets event passing flag.
+///
 void Event::DeducePassFlag()
 {
     int validGammaNo = fDecayType_ == THREE ? 3 : 2;

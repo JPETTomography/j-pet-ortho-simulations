@@ -1,11 +1,14 @@
-#include "parammanager.h"
+/// @file parammanager.cpp
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <typeinfo>
 #include <iterator>
 #include <cstring>
-
+#include <algorithm>
+#include "parammanager.h"
 ///
 /// \brief ParamManager::ParamManager Basic constructor.
 ///
@@ -76,14 +79,15 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
 ///
 /// \brief ParamManager::operator == Compare operator. Compares values of member fields.
 /// \param est Instance of ParamManager to be compared with this.
-/// \return True if all parameter fields are equal.
+/// \return True if all fields are equal.
 ///
 bool ParamManager::operator==(const ParamManager &est) const
 {
-    return ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
+    bool params = ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
             (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
             (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
             (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && (fSmearHighLimit_==est.fSmearHighLimit_);
+    return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin());
 }
 
 
@@ -136,9 +140,8 @@ std::string reduce(const std::string& str,
     return result;
 }
 
-
 ///
-/// \brief ParamManager::ImportParams Imports prameters from file. It reads the number of simulation steps from the first line, and source's (x,y,z,px,py,pz) from the nect ones.
+/// \brief ParamManager::ImportParams Imports prameters from file.
 /// \param inFile Path to the file with parameters.
 ///
 void ParamManager::ImportParams(std::string inFile)
@@ -156,7 +159,7 @@ void ParamManager::ImportParams(std::string inFile)
           }
           row = reduce(row);
           std::istringstream is(row);
-          if (row.find(":=") != std::string::npos)
+          if (row.find(":=") != std::string::npos) // parse parameters
           {
               std::string segment;
               std::vector<std::string> token;
@@ -216,13 +219,22 @@ void ParamManager::ImportParams(std::string inFile)
               else
                 std::cerr<<"[WARNING] Unrecognized parameter in the param file: \""<<token[0]<<"\""<<std::endl;
           }
-          else
+          else //parse source position, momentum and radius
           {
               fData_.push_back(std::vector<double>(std::istream_iterator<double>(is), std::istream_iterator<double>()));
           }
     }
     //The number of simulation runs is determined basing on the number of data sets with source's parameters.
     fSimRuns_=fData_.size();
+    PrintParams();
+    std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
+}
+
+///
+/// \brief PrintParams Prints parameters values to the standard output.
+///
+void ParamManager::PrintParams()
+{
     if(fNoOfGammas_==1)
         std::cout<<"[INFO] No of decay products: 2+1"<<std::endl;
     else if(fNoOfGammas_!=2 && fNoOfGammas_!=3)
@@ -274,13 +286,12 @@ void ParamManager::ImportParams(std::string inFile)
         default:
             break;
     }
-    std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
 }
 
 ///
-/// \brief ParamManager::getDataAt Used to get source's position and momentum.
+/// \brief ParamManager::getDataAt Used to get source's position and momentum and radius.
 /// \param index Number of the run, used to access apropriate data.
-/// \return An array with a set of source's parameters: x, y, z, px, py, pz;
+/// \return An array with a set of source's parameters: x, y, z, px, py, pz, r;
 ///
 std::vector<double> ParamManager::GetDataAt(int index)
 {

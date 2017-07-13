@@ -1,3 +1,6 @@
+/// @file initialcuts.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -7,6 +10,13 @@
 #include "TText.h"
 #include "initialcuts.h"
 
+///
+/// \brief InitialCuts::InitialCuts The only constructor used.
+/// \param type Type of the decay, can be: TWO, THREE or TWOandONE.
+/// \param R Radius of the detector.
+/// \param L Length of the detector.
+/// \param p Probability to interacti with scintillator.
+///
 InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     fDecayType_(type),
     fR_(R),
@@ -212,8 +222,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     {
         throw("Invalid no of decay products!");
     }
-    //histograms for particles that passed through cuts=
-
+    //histograms for particles that passed through cuts
     fH_en_pass_->SetFillColor(kBlue);
     fH_en_pass_ -> SetTitle("Energy distribution");
     fH_en_pass_ -> GetXaxis()->SetTitle("E [MeV]");
@@ -304,6 +313,10 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
 
 }
 
+///
+/// \brief InitialCuts::InitialCuts Copy constructor.
+/// \param est Instance of InitialCuts class.
+///
 InitialCuts::InitialCuts(const InitialCuts& est)
 {
     fSilentMode_=est.fSilentMode_;
@@ -314,30 +327,27 @@ InitialCuts::InitialCuts(const InitialCuts& est)
     fTypeString_ = est.fTypeString_;
     fRand_ = new TRandom3(0);
 
+    fH_12_pass_ = nullptr;
+    fH_12_fail_ = nullptr;
+    fH_23_pass_ = nullptr;
+    fH_31_pass_ = nullptr;
+    fH_12_23_pass_ = nullptr;
+    fH_12_31_pass_ = nullptr;
+    fH_23_31_pass_ = nullptr;
+    fH_12_23_fail_ = nullptr;
+    fH_12_31_fail_ = nullptr;
+    fH_23_31_fail_ = nullptr;
+    fH_31_fail_ = nullptr;
+    fH_23_fail_ = nullptr;
+    fH_en_pass_mid_ = nullptr;
+
     if(fDecayType_==TWO)
     {
         fH_12_pass_ = new TH1F(*est.fH_12_pass_);
         fH_12_fail_ = new TH1F(*est.fH_12_fail_);
-        fH_23_pass_ = nullptr;
-        fH_31_pass_ = nullptr;
-        fH_12_23_pass_ = nullptr;
-        fH_12_31_pass_ = nullptr;
-        fH_23_31_pass_ = nullptr;
-        fH_12_23_fail_ = nullptr;
-        fH_12_31_fail_ = nullptr;
-        fH_23_31_fail_ = nullptr;
-        fH_31_fail_ = nullptr;
-        fH_23_fail_ = nullptr;
-        fH_en_pass_mid_ = nullptr;
     }
     else if(fDecayType_==THREE)
     {
-        fH_12_pass_ = nullptr;
-        fH_12_fail_ = nullptr;
-        fH_23_pass_ = nullptr;
-        fH_31_pass_ = nullptr;
-        fH_31_fail_ = nullptr;
-        fH_23_fail_ = nullptr;
         fH_12_23_pass_ = new TH2F(*est.fH_12_23_pass_);
         fH_12_31_pass_ = new TH2F(*est.fH_12_31_pass_);
         fH_23_31_pass_ = new TH2F(*est.fH_23_31_pass_);
@@ -345,25 +355,15 @@ InitialCuts::InitialCuts(const InitialCuts& est)
         fH_12_31_fail_ = new TH2F(*est.fH_12_31_fail_);
         fH_23_31_fail_ = new TH2F(*est.fH_23_31_fail_);
         fH_en_pass_mid_ = new TH1F(*est.fH_en_pass_mid_);
-
     }
     else if(fDecayType_==TWOandONE)
     {
-        fH_12_23_pass_ = nullptr;
-        fH_12_31_pass_ = nullptr;
-        fH_23_31_pass_ = nullptr;
-        fH_12_23_fail_ = nullptr;
-        fH_12_31_fail_ = nullptr;
-        fH_23_31_fail_ = nullptr;
-        fH_en_pass_mid_ = nullptr;
-
         fH_12_pass_ = new TH1F(*est.fH_12_pass_);
         fH_12_fail_ = new TH1F(*est.fH_12_fail_);
         fH_23_pass_ = new TH1F(*est.fH_23_pass_);
         fH_23_fail_ = new TH1F(*est.fH_23_fail_);
         fH_31_pass_ = new TH1F(*est.fH_31_pass_);
         fH_31_fail_ = new TH1F(*est.fH_31_fail_);
-
     }
 
     fH_en_pass_ = new TH1F(*est.fH_en_pass_);
@@ -386,6 +386,11 @@ InitialCuts::InitialCuts(const InitialCuts& est)
     fAcceptedGammas_ = est.fAcceptedGammas_;
 }
 
+///
+/// \brief InitialCuts::operator = Assignement operator.
+/// \param est Instance of InitialCuts to be copied from.
+/// \return Ref to new InitialCuts, identical to est.
+///
 InitialCuts& InitialCuts::operator=(const InitialCuts& est)
 {
     fSilentMode_=est.fSilentMode_;
@@ -397,30 +402,27 @@ InitialCuts& InitialCuts::operator=(const InitialCuts& est)
 
     fRand_ = new TRandom3(0);
 
+    fH_12_pass_ = nullptr;
+    fH_12_fail_ = nullptr;
+    fH_23_pass_ = nullptr;
+    fH_31_pass_ = nullptr;
+    fH_12_23_pass_ = nullptr;
+    fH_12_31_pass_ = nullptr;
+    fH_23_31_pass_ = nullptr;
+    fH_12_23_fail_ = nullptr;
+    fH_12_31_fail_ = nullptr;
+    fH_23_31_fail_ = nullptr;
+    fH_31_fail_ = nullptr;
+    fH_23_fail_ = nullptr;
+    fH_en_pass_mid_ = nullptr;
+
     if(fDecayType_==TWO)
     {
         fH_12_pass_ = new TH1F(*est.fH_12_pass_);
         fH_12_fail_ = new TH1F(*est.fH_12_fail_);
-        fH_23_pass_ = nullptr;
-        fH_31_pass_ = nullptr;
-        fH_12_23_pass_ = nullptr;
-        fH_12_31_pass_ = nullptr;
-        fH_23_31_pass_ = nullptr;
-        fH_12_23_fail_ = nullptr;
-        fH_12_31_fail_ = nullptr;
-        fH_23_31_fail_ = nullptr;
-        fH_31_fail_ = nullptr;
-        fH_23_fail_ = nullptr;
-        fH_en_pass_mid_ = nullptr;
     }
     else if(fDecayType_==THREE)
     {
-        fH_12_pass_ = nullptr;
-        fH_12_fail_ = nullptr;
-        fH_23_pass_ = nullptr;
-        fH_31_pass_ = nullptr;
-        fH_31_fail_ = nullptr;
-        fH_23_fail_ = nullptr;
         fH_12_23_pass_ = new TH2F(*est.fH_12_23_pass_);
         fH_12_31_pass_ = new TH2F(*est.fH_12_31_pass_);
         fH_23_31_pass_ = new TH2F(*est.fH_23_31_pass_);
@@ -431,14 +433,6 @@ InitialCuts& InitialCuts::operator=(const InitialCuts& est)
     }
     else if(fDecayType_==TWOandONE)
     {
-        fH_12_23_pass_ = nullptr;
-        fH_12_31_pass_ = nullptr;
-        fH_23_31_pass_ = nullptr;
-        fH_12_23_fail_ = nullptr;
-        fH_12_31_fail_ = nullptr;
-        fH_23_31_fail_ = nullptr;
-        fH_en_pass_mid_ = nullptr;
-
         fH_12_pass_ = new TH1F(*est.fH_12_pass_);
         fH_12_fail_ = new TH1F(*est.fH_12_fail_);
         fH_23_pass_ = new TH1F(*est.fH_23_pass_);
@@ -468,6 +462,9 @@ InitialCuts& InitialCuts::operator=(const InitialCuts& est)
     return *this;
 }
 
+///
+/// \brief InitialCuts::~InitialCuts Releases memory (mostly allocated for histograms).
+///
 InitialCuts::~InitialCuts()
 {
     if(fH_12_23_pass_) delete fH_12_23_pass_;
@@ -499,6 +496,10 @@ InitialCuts::~InitialCuts()
     if(fRand_) delete fRand_;
 }
 
+///
+/// \brief InitialCuts::AddCuts Checks if an event and particular gammas passed through cuts. Sets flags in Event instance. Fills histograms.
+/// \param event Pointer to an Event object representing a single decay.
+///
 void InitialCuts::AddCuts(Event* event)
 {
     fNumberOfEvents_++;
@@ -514,9 +515,12 @@ void InitialCuts::AddCuts(Event* event)
             bool geo_pass = GeometricalAcceptance_(event->GetEmissionPointOf(ii), event->GetFourMomentumOf(ii));
             bool inter_pass = geo_pass ? DetectionCut_() : false;
             event->SetCutPassing(ii, geo_pass && inter_pass);
-            geo_event_pass &= geo_pass;
-            inter_event_pass &= inter_pass;
-            if(geo_pass && inter_pass)
+            if(!(event->GetDecayType()==TWOandONE && ii==2))
+            {
+                geo_event_pass &= geo_pass;
+                inter_event_pass &= inter_pass;
+            }
+            if(geo_pass && inter_pass) //gamma passed all cuts
             {
                 fAcceptedGammas_++;
                 fH_en_pass_->Fill(event->GetFourMomentumOf(ii)->Energy());
@@ -524,7 +528,7 @@ void InitialCuts::AddCuts(Event* event)
                 fH_phi_pass_->Fill(event->GetFourMomentumOf(ii)->Phi());
                 fH_cosTheta_pass_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
             }
-            else
+            else //gamma failed at least one of the cuts
             {
                 fH_en_fail_->Fill(event->GetFourMomentumOf(ii)->Energy());
                 fH_p_fail_->Fill(event->GetFourMomentumOf(ii)->P());
@@ -547,6 +551,12 @@ void InitialCuts::AddCuts(Event* event)
     event->DeducePassFlag();
 }
 
+///
+/// \brief InitialCuts::GeometricalAcceptance_ Checks if gamma hit the detector.
+/// \param source Coordinates of the emmision point.
+/// \param gamma Photon's fourmomentum.
+/// \return True if gamma hit the detector, false otherwise.
+///
 bool InitialCuts::GeometricalAcceptance_(const TLorentzVector* source, const TLorentzVector* gamma)
 {
     int side = (gamma->Pz()>0) ? 1 : -1;
@@ -562,6 +572,10 @@ bool InitialCuts::GeometricalAcceptance_(const TLorentzVector* source, const TLo
     else return false;
 }
 
+///
+/// \brief InitialCuts::DetectionCut_ Checks if gamma interacted with the detector.
+/// \return True if gamma interacted with the detector, false otherwise.
+///
 bool InitialCuts::DetectionCut_()
 {
     bool pass = false;
@@ -577,11 +591,15 @@ bool InitialCuts::DetectionCut_()
     return pass;
 }
 
+///
+/// \brief InitialCuts::FillValidEventHistograms_ Fills histograms only for EVENTS that passed cuts and can be correctly reconstructed.
+/// \param event Pointer to Event object.
+///
 void InitialCuts::FillValidEventHistograms_(const Event* event)
 {
     fAcceptedEvents_++;
     bool thirdGammaSc = false;
-    int minIndex=0;
+    int minIndex=0; //indices of min and max energy out of 2 or 3 gammas
     int maxIndex=0;
     for(int ii=0; ii<3; ii++)
     {
@@ -601,7 +619,7 @@ void InitialCuts::FillValidEventHistograms_(const Event* event)
     fH_en_pass_high_->Fill(event->GetFourMomentumOf(maxIndex)->Energy());
     if(fDecayType_==THREE)
     {
-
+        //If there are 3 gammas, draw also middle value.
         int midIndex = minIndex==maxIndex ? minIndex : 3-minIndex-maxIndex;
         fH_en_pass_mid_->Fill(event->GetFourMomentumOf(midIndex)->Energy());
         fH_12_23_pass_->Fill(event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect()), \
@@ -628,6 +646,10 @@ void InitialCuts::FillValidEventHistograms_(const Event* event)
     }
 }
 
+///
+/// \brief InitialCuts::FillInvalidEventHistograms_ Fills histograms for EVENTS that did not pass cuts and cannot be reconstructed.
+/// \param event Pointer to Event object.
+///
 void InitialCuts::FillInvalidEventHistograms_(const Event* event)
 {
 
@@ -657,7 +679,10 @@ void InitialCuts::FillInvalidEventHistograms_(const Event* event)
     }
 }
 
-
+///
+/// \brief InitialCuts::FillDistributionHistograms_ Fill histograms with distributions of E, p, phi and cos(theta).
+/// \param event Pointer to Event object.
+///
 void InitialCuts::FillDistributionHistograms_(const Event* event)
 {
     for(int ii=0; ii<3; ii++)
@@ -682,6 +707,11 @@ void InitialCuts::FillDistributionHistograms_(const Event* event)
     }
 }
 
+///
+/// \brief InitialCuts::DrawHistograms One function to rule... draw them all!
+/// \param prefix Prefix of histograms file names.
+/// \param output Type of output to be saved. Can be TREE, PNG or BOTH.
+///
 void InitialCuts::DrawHistograms(std::string prefix, OutputOptions output)
 {
     DrawCutsHistograms(prefix, output);
@@ -689,6 +719,11 @@ void InitialCuts::DrawHistograms(std::string prefix, OutputOptions output)
     DrawFailHistograms(prefix, output);
 }
 
+///
+/// \brief InitialCuts::DrawCutsHistograms Draws histograms indicating what percent of gammas/events passed through certain cuts.
+/// \param prefix Prefix of histograms file names.
+/// \param output Type of output to be saved. Can be TREE, PNG or BOTH.
+///
 void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
 {
     std::string outFile;
@@ -716,6 +751,7 @@ void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
     ss<<std::setprecision(2);
 
     //drawing histograms
+    //for gammas
     cuts->cd(1);
     fH_gamma_cuts_->Scale(100.0/fNumberOfGammas_);
     fH_gamma_cuts_->GetYaxis()->SetRangeUser(0.0, 101.0);
@@ -727,7 +763,7 @@ void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
     ss<<fAcceptedGammas_/(double)fNumberOfGammas_*100.0;
     labelPercent->DrawText(0.75, 0.2, (ss.str()+std::string("%")).c_str());
     ss.str(std::string());
-
+    //for events
     cuts->cd(2);
     fH_event_cuts_->Scale(100.0/fNumberOfEvents_);
     fH_event_cuts_->GetYaxis()->SetRangeUser(0.0, 101.0);
@@ -759,12 +795,17 @@ void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
     delete labelPercent;
 }
 
+///
+/// \brief InitialCuts::DrawPassHistograms Draws histograms for gammas and events that passed cuts.
+/// \param prefix Prefix of histograms file names.
+/// \param output Type of output to be saved. Can be TREE, PNG or BOTH.
 
+///
 void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
 {
     std::string outFile1;
     std::string outFile2;
-    if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for events that passed cuts."<<std::endl;
+    if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for gammas that passed cuts."<<std::endl;
     TCanvas* angles_pass;
 
     TCanvas* dist_pass = new TCanvas((fTypeString_+"-gammas_dist_pass").c_str(),\
@@ -831,7 +872,10 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
         fH_31_pass_->Draw();
         outFile2 = prefix+fTypeString_+"-gammas_angles_pass_.png";
     }
-
+    //temporary pointers
+    TH1F* objLow = nullptr;
+    TH1F* objMid = nullptr;
+    TH1F* objHigh = nullptr;
     if(fDecayType_==THREE)
     {
         //Drawing energy distribution of gammas from valid events
@@ -842,11 +886,11 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
         legend->AddEntry(fH_en_pass_mid_, "medium energy", "f");
         diff_en->Divide(2,2);
         diff_en->cd(2);
-        fH_en_pass_low_->DrawClone();
+        objLow = (TH1F*)fH_en_pass_low_->DrawClone(); //need to draw clones to make it look pretty
         diff_en->cd(3);
-        fH_en_pass_mid_->DrawClone();
+        objMid = (TH1F*)fH_en_pass_mid_->DrawClone();
         diff_en->cd(4);
-        fH_en_pass_high_->DrawClone();
+        objHigh = (TH1F*)fH_en_pass_high_->DrawClone();
         diff_en->Update();
         diff_en->cd(1);
         fH_en_pass_low_->SetStats(0);
@@ -869,9 +913,9 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
                                        +fTypeString_+std::string("-gamma events")).c_str(), 1200, 450);
         diff_en->Divide(3,1);
         diff_en->cd(2);
-        fH_en_pass_low_->DrawClone();
+        objLow = (TH1F*)fH_en_pass_low_->DrawClone();
         diff_en->cd(3);
-        fH_en_pass_high_->DrawClone();
+        objHigh = (TH1F*)fH_en_pass_high_->DrawClone();
         diff_en->cd(1);
         fH_en_pass_event_->Draw();
         diff_en->Update();
@@ -913,9 +957,17 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     delete angles_pass;
     delete diff_en;
     delete legend;
-
+    if(objLow) delete objLow;
+    if(objMid) delete objMid;
+    if(objHigh) delete objHigh;
 }
 
+///
+/// \brief InitialCuts::DrawFailHistograms Draws histograms for gammas and events that did not pass cuts.
+/// \param prefix Prefix of histograms file names.
+/// \param output Type of output to be saved. Can be TREE, PNG or BOTH.
+
+///
 void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
 {
         std::string outFile1;
@@ -997,5 +1049,4 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         }
         delete dist_fail;
         delete angles_fail;
-
 }
