@@ -1,3 +1,6 @@
+/// @file event_linkdef.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #include "TLorentzVector.h"
 #include <vector>
 #if defined(__MAKECINT__)

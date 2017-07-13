@@ -1,3 +1,6 @@
+/// @file comptonscattering.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #ifndef COMPTONSCATTERING_H
 #define COMPTONSCATTERING_H
 #include <string>
@@ -22,7 +25,7 @@ class ComptonScattering
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
         void DrawComptonHistograms(std::string filePrefix, OutputOptions output=PNG);
-        void Scatter(const Event* event); //perfors scattering
+        void Scatter(const Event* event) const; //perfors scattering
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
         inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
@@ -45,11 +48,11 @@ class ComptonScattering
         TH1D* fH_PDF_cross; //Klein-Nishina function for specified value of incident's photon energy
         TH2D* fH_PDF_Theta_; //Klein-Nishina based theta PDF function
         TH1D* fH_PDF_Theta_cross; //Klein-Nishina based theta PDF function for specified value of incident's photon energy
-        float fSmearLowLimit_;
-        float fSmearHighLimit_;
-        static long double KleinNishina_(double* angle, double* energy);
+        float fSmearLowLimit_; //lower limit for phenomenologicly derived smearing effect
+        float fSmearHighLimit_; //higher limit for phenomenologicly derived smearing effect
+        static long double KleinNishina_(double* angle, double* energy); //Klein-Nishina function
         static long double KleinNishinaTheta_(double* angle, double* energy); //Klein-Nishina based theta PDF
-        double sigmaE(double E, double coeff=0.0444);
+        double sigmaE(double E, double coeff=0.0444) const; //calculate std dev for the smearing effevt
 
 };
 

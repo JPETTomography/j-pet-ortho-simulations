@@ -1,3 +1,6 @@
+/// @file event.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #ifndef EVENT_H
 #define EVENT_H
 #include "TLorentzVector.h"
@@ -5,6 +8,9 @@
 #include "TTree.h"
 #include <vector>
 
+///
+/// \brief The DecayType enum Specifies the type of decay in which the event was produced.
+///
 enum DecayType
 {
     WRONG = 0,
@@ -13,15 +19,18 @@ enum DecayType
     THREE = 3
 };
 
+///
+/// \brief The Event class Class holding information about products of one decay.
+///
 class Event : public TObject
 {
     public:
-
         Event();
         Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weight, DecayType type);
         Event(const Event& est);
         Event& operator=(const Event &est);
         virtual ~Event();
+        //setters and getters
         inline TLorentzVector* GetEmissionPointOf(const unsigned index) const
             {return index<fEmissionPoint_.size() ? const_cast<TLorentzVector*>(&fEmissionPoint_[index]) : NULL;}
         inline TLorentzVector* GetFourMomentumOf(const unsigned index) const
@@ -33,25 +42,25 @@ class Event : public TObject
         inline bool GetPassFlag() const {return fPassFlag_;}
         inline double GetPhiOf(const unsigned index) const {return fPhi_[index];}
         inline double GetThetaOf(const unsigned index) const {return fTheta_[index];}
+        //set fPassFlag_ by checking values in fCutPassing_
         void DeducePassFlag();
+        //number of event
         long fId;
+        //ROOT stuff
         ClassDef(Event, 8)
 
     private:
-        static long fCounter_;
-        std::vector<TLorentzVector> fEmissionPoint_; //x, y, z, t [m and s]
+        static long fCounter_; //static variable incremented with every call of a constructor (but not copy constructor)
+        std::vector<TLorentzVector> fEmissionPoint_; //x, y, z, t(irrelevant) [mm and s]
         std::vector<TLorentzVector> fFourMomentum_; //pX, pY, pZ, E [MeV/c and MeV]
         std::vector<bool> fCutPassing_; //indicates if gamma failed passing through cuts
-        double fWeight_;
-        DecayType fDecayType_;
-        bool fPassFlag_;
-        std::vector<double> fPhi_;
-        std::vector<double> fTheta_;
+        double fWeight_; //weight of the event
+        DecayType fDecayType_; //type of the event
+        bool fPassFlag_; //if true, event can be reconstructed -- all necessary gammas passed through cuts
+        std::vector<double> fPhi_; //values of azimuthal angle for gammas
+        std::vector<double> fTheta_;//values of polar angle for gammas
         typedef TObject inherited;
 
 
 };
-//#ifdef __MAKECINT__
-//#pragma link C++ class Event;
-//#endif
-#endif // EVENT_H
+#endif

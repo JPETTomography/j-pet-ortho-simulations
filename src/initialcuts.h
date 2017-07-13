@@ -1,3 +1,6 @@
+/// @file initialcuts.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #ifndef INITIALCUTS_H
 #define INITIALCUTS_H
 #include <string>
@@ -7,7 +10,9 @@
 #include "parammanager.h"
 
 
-
+///
+/// \brief The InitialCuts class Class that performs cuts and stores histograms connected.
+///
 class InitialCuts
 {
     public:
@@ -47,12 +52,12 @@ class InitialCuts
         float fL_;  //length in cm
         float fDetectionProbability_; //probability that detector will detect gamma after being hit
 
-        int fAcceptedEvents_;
-        int fAcceptedGammas_;
-        int fNumberOfEvents_;
-        int fNumberOfGammas_;
+        int fAcceptedEvents_; //no of events that passed all cuts
+        int fAcceptedGammas_; //no of gammas that passed all cuts
+        int fNumberOfEvents_; //total number of events
+        int fNumberOfGammas_; //total number of gammas
 
-        TRandom3* fRand_; //set seed
+        TRandom3* fRand_; //set random seed
         // histograms with relative angles for events that passed cuts
         TH1F* fH_12_pass_;
         TH1F* fH_23_pass_;

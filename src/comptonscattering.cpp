@@ -4,14 +4,14 @@
 #include "comptonscattering.h"
 
 ///
-/// \brief ComptonScattering::ComptonScattering Basic constructor.
-/// \param prefix File prefix.
-/// \param noOfGammas No of gammas (only for file naming).
+/// \brief ComptonScattering::ComptonScattering The only constructor used.
+/// \param type Type of the decay, can be: TWO, THREE or TWOandTHREE.
+/// \param low Lower limit for smearing effect.
+/// \param high Higher limit for smearing effect.
 ///
 ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fSilentMode_(false), fDecayType_(type), fSmearLowLimit_(low), fSmearHighLimit_(high)
 {
     fRand_ = new TRandom3(0); //set seed for the random generator
-
 
     if(fDecayType_==THREE)
     {
@@ -153,6 +153,7 @@ ComptonScattering::~ComptonScattering()
 ///
 /// \brief ComptonScattering::DrawPDF Draws Klein-Nishina function and saves to a file.
 /// \param filePrefix Prefix of the output file, may contain path.
+/// \param crossSectionE Value of energy to draw a cross section.
 ///
 void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
 {
@@ -207,6 +208,11 @@ void ComptonScattering::DrawPDF(std::string filePrefix, double crossSectionE)
     delete img2;
 }
 
+///
+/// \brief ComptonScattering::DrawComptonHistograms Draws histograms and saves to file(s).
+/// \param filePrefix Prefix of the filename.
+/// \param output Type of output, can be PNG, TREE, or BOTH.
+///
 void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOptions output)
 {
     if(!fSilentMode_)
@@ -233,6 +239,7 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
     fH_electron_E_blur_->Draw();
     lowLimit->Draw();
     highLimit->Draw();
+    //writing depends on the 'output' value
     if(output==BOTH || output==PNG)
     {
         TImage *img = TImage::Create();
@@ -254,10 +261,10 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
 }
 
 ///
-/// \brief ComptonScattering::Scatter Scatters a photon according to Klein-Nishina formula and fills histograms for electrons.
-/// \param E Energy of incident photon.
+/// \brief ComptonScattering::Scatter Scatters gammas from the event, performs smearing and fills histograms.
+/// \param event Pointer to Event object that is to be scattered.
 ///
-void ComptonScattering::Scatter(const Event* event)
+void ComptonScattering::Scatter(const Event* event) const
 {
     for(int ii=0; ii<3; ii++)
     {
@@ -270,6 +277,7 @@ void ComptonScattering::Scatter(const Event* event)
             fH_photon_theta_->Fill(theta);
             double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
             fH_electron_E_->Fill(new_E);
+            //if new_E is within limit -- smear, otherwise fill histogram with new_E
             if((new_E >= fSmearLowLimit_) && (new_E <= fSmearHighLimit_))
                 fH_electron_E_blur_->Fill(fRand_->Gaus(new_E, sigmaE(E)));
             else
@@ -309,7 +317,13 @@ long double ComptonScattering::KleinNishinaTheta_(double* angle, double* energy)
             *2*TMath::Pi()*TMath::Sin(angle[0]); //corrections suggested by W.Krzemien
 }
 
-double ComptonScattering::sigmaE(double E, double coeff)
+///
+/// \brief ComptonScattering::sigmaE Calculates std dev for the smearing effect.
+/// \param E Incident photon's energy.
+/// \param coeff Phenomenological coeff.
+/// \return  std dev for electron's energy distribution
+///
+double ComptonScattering::sigmaE(double E, double coeff) const
 {
     return coeff*E/TMath::Sqrt(E);
 }

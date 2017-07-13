@@ -1,6 +1,6 @@
-/// @file psdecay.h
+/// @file psdecay.cpp
 /// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
-/// @date 01.06.2017
+/// @date 13.07.2017
 
 #include <typeinfo>
 #include <cstdio>
@@ -10,7 +10,10 @@
 #include "TText.h"
 #include "psdecay.h"
 
-
+///
+/// \brief PsDecay::PsDecay The only used constructor.
+/// \param type Type of decay. Can be TWO, THREE or TWOandONE.
+///
 PsDecay::PsDecay(DecayType type) :
       fSilentMode_(false),
       fDecayType_(type)
@@ -18,9 +21,10 @@ PsDecay::PsDecay(DecayType type) :
     //Creating histograms for angle distributions
     if(fDecayType_ == THREE)
     {
+        //general purpose histograms are created here to ensure right limits
         fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 0.6);
-
+        //unnecessary pointers are set to nullptr
         fH_12_=nullptr;
         fH_23_=nullptr;
         fH_31_=nullptr;
@@ -72,9 +76,10 @@ PsDecay::PsDecay(DecayType type) :
     }
     else if(fDecayType_ == TWO)
     {
+        //general purpose histograms are created here to ensure right limits
         fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 0.6);
-
+        //unnecessary pointers are set to nullptr
         fH_12_23_ = nullptr;
         fH_12_31_ = nullptr;
         fH_23_31_ = nullptr;
@@ -97,9 +102,10 @@ PsDecay::PsDecay(DecayType type) :
     }
     else if(fDecayType_ == TWOandONE)
     {
+        //general purpose histograms are created here to ensure right limits
         fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.3, 1.3);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.3, 1.3);
-
+        //unnecessary pointers are set to nullptr
         fH_12_23_ = nullptr;
         fH_12_31_ = nullptr;
         fH_23_31_ = nullptr;
@@ -138,8 +144,7 @@ PsDecay::PsDecay(DecayType type) :
         throw("Invalid no of decay products!");
     }
 
-    // histograms common for all particles
-
+    // histograms common for all decay types
     fH_en_->SetFillColor(kBlue);
     fH_en_ -> SetTitle("Energy distribution");
     fH_en_ -> GetXaxis()->SetTitle("E [MeV]");
@@ -179,23 +184,22 @@ PsDecay::PsDecay(const PsDecay& est)
     fDecayType_=est.fDecayType_;
     fTypeString_ = est.fTypeString_;
 
+    fH_12_23_ = nullptr;
+    fH_12_31_ = nullptr;
+    fH_23_31_ = nullptr;
+    fH_min_mid_ = nullptr;
+    fH_min_max_ = nullptr;
+    fH_mid_max_ = nullptr;
+    fH_12_ = nullptr;
+    fH_23_ = nullptr;
+    fH_31_ = nullptr;
+
     if(fDecayType_==TWO)
     {
         fH_12_ = new TH1F(*est.fH_12_);
-        fH_23_ = nullptr;
-        fH_31_=nullptr;
-        fH_min_mid_ = nullptr;
-        fH_min_max_ = nullptr;
-        fH_mid_max_ = nullptr;
-        fH_12_23_ = nullptr;
-        fH_12_31_ = nullptr;
-        fH_23_31_ = nullptr;
     }
     else if(fDecayType_==THREE)
     {
-        fH_12_ = nullptr;
-        fH_23_ = nullptr;
-        fH_31_=nullptr;
         fH_12_23_ = new TH2F(*est.fH_12_23_);
         fH_12_31_ = new TH2F(*est.fH_12_31_);
         fH_23_31_ = new TH2F(*est.fH_23_31_);
@@ -206,12 +210,6 @@ PsDecay::PsDecay(const PsDecay& est)
     }
     else if(fDecayType_==TWOandONE)
     {
-        fH_12_23_ = nullptr;
-        fH_12_31_ = nullptr;
-        fH_23_31_ = nullptr;
-        fH_min_mid_ = nullptr;
-        fH_min_max_ = nullptr;
-        fH_mid_max_ = nullptr;
         fH_12_ = new TH1F(*est.fH_12_);
         fH_23_ = new TH1F(*est.fH_23_);
         fH_31_ = new TH1F(*est.fH_31_);
@@ -235,23 +233,22 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
     fDecayType_=est.fDecayType_;
     fTypeString_ = est.fTypeString_;
 
+    fH_12_23_ = nullptr;
+    fH_12_31_ = nullptr;
+    fH_23_31_ = nullptr;
+    fH_min_mid_ = nullptr;
+    fH_min_max_ = nullptr;
+    fH_mid_max_ = nullptr;
+    fH_12_ = nullptr;
+    fH_23_ = nullptr;
+    fH_31_ = nullptr;
+
     if(fDecayType_==TWO)
     {
         fH_12_ = new TH1F(*est.fH_12_);
-        fH_23_ = nullptr;
-        fH_31_=nullptr;
-        fH_min_mid_ = nullptr;
-        fH_min_max_ = nullptr;
-        fH_mid_max_ = nullptr;
-        fH_12_23_ = nullptr;
-        fH_12_31_ = nullptr;
-        fH_23_31_ = nullptr;
     }
     else if(fDecayType_==THREE)
     {
-        fH_12_ = nullptr;
-        fH_23_ = nullptr;
-        fH_31_=nullptr;
         fH_12_23_ = new TH2F(*est.fH_12_23_);
         fH_12_31_ = new TH2F(*est.fH_12_31_);
         fH_23_31_ = new TH2F(*est.fH_23_31_);
@@ -262,12 +259,6 @@ PsDecay& PsDecay::operator=(const PsDecay& est)
     }
     else if(fDecayType_==TWOandONE)
     {
-        fH_12_23_ = nullptr;
-        fH_12_31_ = nullptr;
-        fH_23_31_ = nullptr;
-        fH_min_mid_ = nullptr;
-        fH_min_max_ = nullptr;
-        fH_mid_max_ = nullptr;
         fH_12_ = new TH1F(*est.fH_12_);
         fH_23_ = new TH1F(*est.fH_23_);
         fH_31_ = new TH1F(*est.fH_31_);
@@ -300,10 +291,13 @@ PsDecay::~PsDecay()
     if(fH_cosTheta_) delete fH_cosTheta_;
 }
 
-
-void PsDecay::AddEvent(const Event* event)
+///
+/// \brief PsDecay::AddEvent Takes information out of Event class instance and fills the histograms.
+/// \param event Pointer to Event object.
+///
+void PsDecay::AddEvent(const Event* event) const
 {
-    bool thirdGammaExists = false;
+    bool thirdGammaExists = false; //check if 3rd pointer !=nullptr
     for(int ii=0; ii<3; ii++)
     {
         if(event->GetFourMomentumOf(ii)!=nullptr)
@@ -320,6 +314,15 @@ void PsDecay::AddEvent(const Event* event)
     {
         fH_12_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
     }
+    else if(fDecayType_==TWOandONE)
+    {
+        fH_12_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
+        if(thirdGammaExists)
+        {
+            fH_23_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
+            fH_31_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
+        }
+    }
     else if(fDecayType_==THREE)
     {
         double theta12 = event->GetFourMomentumOf(0)->Angle(event->GetFourMomentumOf(1)->Vect());
@@ -329,68 +332,27 @@ void PsDecay::AddEvent(const Event* event)
         fH_12_31_->Fill(theta12, theta31, event->GetWeight());
         fH_23_31_->Fill(theta23, theta31, event->GetWeight());
         //sorting the angles
-        if(theta12>theta23)
+        double thetas[3] = {theta12, theta23, theta31};
+        unsigned indMin = 0;
+        unsigned indMid = 0;
+        unsigned indMax = 0;
+        for(int ii=0; ii<3; ii++)
         {
-            if(theta12>theta31)
-            {
-                if(theta23>theta31)
-                {
-                    fH_mid_max_->Fill(theta23, theta12, event->GetWeight());
-                    fH_min_max_->Fill(theta31, theta12, event->GetWeight());
-                    fH_min_mid_->Fill(theta31, theta23, event->GetWeight());
-                }
-                else
-                {
-                    fH_mid_max_->Fill(theta31, theta12, event->GetWeight());
-                    fH_min_max_->Fill(theta23, theta12, event->GetWeight());
-                    fH_min_mid_->Fill(theta23, theta31, event->GetWeight());
-                }
-            }
-            else
-            {
-                fH_min_max_->Fill(theta23, theta31, event->GetWeight());
-                fH_min_mid_->Fill(theta23, theta12, event->GetWeight());
-                fH_mid_max_->Fill(theta12, theta31, event->GetWeight());
-            }
+            indMin = thetas[ii] < thetas[indMin] ? ii : indMin;
+            indMax = thetas[ii] > thetas[indMin] ? ii : indMax;
         }
-        else
-        {
-            if(theta12>theta31)
-            {
-                fH_min_max_->Fill(theta31, theta23, event->GetWeight());
-                fH_min_mid_->Fill(theta31, theta12, event->GetWeight());
-                fH_mid_max_->Fill(theta12, theta23, event->GetWeight());
-            }
-            else
-            {
-                if(theta23>theta31)
-                {
-                    fH_min_max_->Fill(theta12, theta23, event->GetWeight());
-                    fH_min_mid_->Fill(theta12, theta31, event->GetWeight());
-                    fH_mid_max_->Fill(theta23, theta31, event->GetWeight());
-                }
-                else
-                {
-                    fH_min_max_->Fill(theta12, theta31, event->GetWeight());
-                    fH_min_mid_->Fill(theta12, theta23, event->GetWeight());
-                    fH_mid_max_->Fill(theta31, theta23, event->GetWeight());
-                }
-            }
-        }
-
-    }
-    if(fDecayType_==TWOandONE)
-    {
-        fH_12_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
-        if(thirdGammaExists)
-        {
-            fH_23_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
-            fH_31_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
-        }
-    }
+        indMid = indMax==indMin ? indMax : 3-indMax-indMin;
+        fH_min_max_->Fill(thetas[indMin], thetas[indMax], event->GetWeight());
+        fH_min_mid_->Fill(thetas[indMin], thetas[indMid], event->GetWeight());
+        fH_mid_max_->Fill(thetas[indMid], thetas[indMax], event->GetWeight());
+   }
 }
 
-
+///
+/// \brief PsDecay::DrawHistograms Draws all member field histograms applicable to selected type of decay.
+/// \param prefix Prefix for histogram file names.
+/// \param output Specifies whether draw histograms as PNG files, or to ROOT file, or both.
+///
 void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
 {
     std::string outFile1;
@@ -398,11 +360,12 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
     std::string outFile3;
 
     if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for all generated events."<<std::endl;
-    TCanvas* angles_all;
-    TCanvas* angles_sorted_all;
+    TCanvas* angles_all = nullptr;
+    TCanvas* angles_sorted_all = nullptr;
     TCanvas* dist_all = new TCanvas((fTypeString_+"-gammas_dist_all").c_str(), \
                                     (std::string("Basic distributions for all generated ")\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
+    //drawing histograms for distributions
     dist_all->Divide(2, 2);
     dist_all->cd(1);
     fH_en_->Draw();
@@ -415,7 +378,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
     dist_all->Update();
     outFile1=prefix+fTypeString_+std::string("-gammas_dist_all_.png");
 
-    //angle distribution depends on the number of decay products
+    //angle distribution appearance depends on the number of decay products
     if(fDecayType_==THREE)
     {
         angles_all = new TCanvas((fTypeString_+"-gammas_angles_all").c_str(), \
@@ -429,7 +392,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
         angles_all->cd(3);
         fH_23_31_->Draw("colz");
         outFile2 = prefix+std::string("3-gammas_angles_all.png");
-
+        //writing histograms with sorted angles
         angles_sorted_all = new TCanvas((fTypeString_+"-gammas_angles_sorted_all").c_str(), \
                                                   (std::string("Sorted angle ditribution for all generated ")\
                                                   +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
@@ -466,6 +429,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
     }
     angles_all->Update();
 
+    //writing depends on the 'output' prameter
     if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for all events."<<std::endl;
     if(output==BOTH || output==PNG)
     {

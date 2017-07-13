@@ -1,6 +1,6 @@
 #Lines that start with '#' are treated as comments.
-gammas := 3 #no of decay products, select 2 or 3, or 1 if you want to have 2+1 decay, if other number provided both types will be simulated
-events := 50000 #no of decays to be simulated
+gammas := 0 #no of decay products, select 2 or 3, or 1 if you want to have 2+1 decay, if other number provided both types will be simulated
+events := 100000 #no of decays to be simulated
 p := 0.17 #probability that gamma will be scattered after hitting a detector
 R := 500 #radius of the detector
 L := 700 #length of the detector
@@ -20,4 +20,4 @@ output := both #set "tree" for ROOT tree, set "png" for writing image files, set
 0.0   0.0   0.0   0.1   0.1  0.1 0.0
 #0.35   0.35   0.3   0.0    0.0   0.1 0.0
 #35   35   20   0.0    0.0    0.1 0.0
-#490.9 0.0 340.9 0.0 0.0 0.1 0.0
+490.9 0.0 340.9 0.0 0.0 0.1 0.0
