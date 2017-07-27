@@ -9,7 +9,7 @@
 /// @section USAGE
 /// To use, compile using Makefile, then simply run.
 
-#include <iomanip>
+//#include <iomanip>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sstream>
@@ -29,13 +29,13 @@ static std::string generalPrefix("results/");
 ///
 /// \brief Template used to cast any value to string. Mainly used to cast double to string, preserving scientific notation.
 ///
-template <typename T>
-std::string to_string(const T a_value)
-{
-    std::ostringstream out;
-    out << a_value;
-    return out.str();
-}
+//template <typename T>
+//std::string std::to_string(const T a_value)
+//{
+//    std::ostringstream out;
+//    out << a_value;
+//    return out.str();
+//}
 
 ///
 /// \brief simulateDecay A function that performs run for many decays with one parameter set.
@@ -211,8 +211,8 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    //setting the parameters of the source and subdirectory name
    Ps = TLorentzVector(px/1000000.0, py/1000000.0, pz/1000000.0, 1.022/1000); //scaling back to GeV
    sourcePos = TLorentzVector(x,y,z,r);
-   subDir = to_string(x)+std::string("_")+to_string(y)+std::string("_")+to_string(z)+std::string("_")\
-           +to_string(px)+std::string("_")+to_string(py)+std::string("_")+to_string(pz)+std::string("/");
+   subDir = std::to_string(x)+std::string("_")+std::to_string(y)+std::string("_")+std::to_string(z)+std::string("_")\
+           +std::to_string(px)+std::string("_")+std::to_string(py)+std::string("_")+std::to_string(pz)+std::string("/");
 
    //setting the right output
    if(pManag.GetOutputType()==BOTH || pManag.GetOutputType()==PNG)
@@ -269,11 +269,11 @@ int main(int argc, char* argv[])
   ParamManager par_man;
   bool pars_imported = false;
   //default name of the output file is current date and time
-  auto t = std::time(nullptr);
-  auto tm = *std::localtime(&t);
-  std::ostringstream oss;
-  oss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
-  std::string outputFileAndDirName = oss.str();
+//  auto t = std::time(nullptr);
+//  auto tm = *std::localtime(&t);
+//  std::ostringstream oss;
+//  oss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
+  std::string outputFileAndDirName("nazwa");// = oss.str();
   //parsing command line arguments
   for(int nn=1; nn<argc; nn++)
   {

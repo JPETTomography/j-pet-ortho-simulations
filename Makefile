@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-c -std=c++11 -Wall `root-config --cflags`
-LDFLAGS=`root-config --ldflags --glibs` -lTree
+LDFLAGS= `root-config --ldflags --glibs` -lTree
 
 OBJDIR=./obj
 SRCDIR=src
@@ -8,11 +8,16 @@ EVPATH = "$(shell pwd)/$(SRCDIR)/"
 
 all: sim
 
-sim: $(OBJDIR)/simulate.o $(OBJDIR)/event.o $(OBJDIR)/psdecay.o $(OBJDIR)/initialcuts.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o
-	$(CC) -o sim $(OBJDIR)/simulate.o $(OBJDIR)/event.o $(OBJDIR)/psdecay.o $(OBJDIR)/initialcuts.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o $(SRCDIR)/event_cpp.so $(LDFLAGS)	
+sim: $(OBJDIR)/simulate.o $(OBJDIR)/event.o $(OBJDIR)/psdecay.o $(OBJDIR)/initialcuts.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o $(OBJDIR)/EventDict.o
+	$(CC) -o sim $(OBJDIR)/simulate.o $(OBJDIR)/EventDict.o $(OBJDIR)/event.o $(OBJDIR)/psdecay.o $(OBJDIR)/initialcuts.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o  $(LDFLAGS)
 	
+$(SRCDIR)/EventDict.cpp:
+	(cd src && rootcint -f EventDict.cpp -c $(CFLAGS) -p $^ event.h event_linkdef.h)
+
+$(OBJDIR)/EventDict.o: $(SRCDIR)/EventDict.cpp
+	$(CC) $(SRCDIR)/EventDict.cpp -o $(OBJDIR)/EventDict.o $(CFLAGS)
+
 $(OBJDIR)/event.o: $(SRCDIR)/event.cpp $(SRCDIR)/event.h
-	root -l -b -n -q $(SRCDIR)/'generatedict.cpp($(EVPATH))'++
 	$(CC) $(CFLAGS) $(SRCDIR)/event.cpp -o $(OBJDIR)/event.o
 
 $(OBJDIR)/psdecay.o: $(SRCDIR)/psdecay.cpp $(SRCDIR)/psdecay.h $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h
@@ -30,6 +35,6 @@ $(OBJDIR)/parammanager.o: $(SRCDIR)/parammanager.cpp $(SRCDIR)/parammanager.h
 $(OBJDIR)/simulate.o: $(SRCDIR)/simulate.cpp $(SRCDIR)/psdecay.h $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h $(SRCDIR)/parammanager.h
 	$(CC) $(CFLAGS) $(SRCDIR)/simulate.cpp -o $(OBJDIR)/simulate.o
 
-clean: 
-	rm $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(OBJDIR)/*.o sim $(SRCDIR)/Auto*
+clean:
+	rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(OBJDIR)/*.o $(SRCDIR)/EventDict* sim $(SRCDIR)/Auto* 
 
