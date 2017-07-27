@@ -100,6 +100,8 @@ class InitialCuts
         void FillInvalidEventHistograms_(const Event* event);
         void FillDistributionHistograms_(const Event* event);
 
+        static unsigned objectID_;
+
 };
 
 #endif // INITIALCUTS_H

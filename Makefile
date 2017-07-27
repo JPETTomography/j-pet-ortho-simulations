@@ -1,40 +1,42 @@
 CC=g++
-CFLAGS=-c -std=c++11 -Wall `root-config --cflags`
-LDFLAGS= `root-config --ldflags --glibs` -lTree
+CXXFLAGS= -std=c++11 -Wall `root-config --cflags`
+LDFLAGS= `root-config --ldflags --glibs`
 
 OBJDIR=./obj
 SRCDIR=src
+H_FILES := $(wildcard $(SRCDIR)/*.h) 
+CPP_FILES := $(wildcard $(SRCDIR)/*.cpp)
+OBJ_FILES := $(addprefix $(OBJDIR)/,$(notdir $(CPP_FILES:.cpp=.o)))
+
 EVPATH = "$(shell pwd)/$(SRCDIR)/"
-
-all: sim
-
-sim: $(OBJDIR)/simulate.o $(OBJDIR)/event.o $(OBJDIR)/psdecay.o $(OBJDIR)/initialcuts.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o $(OBJDIR)/EventDict.o
-	$(CC) -o sim $(OBJDIR)/simulate.o $(OBJDIR)/EventDict.o $(OBJDIR)/event.o $(OBJDIR)/psdecay.o $(OBJDIR)/initialcuts.o $(OBJDIR)/comptonscattering.o $(OBJDIR)/parammanager.o  $(LDFLAGS)
+#checks if a dictionary exists
+DICT_EXISTS=$(shell [ -e "$(shell pwd)/$(OBJDIR)/EventDict.o" ] && echo 1 || echo 0 )
 	
-$(SRCDIR)/EventDict.cpp:
-	(cd src && rootcint -f EventDict.cpp -c $(CFLAGS) -p $^ event.h event_linkdef.h)
+all: sim
+	@echo "COMPILATION COMPLETE!!!"
+
+sim: $(OBJ_FILES) $(OBJDIR)/EventDict.o
+ifeq ($(DICT_EXISTS), 1)
+	@echo "Creating executable: $@"
+	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $(OBJ_FILES) $(LDFLAGS))
+else
+	@echo "Creating executable: $@"
+	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $(OBJ_FILES) $(OBJDIR)/EventDict.o $(LDFLAGS))
+endif
+		
+$(SRCDIR)/EventDict.cpp: $(SRCDIR)/event.*
+	@echo "Compiling $@"
+	@(cd src && rootcint -f EventDict.cpp -c $(CXXFLAGS) -p  event.h event_linkdef.h)
 
 $(OBJDIR)/EventDict.o: $(SRCDIR)/EventDict.cpp
-	$(CC) $(SRCDIR)/EventDict.cpp -o $(OBJDIR)/EventDict.o $(CFLAGS)
+	@echo "Compiling $@"
+	@$(CC) $(SRCDIR)/EventDict.cpp -o $(OBJDIR)/EventDict.o -c $(CXXFLAGS)
 
-$(OBJDIR)/event.o: $(SRCDIR)/event.cpp $(SRCDIR)/event.h
-	$(CC) $(CFLAGS) $(SRCDIR)/event.cpp -o $(OBJDIR)/event.o
-
-$(OBJDIR)/psdecay.o: $(SRCDIR)/psdecay.cpp $(SRCDIR)/psdecay.h $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h
-	$(CC) $(CFLAGS) $(SRCDIR)/psdecay.cpp -o $(OBJDIR)/psdecay.o
-
-$(OBJDIR)/initialcuts.o: $(SRCDIR)/initialcuts.cpp $(SRCDIR)/initialcuts.h $(SRCDIR)/event.h
-	$(CC) $(CFLAGS) $(SRCDIR)/initialcuts.cpp -o $(OBJDIR)/initialcuts.o
-
-$(OBJDIR)/comptonscattering.o: $(SRCDIR)/comptonscattering.cpp $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h
-	$(CC) $(CFLAGS) $(SRCDIR)/comptonscattering.cpp -o $(OBJDIR)/comptonscattering.o
-
-$(OBJDIR)/parammanager.o: $(SRCDIR)/parammanager.cpp $(SRCDIR)/parammanager.h
-	$(CC) $(CFLAGS) $(SRCDIR)/parammanager.cpp -o $(OBJDIR)/parammanager.o
-
-$(OBJDIR)/simulate.o: $(SRCDIR)/simulate.cpp $(SRCDIR)/psdecay.h $(SRCDIR)/comptonscattering.h $(SRCDIR)/constants.h $(SRCDIR)/parammanager.h
-	$(CC) $(CFLAGS) $(SRCDIR)/simulate.cpp -o $(OBJDIR)/simulate.o
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	@echo "Compiling $@"
+	@$(CC) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(OBJDIR)/*.o $(SRCDIR)/EventDict* sim $(SRCDIR)/Auto* 
+	@echo "Cleaning..."
+	@rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(SRCDIR)/Auto* $(OBJDIR)/*.o $(SRCDIR)/EventDict* EventDict* sim 
 

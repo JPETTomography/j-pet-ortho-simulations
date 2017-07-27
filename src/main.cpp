@@ -9,7 +9,6 @@
 /// @section USAGE
 /// To use, compile using Makefile, then simply run.
 
-//#include <iomanip>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sstream>
@@ -25,17 +24,6 @@
 
 // Paths to folders containing results.
 static std::string generalPrefix("results/");
-
-///
-/// \brief Template used to cast any value to string. Mainly used to cast double to string, preserving scientific notation.
-///
-//template <typename T>
-//std::string std::to_string(const T a_value)
-//{
-//    std::ostringstream out;
-//    out << a_value;
-//    return out.str();
-//}
 
 ///
 /// \brief simulateDecay A function that performs run for many decays with one parameter set.
@@ -67,9 +55,6 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
         noOfGammas = 2;
     }
 
-    //Descriptive part
-    std::cout<<"[INFO] Simulating "<<type_string<<"-gamma decays"<<std::endl;
-    std::cout<<"[INFO] Source coordinates: ("<<source.X()<<", "<<source.Y()<<", "<<source.Z()<<") r="<<source.T()<<" [mm]"<<std::endl;
     ////////////////////////////////////////////////////////////////////////
     double* masses = new double[noOfGammas]();
     //(Momentum, Energy units are Gev/C, GeV)
@@ -83,12 +68,17 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     //setting SilentMode if necessary
     if(pManag.IsSilentMode())
     {
+        //Descriptive part
         decay.EnableSilentMode();
         cuts.EnableSilentMode();
         cs.EnableSilentMode();
     }
     else
+    {
+        std::cout<<"[INFO] Simulating "<<type_string<<"-gamma decays"<<std::endl;
+        std::cout<<"[INFO] Source coordinates: ("<<source.X()<<", "<<source.Y()<<", "<<source.Z()<<") r="<<source.T()<<" [mm]"<<std::endl;
         std::cout<<"[INFO] Generation start!"<<std::endl;
+    }
 
     //***   EVENT LOOP  ***
     for (Int_t n=0; n<pManag.GetSimEvents(); n++)
@@ -268,12 +258,12 @@ int main(int argc, char* argv[])
   PrintConstants(); //prints physics constants values implemented in code
   ParamManager par_man;
   bool pars_imported = false;
-  //default name of the output file is current date and time
-//  auto t = std::time(nullptr);
-//  auto tm = *std::localtime(&t);
-//  std::ostringstream oss;
-//  oss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
-  std::string outputFileAndDirName("nazwa");// = oss.str();
+//  default name of the output file is current date and time
+  auto t = std::time(nullptr);
+  auto tm = *std::localtime(&t);
+  std::ostringstream oss;
+  oss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
+  std::string outputFileAndDirName = oss.str();
   //parsing command line arguments
   for(int nn=1; nn<argc; nn++)
   {
@@ -320,8 +310,17 @@ int main(int argc, char* argv[])
       std::cout<<":::::::::::: START OF RUN NO: "<<ii+1<<" ::::::::::::"<<std::endl;
       tree = simulate(ii, par_man, treeFile, outputFileAndDirName+"/");
       if(tree)
+      {
           tree->Write();
+          delete tree;
+      }
       std::cout<<":::::::::::: END OF RUN NO:  "<<ii+1<<" ::::::::::::"<<"\n"<<std::endl;
+  }
+  if(treeFile)
+  {
+      treeFile->Write();
+      treeFile->Close();
+      delete treeFile;
   }
   std::cout<<"\n:::::::::::: END OF PROGRAM. ::::::::::::\n"<<std::endl;
   return 0;

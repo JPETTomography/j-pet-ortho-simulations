@@ -226,7 +226,10 @@ void ParamManager::ImportParams(std::string inFile)
     }
     //The number of simulation runs is determined basing on the number of data sets with source's parameters.
     fSimRuns_=fData_.size();
-    PrintParams();
+    if(!fSilentMode_)
+        PrintParams();
+    else
+        std::cout<<"[WARNING] Silent mode is enabled! Some inforamtion will not be printed!"<<std::endl;
     std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
 }
 

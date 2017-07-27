@@ -6,18 +6,19 @@ LDFLAGS = -lgtest -lboost_filesystem -lboost_system -lpthread `root-config --ldf
 OBJDIR = ./obj
 OBJDIRUP = ../obj
 SRCDIR = src
+SRCDIRUP = ../src
 
 
-INCS = ./$(SRCDIR)/main_test_all.cpp ./$(SRCDIR)/cuts_tests.cpp ./$(SRCDIR)/event.h $(SRCDIR)/initialcuts.h $(SRCDIR)/parammanager.h
+INCS = ./$(SRCDIR)/main_test_all.cpp ./$(SRCDIR)/cuts_tests.cpp ./$(SRCDIRUP)/event.h 
 
-OBJS =  $(OBJDIR)/main_test_all.o $(OBJDIR)/event.o $(OBJDIR)/cuts_tests.o  $(OBJDIR)/initialcuts.o $(OBJDIR)/parammanager.o
+OBJS =  $(OBJDIR)/main_test_all.o $(OBJDIRUP)/event.o $(OBJDIR)/cuts_tests.o  $(OBJDIRUP)/initialcuts.o $(OBJDIRUP)/parammanager.o $(OBJDIRUP)/EventDict.o
 EVPATH = "$(shell pwd)/src/"
 
 
 #../obj/parammanager.o ../obj/psdecay.o ../obj/comptonscattering.o
 
 testAll: $(OBJS) $(INCS)
-	$(CXX) -o testAll $(OBJS) $(LDFLAGS)
+	(cp $(SRCDIRUP)/EventDict_rdict.pcm . && $(CXX) -o testAll $(OBJS) $(LDFLAGS))
 	
 $(OBJDIR)/main_test_all.o: $(INCS)
 	$(CXX) $(CXXFLAGS) ./$(SRCDIR)/main_test_all.cpp -o $(OBJDIR)/main_test_all.o 
@@ -25,16 +26,5 @@ $(OBJDIR)/main_test_all.o: $(INCS)
 $(OBJDIR)/cuts_tests.o: $(INCS) 
 	$(CXX) $(CXXFLAGS) ./$(SRCDIR)/cuts_tests.cpp  -o $(OBJDIR)/cuts_tests.o 
 
-$(OBJDIR)/event.o: $(INCS)
-	cp $(DEP)/event.h $(DEP)/event.cpp $(DEP)/generatedict.cpp $(DEP)/event_linkdef.h ./$(SRCDIR)
-	root -l -b -n -q $(SRCDIR)/'generatedict.cpp($(EVPATH))'++
-	$(CC) $(CXXFLAGS) $(SRCDIR)/event.cpp -o $(OBJDIR)/event.o
-
-$(OBJDIR)/initialcuts.o: $(SRCDIR)/initialcuts.cpp $(SRCDIR)/initialcuts.h $(SRCDIR)/event.h
-	$(CC) $(CXXFLAGS) $(SRCDIR)/initialcuts.cpp -o $(OBJDIR)/initialcuts.o
-
-$(OBJDIR)/parammanager.o: $(SRCDIR)/parammanager.cpp $(SRCDIR)/parammanager.h
-	$(CC) $(CXXFLAGS) $(SRCDIR)/parammanager.cpp -o $(OBJDIR)/parammanager.o	
-	
 clean:
 	rm obj/*.o $(SRCDIR)/*.so $(SRCDIR)/*.d testAll  testAll.xml 

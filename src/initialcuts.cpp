@@ -10,6 +10,8 @@
 #include "TText.h"
 #include "initialcuts.h"
 
+unsigned InitialCuts::objectID_ = 1;
+
 ///
 /// \brief InitialCuts::InitialCuts The only constructor used.
 /// \param type Type of the decay, can be: TWO, THREE or TWOandONE.
@@ -31,10 +33,10 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     //Creating histograms for angle distributions
     if(type==THREE)
     {
-        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)).c_str(), "fH_p_", 52, 0.0, 0.6);
-        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)).c_str(), "fH_p_", 52, 0.0, 0.6);
+        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
+        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
 
         fTypeString_="3";
         fH_12_pass_=nullptr;
@@ -45,21 +47,21 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_31_fail_=nullptr;
 
         // histograms for events tha passed cuts
-        fH_12_23_pass_ = new TH2F("fH_12_23_pass","fH_12_23_pass", 50,0, 3.15, 50,0,3.15);
+        fH_12_23_pass_ = new TH2F((std::string("fH_12_23_pass_")+std::to_string(objectID_)).c_str(),"fH_12_23_pass", 50,0, 3.15, 50,0,3.15);
         fH_12_23_pass_ -> SetTitle("Polar angle distr, 12 vs 23");
         fH_12_23_pass_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
         fH_12_23_pass_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_23_pass_ -> GetYaxis()->SetTitle("#theta_{23} [rad]");
         fH_12_23_pass_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_12_31_pass_ = new TH2F("fH_12_31_pass","fH_12_31_pass", 50,0, 3.15, 50,0,3.15);
+        fH_12_31_pass_ = new TH2F(("fH_12_31_pass"+std::to_string(objectID_)).c_str(),"fH_12_31_pass", 50,0, 3.15, 50,0,3.15);
         fH_12_31_pass_ -> SetTitle("Polar angle distr, 12 vs 31");
         fH_12_31_pass_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
         fH_12_31_pass_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_31_pass_ -> GetYaxis()->SetTitle("#theta_{31} [rad]");
         fH_12_31_pass_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_23_31_pass_ = new TH2F("fH_23_31_pass","fH_23_31_pass", 50,0, 3.15, 50,0,3.15);
+        fH_23_31_pass_ = new TH2F(("fH_23_31_pass"+std::to_string(objectID_)).c_str(),"fH_23_31_pass", 50,0, 3.15, 50,0,3.15);
         fH_23_31_pass_ -> SetTitle("Polar angle distr, 23 vs 31");
         fH_23_31_pass_ -> GetXaxis()->SetTitle("#theta_{23} [rad]");
         fH_23_31_pass_ -> GetXaxis()->SetTitleOffset(1.4);
@@ -67,31 +69,31 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_23_31_pass_ -> GetYaxis()->SetTitleOffset(1.4);
 
         //histograms for events that failed cuts
-        fH_12_23_fail_ = new TH2F("fH_12_23_fail","fH_12_23_fail", 50,0, 3.15, 50,0,3.15);
+        fH_12_23_fail_ = new TH2F(("fH_12_23_fail"+std::to_string(objectID_)).c_str(),"fH_12_23_fail", 50,0, 3.15, 50,0,3.15);
         fH_12_23_fail_ -> SetTitle("Polar angle distr, 12 vs 23");
         fH_12_23_fail_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
         fH_12_23_fail_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_23_fail_ -> GetYaxis()->SetTitle("#theta_{23} [rad]");
         fH_12_23_fail_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_12_31_fail_ = new TH2F("fH_12_31_fail","fH_12_31_fail", 50,0, 3.15, 50,0,3.15);
+        fH_12_31_fail_ = new TH2F(("fH_12_31_fail"+std::to_string(objectID_)).c_str(),"fH_12_31_fail", 50,0, 3.15, 50,0,3.15);
         fH_12_31_fail_ -> SetTitle("Polar angle distr, 12 vs 31");
         fH_12_31_fail_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
         fH_12_31_fail_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_31_fail_ -> GetYaxis()->SetTitle("#theta_{31} [rad]");
         fH_12_31_fail_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_23_31_fail_ = new TH2F("fH_23_31_fail","fH_23_31_fail", 50,0, 3.15, 50,0,3.15);
+        fH_23_31_fail_ = new TH2F(("fH_23_31_fail"+std::to_string(objectID_)).c_str(),"fH_23_31_fail", 50,0, 3.15, 50,0,3.15);
         fH_23_31_fail_ -> SetTitle("Polar angle distr, 23 vs 31");
         fH_23_31_fail_ -> GetXaxis()->SetTitle("#theta_{23} [rad]");
         fH_23_31_fail_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_23_31_fail_ -> GetYaxis()->SetTitle("#theta_{31} [rad]");
         fH_23_31_fail_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_en_pass_mid_ = new TH1F((std::string("fH_en_pass_MID")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_en_pass_mid_ = new TH1F((std::string("fH_en_pass_MID")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_en_pass_mid_ -> SetTitle("Energy distribution, mid energy gammas");
         fH_en_pass_mid_ -> GetXaxis()->SetTitle("E [MeV]");
         fH_en_pass_mid_ -> GetXaxis()->SetTitleOffset(1.6);
@@ -100,10 +102,10 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     }
     else if(type==TWO)
     {
-        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)).c_str(), "fH_p_", 52, 0.0, 0.6);
-        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)).c_str(), "fH_p_", 52, 0.0, 0.6);
+        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
+        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
 
         fTypeString_ = "2";
         fH_12_23_pass_ = nullptr;
@@ -119,15 +121,15 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
 
 
         fH_en_pass_mid_ = nullptr;
-        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)).c_str(), "fH_en_", 19, 0.510, 0.512);
+        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_low_->GetXaxis()->SetNdivisions(5, false);
-        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)).c_str(), "fH_en_", 19, 0.510, 0.512);
+        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_high_->GetXaxis()->SetNdivisions(5, false);
-        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)).c_str(), "fH_en_", 19, 0.510, 0.512);
+        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_event_->GetXaxis()->SetNdivisions(5, false);
 
         //histogram for events that passed cuts
-        fH_12_pass_ = new TH1F("fH_12_pass", "fH_12_pass", 20, 3.13, 3.15);
+        fH_12_pass_ = new TH1F(("fH_12_pass"+std::to_string(objectID_)).c_str(), "fH_12_pass", 20, 3.13, 3.15);
         fH_12_pass_->SetFillColor(kBlue);
         fH_12_pass_ -> SetTitle("Distribution of polar angle between 2 gammas");
         fH_12_pass_ -> GetXaxis()->SetNdivisions(5, false);
@@ -136,7 +138,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_12_pass_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
         fH_12_pass_ -> GetYaxis()->SetTitleOffset(1.4);
         // histogram for events that did not passed cuts
-        fH_12_fail_ = new TH1F("fH_12_fail", "fH_12_fail", 20, 3.13, 3.15);
+        fH_12_fail_ = new TH1F(("fH_12_fail"+std::to_string(objectID_)).c_str(), "fH_12_fail", 20, 3.13, 3.15);
         fH_12_fail_->SetFillColor(kBlue);
         fH_12_fail_ -> SetTitle("Distribution of polar angle between 2 gammas");
         fH_12_fail_ -> GetXaxis()->SetNdivisions(5, false);
@@ -147,10 +149,10 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     }
     else if(type==TWOandONE)
     {
-        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.3, 1.3);
-        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)).c_str(), "fH_p_", 52, 0.3, 1.3);
-        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)).c_str(), "fH_en_", 52, 0.3, 1.3);
-        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)).c_str(), "fH_p_", 52, 0.3, 1.3);
+        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.3, 1.3);
+        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.3, 1.3);
+        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.3, 1.3);
+        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.3, 1.3);
 
         fTypeString_ = "2&1";
         fH_12_23_pass_ = nullptr;
@@ -161,14 +163,14 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_23_31_fail_ = nullptr;
         fH_en_pass_mid_ = nullptr;
 
-        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)).c_str(), "fH_en_", 19, 0.510, 0.512);
+        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_low_->GetXaxis()->SetNdivisions(5, false);
-        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)).c_str(), "fH_en_", 19, 0.510, 0.512);
+        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_high_->GetXaxis()->SetNdivisions(5, false);
-        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)).c_str(), "fH_en_", 19, 0.510, 0.512);
+        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_event_->GetXaxis()->SetNdivisions(5, false);
         //histograms for events that passed cuts
-        fH_12_pass_ = new TH1F("fH_12_pass", "fH_12_pass", 19, 3.13, 3.15);
+        fH_12_pass_ = new TH1F(("fH_12_pass"+std::to_string(objectID_)).c_str(), "fH_12_pass", 19, 3.13, 3.15);
         fH_12_pass_->SetFillColor(kBlue);
         fH_12_pass_ -> SetTitle("Polar angle distribution between gamma1 and gamma2");
         fH_12_pass_ -> GetXaxis()->SetNdivisions(5, false);
@@ -176,7 +178,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_12_pass_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_pass_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
         fH_12_pass_ -> GetYaxis()->SetTitleOffset(1.4);
-        fH_23_pass_ = new TH1F("fH_23_pass", "fH_23_pass", 50, 0.0, 3.15);
+        fH_23_pass_ = new TH1F(("fH_23_pass"+std::to_string(objectID_)).c_str(), "fH_23_pass", 50, 0.0, 3.15);
         fH_23_pass_->SetFillColor(kBlue);
         fH_23_pass_ -> SetTitle("Polar angle distribution between gamma2 and gamma3");
         fH_23_pass_ -> GetXaxis()->SetNdivisions(5, false);
@@ -184,7 +186,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_23_pass_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_23_pass_ -> GetYaxis()->SetTitle("dN/d#theta_{23}");
         fH_23_pass_ -> GetYaxis()->SetTitleOffset(1.4);
-        fH_31_pass_ = new TH1F("fH_31_pass", "fH_31_pass", 50, 0.0, 3.15);
+        fH_31_pass_ = new TH1F(("fH_31_pass"+std::to_string(objectID_)).c_str(), "fH_31_pass", 50, 0.0, 3.15);
         fH_31_pass_->SetFillColor(kBlue);
         fH_31_pass_ -> SetTitle("Polar angle distribution between gamma1 and gamma3");
         fH_31_pass_ -> GetXaxis()->SetNdivisions(5, false);
@@ -193,7 +195,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_31_pass_ -> GetYaxis()->SetTitle("dN/d#theta_{31}");
         fH_31_pass_ -> GetYaxis()->SetTitleOffset(1.4);
         // histogram for events that did not passed cuts
-        fH_12_fail_ = new TH1F("fH_12_fail", "fH_12_fail", 19, 3.13, 3.15);
+        fH_12_fail_ = new TH1F(("fH_12_fail"+std::to_string(objectID_)).c_str(), "fH_12_fail", 19, 3.13, 3.15);
         fH_12_fail_->SetFillColor(kBlue);
         fH_12_fail_ -> SetTitle("Polar angle distribution between gamma1 and gamma2");
         fH_12_fail_ -> GetXaxis()->SetNdivisions(5, false);
@@ -201,7 +203,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_12_fail_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_fail_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
         fH_12_fail_ -> GetYaxis()->SetTitleOffset(1.4);
-        fH_23_fail_ = new TH1F("fH_23_fail", "fH_23_fail", 50, 0.0, 3.15);
+        fH_23_fail_ = new TH1F(("fH_23_fail"+std::to_string(objectID_)).c_str(), "fH_23_fail", 50, 0.0, 3.15);
         fH_23_fail_->SetFillColor(kBlue);
         fH_23_fail_ -> SetTitle("Polar angle distribution between gamma2 and gamma3");
         fH_23_fail_ -> GetXaxis()->SetNdivisions(5, false);
@@ -209,7 +211,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_23_fail_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_23_fail_ -> GetYaxis()->SetTitle("dN/d#theta_{23}");
         fH_23_fail_ -> GetYaxis()->SetTitleOffset(1.4);
-        fH_31_fail_ = new TH1F("fH_31_fail", "fH_31_fail", 50, 0.0, 3.15);
+        fH_31_fail_ = new TH1F(("fH_31_fail"+std::to_string(objectID_)).c_str(), "fH_31_fail", 50, 0.0, 3.15);
         fH_31_fail_->SetFillColor(kBlue);
         fH_31_fail_ -> SetTitle("Polar angle distribution between gamma1 and gamma3");
         fH_31_fail_ -> GetXaxis()->SetNdivisions(5, false);
@@ -235,14 +237,14 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     fH_p_pass_ -> GetXaxis()->SetTitleOffset(1.6);
     fH_p_pass_ -> GetYaxis()->SetTitle("dN/dp");
     fH_p_pass_ -> GetYaxis()->SetTitleOffset(1.8);
-    fH_phi_pass_ = new TH1F((std::string("fH_phi_pass_")+std::to_string(fDecayType_)).c_str(), "fH_phi_", 52, -3.2, 3.2);
+    fH_phi_pass_ = new TH1F((std::string("fH_phi_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_phi_", 52, -3.2, 3.2);
     fH_phi_pass_->SetFillColor(kBlue);
     fH_phi_pass_ -> SetTitle("Azimuthal angle distribution");
     fH_phi_pass_ -> GetXaxis()->SetTitle("#phi [rad]");
     fH_phi_pass_ -> GetXaxis()->SetTitleOffset(1.6);
     fH_phi_pass_ -> GetYaxis()->SetTitle("dN/d #phi");
     fH_phi_pass_ -> GetYaxis()->SetTitleOffset(1.8);
-    fH_cosTheta_pass_ = new TH1F((std::string("fH_cosTheta_pass_")+std::to_string(fDecayType_)).c_str(), "fH_cosTheta_", 52, -1.01, 1.01);
+    fH_cosTheta_pass_ = new TH1F((std::string("fH_cosTheta_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_cosTheta_", 52, -1.01, 1.01);
     fH_cosTheta_pass_->SetFillColor(kBlue);
     fH_cosTheta_pass_ -> SetTitle("Cosine of polar angle distribution");
     fH_cosTheta_pass_ -> GetXaxis()->SetTitle("cos(#theta)");
@@ -263,14 +265,14 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     fH_p_fail_ -> GetXaxis()->SetTitleOffset(1.6);
     fH_p_fail_ -> GetYaxis()->SetTitle("dN/dp");
     fH_p_fail_ -> GetYaxis()->SetTitleOffset(1.8);
-    fH_phi_fail_ = new TH1F((std::string("fH_phi_fail_")+std::to_string(fDecayType_)).c_str(), "fH_phi_", 52, -3.2, 3.2);
+    fH_phi_fail_ = new TH1F((std::string("fH_phi_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_phi_", 52, -3.2, 3.2);
     fH_phi_fail_->SetFillColor(kBlue);
     fH_phi_fail_ -> SetTitle("Azimuthal angle distribution");
     fH_phi_fail_ -> GetXaxis()->SetTitle("#phi [rad]");
     fH_phi_fail_ -> GetXaxis()->SetTitleOffset(1.6);
     fH_phi_fail_ -> GetYaxis()->SetTitle("dN/d #phi");
     fH_phi_fail_ -> GetYaxis()->SetTitleOffset(1.8);
-    fH_cosTheta_fail_ = new TH1F((std::string("fH_cosTheta_fail_")+std::to_string(fDecayType_)).c_str(), "fH_cosTheta_", 52, -1.01, 1.01);
+    fH_cosTheta_fail_ = new TH1F((std::string("fH_cosTheta_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_cosTheta_", 52, -1.01, 1.01);
     fH_cosTheta_fail_->SetFillColor(kBlue);
     fH_cosTheta_fail_ -> SetTitle("Cosine of polar angle distribution");
     fH_cosTheta_fail_ -> GetXaxis()->SetTitle("cos(#theta)");
@@ -296,14 +298,14 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     fH_en_pass_high_ -> GetYaxis()->SetTitleOffset(1.8);
 
     //histograms to monitor cuts passing
-    fH_event_cuts_ = new TH1F((std::string("fH_event_cuts_")+std::to_string(fDecayType_)).c_str(),\
+    fH_event_cuts_ = new TH1F((std::string("fH_event_cuts_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(),\
             "fH_event_cuts_", 3, 0.0, 3.0);
     fH_event_cuts_->SetTitle("Passing cuts by events");
     fH_event_cuts_->GetYaxis()->SetTitle("% passed");
     fH_event_cuts_->GetYaxis()->SetTitleOffset(1.4);
     fH_event_cuts_->GetXaxis()->SetLabelSize(0);
     fH_event_cuts_->GetXaxis()->SetTickLength(0);
-    fH_gamma_cuts_ = new TH1F((std::string("fH_gamma_cuts_")+std::to_string(fDecayType_)).c_str(),\
+    fH_gamma_cuts_ = new TH1F((std::string("fH_gamma_cuts_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(),\
             "fH_gamma_cuts_", 3, 0.0, 3.0);
     fH_gamma_cuts_->SetTitle("Passing cuts by gammas");
     fH_gamma_cuts_->GetYaxis()->SetTitle("% passed");
@@ -311,6 +313,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     fH_gamma_cuts_->GetXaxis()->SetLabelSize(0);
     fH_gamma_cuts_->GetXaxis()->SetTickLength(0);
 
+    objectID_++;
 }
 
 ///
