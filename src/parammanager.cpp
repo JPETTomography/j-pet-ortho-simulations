@@ -229,8 +229,8 @@ void ParamManager::ImportParams(std::string inFile)
     if(!fSilentMode_)
         PrintParams();
     else
-        std::cout<<"[WARNING] Silent mode is enabled! Some inforamtion will not be printed!"<<std::endl;
-    std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
+        std::cout<<"[WARNING] Silent mode is enabled! Some information will not be printed!"<<std::endl;
+    std::cout<<"[INFO] Parameters imported.\n"<<std::endl;
 }
 
 ///

@@ -4,7 +4,7 @@
 ## Email: rafal.maselek@ncbj.gov.pl
 
 ### Requirements:
-+ ROOT ^ (You may have to manually load the environment, if it is not set in *~/.bashrc* To learn how to do it see ROOT installation manual.
++ ROOT 6 (You may have to manually load the environment, if it is not set in *~/.bashrc* To learn how to do it see ROOT installation manual.
 + GCC > 4.9 (default version on cluster is too old, load more recent one; tested on 5.4.0)
 + Unix (tested on Kubuntu 16.04)
 

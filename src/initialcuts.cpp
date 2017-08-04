@@ -505,6 +505,8 @@ InitialCuts::~InitialCuts()
 ///
 void InitialCuts::AddCuts(Event* event)
 {
+    //Calculate real hit points for pass, and fake hit points for fail (we assume infinite long detector)
+    event->CalculateHitPoints(fR_);
     fNumberOfEvents_++;
     bool geo_event_pass = true;
     bool inter_event_pass = true;
@@ -525,6 +527,8 @@ void InitialCuts::AddCuts(Event* event)
             }
             if(geo_pass && inter_pass) //gamma passed all cuts
             {
+                if(TMath::Abs(event->GetHitPointOf(ii)->Z()) > fL_/2.0)
+                    std::cerr<<"z="<<event->GetHitPointOf(ii)->Z()<<" ";
                 fAcceptedGammas_++;
                 fH_en_pass_->Fill(event->GetFourMomentumOf(ii)->Energy());
                 fH_p_pass_->Fill(event->GetFourMomentumOf(ii)->P());

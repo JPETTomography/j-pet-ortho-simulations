@@ -264,7 +264,7 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
 /// \brief ComptonScattering::Scatter Scatters gammas from the event, performs smearing and fills histograms.
 /// \param event Pointer to Event object that is to be scattered.
 ///
-void ComptonScattering::Scatter(const Event* event) const
+void ComptonScattering::Scatter(Event* event) const
 {
     for(int ii=0; ii<3; ii++)
     {
@@ -277,12 +277,18 @@ void ComptonScattering::Scatter(const Event* event) const
             fH_photon_theta_->Fill(theta);
             double new_E = E * (1.0 - 1.0/(1.0+(E/(e_mass_MeV))*(1-TMath::Cos(theta)))); //E*(1-P) -- Compton electron's energy
             fH_electron_E_->Fill(new_E);
+            event->SetEdepOf(ii, new_E);
             //if new_E is within limit -- smear, otherwise fill histogram with new_E
             if((new_E >= fSmearLowLimit_) && (new_E <= fSmearHighLimit_))
-                fH_electron_E_blur_->Fill(fRand_->Gaus(new_E, sigmaE(E)));
+            {
+                double Esmear = fRand_->Gaus(new_E, sigmaE(E));
+                fH_electron_E_blur_->Fill(Esmear);
+                event->SetEdepSmearOf(ii, Esmear);
+            }
             else
             {
                 fH_electron_E_blur_->Fill(new_E);
+                event->SetEdepSmearOf(ii, new_E);
             }
         }
     }

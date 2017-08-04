@@ -26,6 +26,16 @@
 static std::string generalPrefix("results/");
 
 ///
+/// \brief Small function to convert double numbers into strings with pretty appearence
+///
+template <typename T>
+std::string toStringPretty(const T a_value)
+{
+    std::ostringstream out;
+    out << a_value;
+    return out.str();
+}
+///
 /// \brief simulateDecay A function that performs run for many decays with one parameter set.
 /// \param Ps Fourmomentum of the source [GeV]
 /// \param source Fourvector with the position of the source, fourth coordinate represents radius of the source ball [mm].
@@ -201,8 +211,8 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    //setting the parameters of the source and subdirectory name
    Ps = TLorentzVector(px/1000000.0, py/1000000.0, pz/1000000.0, 1.022/1000); //scaling back to GeV
    sourcePos = TLorentzVector(x,y,z,r);
-   subDir = std::to_string(x)+std::string("_")+std::to_string(y)+std::string("_")+std::to_string(z)+std::string("_")\
-           +std::to_string(px)+std::string("_")+std::to_string(py)+std::string("_")+std::to_string(pz)+std::string("/");
+   subDir = toStringPretty(x)+std::string("_")+toStringPretty(y)+std::string("_")+toStringPretty(z)+std::string("_")\
+           +toStringPretty(px)+std::string("_")+toStringPretty(py)+std::string("_")+toStringPretty(pz)+std::string("/");
 
    //setting the right output
    if(pManag.GetOutputType()==BOTH || pManag.GetOutputType()==PNG)

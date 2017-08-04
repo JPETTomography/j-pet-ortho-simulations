@@ -3,6 +3,7 @@
 /// @date 13.07.2017
 #include <iostream>
 #include "event.h"
+#include "constants.h"
 //ROOT stuff
 ClassImp(Event)
 
@@ -22,8 +23,8 @@ Event::Event()
     {
         fFourMomentum_.push_back(TLorentzVector(0.0, 0.0, 1.022, 1.022)); //scale from GeV to MeV
         fCutPassing_.push_back(false);
-        fPhi_.push_back(0.0);
-        fTheta_.push_back(0.0);
+//        fPhi_.push_back(0.0);
+//        fTheta_.push_back(0.0);
     }
     std::cerr<<"[WARNING] Default constructor used for Event class!"<<std::endl;
 }
@@ -50,9 +51,11 @@ Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum
         if(fourMomentum[ii])
         {
             fFourMomentum_.push_back(*fourMomentum[ii]*1000); //scale from GeV to MeV
-            fPhi_.push_back(fourMomentum[ii]->Phi());
-            fTheta_.push_back(fourMomentum[ii]->Theta());
+//            fPhi_.push_back(fourMomentum[ii]->Phi());
+//            fTheta_.push_back(fourMomentum[ii]->Theta());
             fCutPassing_.push_back(true);
+            fEdep_.push_back(0.0);
+            fEdepSmear_.push_back(0.0);
         }
 
     }
@@ -72,10 +75,10 @@ Event::Event(const Event& est) : TObject(est)
     std::copy(est.fFourMomentum_.begin(), est.fFourMomentum_.end(), fFourMomentum_.begin());
     fCutPassing_.resize(est.fCutPassing_.size());
     std::copy(est.fCutPassing_.begin(), est.fCutPassing_.end(), fCutPassing_.begin());
-    fPhi_.resize(est.fPhi_.size());
-    std::copy(est.fPhi_.begin(), est.fPhi_.end(), fPhi_.begin());
-    fTheta_.resize(est.fTheta_.size());
-    std::copy(est.fTheta_.begin(), est.fTheta_.end(), fTheta_.begin());
+    fHitPhi_.resize(est.fHitPhi_.size());
+    std::copy(est.fHitPhi_.begin(), est.fHitPhi_.end(), fHitPhi_.begin());
+    fHitTheta_.resize(est.fHitTheta_.size());
+    std::copy(est.fHitTheta_.begin(), est.fHitTheta_.end(), fHitTheta_.begin());
 }
 
 ///
@@ -93,10 +96,10 @@ Event& Event::operator=(const Event& est)
     std::copy(est.fFourMomentum_.begin(), est.fFourMomentum_.end(), fFourMomentum_.begin());
     fCutPassing_.resize(est.fCutPassing_.size());
     std::copy(est.fCutPassing_.begin(), est.fCutPassing_.end(), fCutPassing_.begin());
-    fPhi_.resize(est.fPhi_.size());
-    std::copy(est.fPhi_.begin(), est.fPhi_.end(), fPhi_.begin());
-    fTheta_.resize(est.fTheta_.size());
-    std::copy(est.fTheta_.begin(), est.fTheta_.end(), fTheta_.begin());
+    fHitPhi_.resize(est.fHitPhi_.size());
+    std::copy(est.fHitPhi_.begin(), est.fHitPhi_.end(), fHitPhi_.begin());
+    fHitTheta_.resize(est.fHitTheta_.size());
+    std::copy(est.fHitTheta_.begin(), est.fHitTheta_.end(), fHitTheta_.begin());
     return *this;
 }
 
@@ -106,6 +109,47 @@ Event& Event::operator=(const Event& est)
 Event::~Event()
 {
 
+}
+
+void Event::CalculateHitPoints(double R)
+{
+    double L = 500;
+    for(auto it = fFourMomentum_.begin(); it != fFourMomentum_.end(); ++it)
+    {
+        if(it->Pt() > TMath::Power(10, -10))
+        {
+            int iter = it-fFourMomentum_.begin();
+            double x0 = fEmissionPoint_[iter].X();
+            double y0 = fEmissionPoint_[iter].Y();
+            double z0 = fEmissionPoint_[iter].Z();
+            double px = it->X();
+            double py = it->Y();
+            double pt2 = px*px+py*py;
+            double delta = 4*(x0*px+y0*py)*(x0*px+y0*py) - 4*(x0*x0+y0*y0-R*R)*pt2;
+            double s = (-2*(x0*px+y0*py)+TMath::Sqrt(delta))/2/pt2;
+            if(TMath::Abs(z0+it->Z()*s) > L/2.0)
+            {
+                //getting out of detector
+                TLorentzVector hit(-1000, -1000, -1000, -1000);
+                fHitPoint_.push_back(hit);
+                fHitPhi_.push_back(-4);
+                fHitTheta_.push_back(-4);
+                continue;
+            }
+            TLorentzVector hit(x0+it->X()*s, y0+it->Y()*s, z0+it->Z()*s, it->T()*s*1000000/light_speed_SI);
+            fHitPoint_.push_back(hit);
+            fHitPhi_.push_back(hit.Phi());//(hit-fEmissionPoint_[it-fFourMomentum_.begin()]).Phi());
+            fHitTheta_.push_back(hit.Theta());//(hit-fEmissionPoint_[it-fFourMomentum_.begin()]).Theta());
+        }
+        else
+        {
+             TLorentzVector hit(-1000, -1000, -1000, -1000);
+             fHitPoint_.push_back(hit);
+             fHitPhi_.push_back(-4);
+             fHitTheta_.push_back(-4);
+
+        }
+    }
 }
 
 ///

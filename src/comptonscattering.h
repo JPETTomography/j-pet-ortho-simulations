@@ -25,7 +25,7 @@ class ComptonScattering
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
         void DrawComptonHistograms(std::string filePrefix, OutputOptions output=PNG);
-        void Scatter(const Event* event) const; //perfors scattering
+        void Scatter(Event* event) const; //perfors scattering
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
         inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
