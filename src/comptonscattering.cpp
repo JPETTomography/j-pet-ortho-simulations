@@ -12,7 +12,6 @@
 ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fSilentMode_(false), fDecayType_(type), fSmearLowLimit_(low), fSmearHighLimit_(high)
 {
     fRand_ = new TRandom3(0); //set seed for the random generator
-
     if(fDecayType_==THREE)
     {
         fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.0, 0.600);

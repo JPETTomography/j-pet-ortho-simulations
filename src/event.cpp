@@ -130,7 +130,7 @@ void Event::CalculateHitPoints(double R)
             if(TMath::Abs(z0+it->Z()*s) > L/2.0)
             {
                 //getting out of detector
-                TLorentzVector hit(-1000, -1000, -1000, -1000);
+                TLorentzVector hit(-2000, -2000, -2000, -2000);
                 fHitPoint_.push_back(hit);
                 fHitPhi_.push_back(-4);
                 fHitTheta_.push_back(-4);
@@ -143,7 +143,7 @@ void Event::CalculateHitPoints(double R)
         }
         else
         {
-             TLorentzVector hit(-1000, -1000, -1000, -1000);
+             TLorentzVector hit(-2000, -2000, -2000, -2000);
              fHitPoint_.push_back(hit);
              fHitPhi_.push_back(-4);
              fHitTheta_.push_back(-4);

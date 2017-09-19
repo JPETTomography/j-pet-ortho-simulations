@@ -269,11 +269,15 @@ int main(int argc, char* argv[])
   ParamManager par_man;
   bool pars_imported = false;
 //  default name of the output file is current date and time
+//  by now it is disabled, but with in future may be useful
+/*
   auto t = std::time(nullptr);
   auto tm = *std::localtime(&t);
   std::ostringstream oss;
   oss << std::put_time(&tm, "%d-%m-%Y_%H-%M-%S");
   std::string outputFileAndDirName = oss.str();
+  */
+  std::string outputFileAndDirName = "result";
   //parsing command line arguments
   for(int nn=1; nn<argc; nn++)
   {

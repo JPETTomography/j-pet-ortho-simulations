@@ -506,7 +506,7 @@ InitialCuts::~InitialCuts()
 void InitialCuts::AddCuts(Event* event)
 {
     //Calculate real hit points for pass, and fake hit points for fail (we assume infinite long detector)
-    event->CalculateHitPoints(fR_);
+    event->CalculateHitPoints(fR_); //calculates hit points position and their theta/phi angles
     fNumberOfEvents_++;
     bool geo_event_pass = true;
     bool inter_event_pass = true;
@@ -517,32 +517,17 @@ void InitialCuts::AddCuts(Event* event)
         if(event->GetEmissionPointOf(ii)!=nullptr && event->GetFourMomentumOf(ii)!=nullptr)
         {
             fNumberOfGammas_++;
-            bool geo_pass = GeometricalAcceptance_(event->GetEmissionPointOf(ii), event->GetFourMomentumOf(ii));
-            bool inter_pass = geo_pass ? DetectionCut_() : false;
-            event->SetCutPassing(ii, geo_pass && inter_pass);
+            bool geo_pass = event->GetHitPhiOf(ii)==-4 ? false : true;//GeometricalAcceptance_(event->GetEmissionPointOf(ii), event->GetFourMomentumOf(ii));
+            bool inter_pass = geo_pass ? DetectionCut_() : false; //if passed geom. then test detector eff
+            event->SetCutPassing(ii, inter_pass);
             if(!(event->GetDecayType()==TWOandONE && ii==2))
             {
                 geo_event_pass &= geo_pass;
                 inter_event_pass &= inter_pass;
             }
-            if(geo_pass && inter_pass) //gamma passed all cuts
-            {
-                if(TMath::Abs(event->GetHitPointOf(ii)->Z()) > fL_/2.0)
-                    std::cerr<<"z="<<event->GetHitPointOf(ii)->Z()<<" ";
-                fAcceptedGammas_++;
-                fH_en_pass_->Fill(event->GetFourMomentumOf(ii)->Energy());
-                fH_p_pass_->Fill(event->GetFourMomentumOf(ii)->P());
-                fH_phi_pass_->Fill(event->GetFourMomentumOf(ii)->Phi());
-                fH_cosTheta_pass_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
-            }
-            else //gamma failed at least one of the cuts
-            {
-                fH_en_fail_->Fill(event->GetFourMomentumOf(ii)->Energy());
-                fH_p_fail_->Fill(event->GetFourMomentumOf(ii)->P());
-                fH_phi_fail_->Fill(event->GetFourMomentumOf(ii)->Phi());
-                fH_cosTheta_fail_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
-            }
         }
+        else
+            event->SetCutPassing(ii, false);
     }
     if(geo_event_pass)
         fH_event_cuts_->Fill(1);
@@ -552,6 +537,7 @@ void InitialCuts::AddCuts(Event* event)
         FillValidEventHistograms_(event);
     else
         FillInvalidEventHistograms_(event);
+    //Fills pass/fail distribution histograms
     FillDistributionHistograms_(event);
 
     //Let event deduce its flag!

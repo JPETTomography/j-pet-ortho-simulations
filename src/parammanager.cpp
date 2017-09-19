@@ -19,7 +19,7 @@ ParamManager::ParamManager() :
     fP_(0),
     fL_(700),
     fR_(500),
-    fESc_(1160),
+    fESc_(1157),
     fPSc_(0.98),
     fSmearLowLimit_(0.0),
     fSmearHighLimit_(2.0),

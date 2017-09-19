@@ -37,8 +37,10 @@ class Event : public TObject
             {return index<fFourMomentum_.size() ? const_cast<TLorentzVector*>(&fFourMomentum_[index]) : NULL;}
         inline TLorentzVector* GetHitPointOf(const unsigned index) const
             {return index<fHitPoint_.size() ? const_cast<TLorentzVector*>(&fHitPoint_[index]) : NULL;}
-        inline bool GetCutPassingOf(const unsigned index) const {return fCutPassing_[index];}
-        inline void SetCutPassing(int ii, bool val) {fCutPassing_[ii]=val;}
+        inline bool GetCutPassingOf(const unsigned index) const
+            {return index<fCutPassing_.size() ? fCutPassing_[index] : false;}
+        inline void SetCutPassing(unsigned ii, bool val)
+            {if(ii<fCutPassing_.size()) fCutPassing_[ii]=val;}
         inline double GetWeight() const {return fWeight_;}
         inline DecayType GetDecayType() const {return fDecayType_;}
         inline bool GetPassFlag() const {return fPassFlag_;}
@@ -52,11 +54,12 @@ class Event : public TObject
         //set fPassFlag_ by checking values in fCutPassing_
         void DeducePassFlag();
         //calculates hit point of gammas on a detectors surface and fills fHitTheta_ and fHitPhi_ histograms
+        // angles are calculated in reference to the center of the reference system's center !!!
         void CalculateHitPoints(double R);
         //number of event
         long fId;
         //ROOT stuff
-        ClassDef(Event, 11)
+        ClassDef(Event, 13)
 
     private:
         static long fCounter_; //static variable incremented with every call of a constructor (but not copy constructor)
