@@ -35,6 +35,17 @@ std::string toStringPretty(const T a_value)
     out << a_value;
     return out.str();
 }
+
+TLorentzVector* generateSingleGamma(TRandom3 &rand, double energy)
+{
+    //generating additional gamma from Sc decay in the same place as the Ps decay
+        double theta = TMath::ACos(rand.Uniform(-1.0, 1.0));
+        double phi = rand.Uniform(0.0, 2*TMath::Pi());
+        double P = energy/1000.0; //GeV
+        return new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
+}
+
+
 ///
 /// \brief simulateDecay A function that performs run for many decays with one parameter set.
 /// \param Ps Fourmomentum of the source [GeV]
@@ -49,7 +60,12 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     std::string type_string;
     int noOfGammas = 0;
     TRandom3 rand(0); //setting the seed for random number generation
-    if(type==TWO)
+    if(type==ONE)
+    {
+        type_string = "1";
+        noOfGammas = 1;
+    }
+    else if(type==TWO)
     {
         type_string = "2";
         noOfGammas = 2;
@@ -64,18 +80,24 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
         type_string = "2&1";
         noOfGammas = 2;
     }
-
+    std::cout<<"po przepisaniu typow, typ =="<<type<<std::endl;
     ////////////////////////////////////////////////////////////////////////
     double* masses = new double[noOfGammas]();
     //(Momentum, Energy units are Gev/C, GeV)
     TGenPhaseSpace event;
     event.SetDecay(Ps, noOfGammas, masses);
     // creating necessary objects
+    std::cout<<"Tworzenie elementow"<<std::endl;
     Event* eventDecay = nullptr;//new Event;
+    std::cout<<"utworzono wskaznik na Event"<<std::endl;
     PsDecay decay(type);
+    std::cout<<"utworzono PsDecay"<<std::endl;
     InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetP());
+    std::cout<<"Utworzono InitialCuts"<<std::endl;
     ComptonScattering cs(type, pManag.GetSmearLowLimit(), pManag.GetSmearHighLimit());
+    std::cout<<"Utworzono ComptonScattering"<<std::endl;
     //setting SilentMode if necessary
+    std::cout<<"Po utworzeniu"<<std::endl;
     if(pManag.IsSilentMode())
     {
         //Descriptive part
@@ -94,59 +116,69 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     for (Int_t n=0; n<pManag.GetSimEvents(); n++)
     {
        //Generation of a decay
-       double weight = event.Generate();
-       TLorentzVector* gamma1 = event.GetDecay(0);
-       TLorentzVector* gamma2 = event.GetDecay(1);
-       TLorentzVector* gamma3;
+       double weight;
+       TLorentzVector* gamma1 = nullptr;
+       TLorentzVector* gamma2 = nullptr;
+       TLorentzVector* gamma3 = nullptr;
+
+       if(type == ONE)
+       {
+           weight = 1.0;
+           gamma1 = generateSingleGamma(rand, pManag.GetEPrompt()/1000.0);
+       }
+       else
+       {
+            weight = event.Generate();
+            gamma1 = event.GetDecay(0);
+            gamma2 = event.GetDecay(1);
+       }
+
+
        //Generating emission point inside a ball
        TLorentzVector* emission1;
+       TLorentzVector* emission2 =nullptr;
+       TLorentzVector* emission3 = nullptr;
        if(source.T() != 0)
             emission1= new TLorentzVector(source.X()+rand.Uniform(-1.0,1.0)*source.T(), source.Y()+rand.Uniform(-1.0,1.0)*source.T(),\
                                                       source.Z()+rand.Uniform(-1.0,1.0)*source.T(), 0.0);
        else
            emission1 = new TLorentzVector(source.X(), source.Y(), source.Z(), 0.0);
-       TLorentzVector* emission2 = new TLorentzVector(*emission1); //making copies
-       TLorentzVector* emission3;
+
+       if(type != ONE)
+          emission2 = new TLorentzVector(*emission1); //making copies
+
        if(type == THREE)
        {
            gamma3=event.GetDecay(2);
            emission3 = new TLorentzVector(*emission1);
        }
-       else if(type == TWO)
+       else if(type == TWOandONE && rand.Uniform() < pManag.GetPPrompt())
        {
-           gamma3 = nullptr;
-           emission3 = nullptr;
+           gamma3 = generateSingleGamma(rand, pManag.GetEPrompt()/1000.0);
+           emission3 = new TLorentzVector(*emission1);
+       }
 
-       }
-       else if(type == TWOandONE)
-       {
-           //generating additional gamma from Sc decay in the same place as the Ps decay
-           if(rand.Uniform() < pManag.GetPSc())
-           {
-               double theta = TMath::ACos(rand.Uniform(-1.0, 1.0));
-               double phi = rand.Uniform(0.0, 2*TMath::Pi());
-               double P = pManag.GetESc()/1000000.0; //GeV
-               gamma3 = new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
-               emission3 = new TLorentzVector(*emission1);
-           }
-           else
-           {
-               gamma3 = nullptr;
-               emission3=nullptr;
-           }
-       }
        //Packing everything to EVENT object
        TLorentzVector* fourMomenta[3] = {gamma1, gamma2, gamma3};
        TLorentzVector* sourcePar[3] = {emission1, emission2, emission3};
        eventDecay = new Event(sourcePar, fourMomenta, weight, type);
 
-       //Getting initial distributions
-       decay.AddEvent(eventDecay);
-       //Applying cuts
-       cuts.AddCuts(eventDecay);
-       //Performing the Compton Scattering
-       cs.Scatter(eventDecay);
-       //we select what kind of events will be saved to the tree and save them
+       try
+       {
+           //Getting initial distributions
+           decay.AddEvent(eventDecay);
+           //Applying cuts
+           cuts.AddCuts(eventDecay);
+           //Performing the Compton Scattering
+           cs.Scatter(eventDecay);
+           //we select what kind of events will be saved to the tree and save them
+       }
+       catch(std::string e)
+       {
+           std::cout<<e;
+           exit(-1);
+       }
+
        if(tree!=nullptr && ((pManag.GetEventTypeToSave()==PASS && eventDecay->GetPassFlag()) || (pManag.GetEventTypeToSave()==FAIL && !(eventDecay->GetPassFlag())) || (pManag.GetEventTypeToSave()==ALL)))
        {
            if(n==0)
@@ -159,7 +191,7 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
        }
        delete eventDecay;
        delete emission1;
-       delete emission2;
+       if(emission2) delete emission2;
        if(emission3) delete emission3;
     }
     //***   END OF EVENT LOOP   ***
@@ -233,8 +265,8 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    //Performing simulations based on the provided number of gammas
    if(noOfGammas==1)
    {
-        std::cout<<"::::::::::::Simulating 2+1-gamma decays::::::::::::"<<std::endl;
-        simulateDecay(Ps, sourcePos, pManag, TWOandONE, generalPrefix+outputFileAndDirName+subDir, tree);
+       std::cout<<"::::::::::::Simulating 1-gamma generation::::::::::::"<<std::endl;
+       simulateDecay(Ps, sourcePos, pManag, ONE, generalPrefix+outputFileAndDirName+subDir, tree);
    }
    else if(noOfGammas==2)
    {
@@ -245,6 +277,11 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    {
        std::cout<<"::::::::::::Simulating 3-gamma decays::::::::::::"<<std::endl;
        simulateDecay(Ps, sourcePos, pManag, THREE, generalPrefix+outputFileAndDirName+subDir, tree);
+   }
+   else if(noOfGammas==4)
+   {
+        std::cout<<"::::::::::::Simulating 2+1-gamma decays::::::::::::"<<std::endl;
+        simulateDecay(Ps, sourcePos, pManag, TWOandONE, generalPrefix+outputFileAndDirName+subDir, tree);
    }
    else
    {

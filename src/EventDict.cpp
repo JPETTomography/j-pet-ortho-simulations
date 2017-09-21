@@ -54,7 +54,7 @@ namespace ROOT {
       ::Event *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::Event >(0);
       static ::ROOT::TGenericClassInfo 
-         instance("Event", ::Event::Class_Version(), "event.h", 25,
+         instance("Event", ::Event::Class_Version(), "event.h", 26,
                   typeid(::Event), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &::Event::Dictionary, isa_proxy, 4,
                   sizeof(::Event) );

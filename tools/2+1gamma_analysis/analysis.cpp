@@ -11,6 +11,8 @@
 #include <TLegend.h>
 #include <TLine.h>
 #include <TStyle.h>
+#include <TTree.h>
+#include <TFile.h>
 
 #include <TF1.h>
 #include "MyEventHits.h"
@@ -22,9 +24,9 @@ using namespace std;
 /// \param text Text used as a picture title and file name.
 /// \param hEdep Histogram containing data for all types of gamma.
 /// \param hEdep511keV Histogram containing data for 511 keV gammas only.
-/// \param hEdep1157keV Histogram containing data for 1157 keV gammas only.
+/// \param hEdepPrompt Histogram containing data for Prompt keV gammas only.
 ///
-void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdep1157keV)
+void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepPrompt)
 {
 
     TCanvas* cEdep = new TCanvas("cEdep", text.c_str(), 600, 400);
@@ -45,20 +47,21 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdep1157
         hEdep511keV->Draw("same");
         legEdep -> AddEntry(hEdep511keV, ("511 keV, N="+to_string((int)hEdep511keV->GetEntries())).c_str());
     }
-    if(hEdep1157keV)
+    if(hEdepPrompt)
     {
-        hEdep1157keV->SetLineColor(kGreen+2);
-        hEdep1157keV->SetLineWidth(2);
-        hEdep1157keV->Draw("same");
-        legEdep -> AddEntry(hEdep1157keV, ("1157 keV, N="+to_string((int)hEdep1157keV->GetEntries())).c_str());
+        hEdepPrompt->SetLineColor(kGreen+2);
+        hEdepPrompt->SetLineWidth(2);
+        hEdepPrompt->Draw("same");
+        legEdep -> AddEntry(hEdepPrompt, ("Prompt keV, N="+to_string((int)hEdepPrompt->GetEntries())).c_str());
     }
-    if(hEdep511keV && hEdep1157keV)
-        cout<<setprecision(2)<<"Ratio 2*(1157keV)/(511keV)="<<2*hEdep1157keV->GetEntries()/hEdep511keV->GetEntries()<<endl;
+    if(hEdep511keV && hEdepPrompt)
+        cout<<setprecision(2)<<"Ratio 2*(Prompt)/(511keV)="<<2*hEdepPrompt->GetEntries()/hEdep511keV->GetEntries()<<endl;
 
     legEdep->Draw();
     TImage *img = TImage::Create();
     img->FromPad(cEdep);
     img->WriteImage((text+".png").c_str());
+    cEdep->Write();
     delete img;
     delete cEdep;
 }
@@ -68,9 +71,9 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdep1157
 /// \param text Text used as a picture title and file name.
 /// \param hEdep Histogram containing data for all types of gamma.
 /// \param hEdep511keV Histogram containing data for 511 keV gammas only.
-/// \param hEdep1157keV Histogram containing data for 1157 keV gammas only.
+/// \param hEdepPrompt Histogram containing data for Prompt keV gammas only.
 ///
-void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdep1157keV)
+void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdepPrompt)
 {
 
     TCanvas* cEfficiency = new TCanvas("cEfficiency", "(1-) Efficiency", 600, 400);
@@ -86,34 +89,35 @@ void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511ke
     hEff511keV->GetYaxis()->SetTitle("Ratio");
     hEff511keV->SetLineColor(kBlue);
     hEff511keV->SetLineWidth(2);
-    TH1F *hEff1157keV = new TH1F("hEff1157keV", "hEff1157keV" , NBins, 0.0, EMax);
-    hEff1157keV->SetLineColor(kRed);
-    hEff1157keV->SetLineWidth(2);
+    TH1F *hEffPrompt = new TH1F("hEffPrompt", "hEffPrompt" , NBins, 0.0, EMax);
+    hEffPrompt->SetLineColor(kRed);
+    hEffPrompt->SetLineWidth(2);
     //adding entries to the histogram
     legEff -> AddEntry(hEff511keV, "eff (511 keV)");
-    legEff -> AddEntry(hEff1157keV, "1 - eff (1157 keV)");
+    legEff -> AddEntry(hEffPrompt, "1 - eff (Prompt keV)");
     legEff -> SetTextSize(0.05);
 
     for(int ii=1; ii<NBins+1; ii++)
     {
         hEff511keV->SetBinContent(ii, hEdep511keV->Integral(0, ii));
         //below 1-eff histogram is filled
-        hEff1157keV->SetBinContent(ii, hEdep1157keV->Integral()-hEdep1157keV->Integral(0, ii));
+        hEffPrompt->SetBinContent(ii, hEdepPrompt->Integral()-hEdepPrompt->Integral(0, ii));
     }
     hEff511keV->Scale(1.0/hEdep511keV->Integral());
-    hEff1157keV->Scale(1.0/hEdep1157keV->Integral());
+    hEffPrompt->Scale(1.0/hEdepPrompt->Integral());
 
     hEff511keV->Draw();
-    hEff1157keV->Draw("same");
+    hEffPrompt->Draw("same");
 
     legEff->Draw();
     TImage *img = TImage::Create();
     img->FromPad(cEfficiency);
     img->WriteImage((text+".png").c_str());
+    cEfficiency->Write();
     delete img;
     delete legEff;
     delete hEff511keV;
-    delete hEff1157keV;
+    delete hEffPrompt;
     delete cEfficiency;
 }
 
@@ -122,9 +126,9 @@ void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511ke
 /// \param text Text used as a picture title and file name.
 /// \param hEdep Histogram containing data for all types of gamma.
 /// \param hEdep511keV Histogram containing data for 511 keV gammas only.
-/// \param hEdep1157keV Histogram containing data for 1157 keV gammas only.
+/// \param hEdepPrompt Histogram containing data for Prompt keV gammas only.
 ///
-void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdep1157keV)
+void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdepPrompt)
 {
 
     TCanvas* cPurity = new TCanvas("cPurity", "(1-) Purity", 600, 400);
@@ -140,12 +144,12 @@ void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, c
     hPur511keV->GetYaxis()->SetTitle("Ratio");
     hPur511keV->SetLineColor(kBlue);
     hPur511keV->SetLineWidth(2);
-    TH1F *hPur1157keV = new TH1F("hPur1157keV", text.c_str(), NBins, 0.0, EMax);
-    hPur1157keV->SetLineColor(kRed);
-    hPur1157keV->SetLineWidth(2);
+    TH1F *hPurPrompt = new TH1F("hPurPrompt", text.c_str(), NBins, 0.0, EMax);
+    hPurPrompt->SetLineColor(kRed);
+    hPurPrompt->SetLineWidth(2);
     //adding entries to the histogram
     legPur -> AddEntry(hPur511keV, "pur left (511 keV)");
-    legPur -> AddEntry(hPur1157keV, "pur right (1157 keV)");
+    legPur -> AddEntry(hPurPrompt, "pur right (Prompt keV)");
     legPur -> SetTextSize(0.05);
 
     for(int ii=1; ii<NBins+1; ii++)
@@ -155,21 +159,22 @@ void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, c
         else
             hPur511keV->SetBinContent(ii, hEdep511keV->Integral(0, ii) / (double)(hEdep->Integral(0, ii)));
         if(hEdep->Integral(ii, NBins) == 0)// if integral in the denominator == 0 then set bin to 1
-            hPur1157keV->SetBinContent(ii, 1);
+            hPurPrompt->SetBinContent(ii, 1);
         else
-            hPur1157keV->SetBinContent(ii, hEdep1157keV->Integral(ii, NBins) / (double)(hEdep->Integral(ii, NBins)));
+            hPurPrompt->SetBinContent(ii, hEdepPrompt->Integral(ii, NBins) / (double)(hEdep->Integral(ii, NBins)));
     }
-    hPur1157keV->Draw();
+    hPurPrompt->Draw();
     hPur511keV->Draw("same");
 
     legPur->Draw();
     TImage *img = TImage::Create();
     img->FromPad(cPurity);
     img->WriteImage((text+".png").c_str());
+    cPurity -> Write();
     delete img;
     delete legPur;
     delete hPur511keV;
-    delete hPur1157keV;
+    delete hPurPrompt;
     delete cPurity;
 }
 
@@ -201,15 +206,20 @@ int main (int argc, char* argv[])
 {
   MyEventHits eh;
   eh.Loop();
+  TFile* file = new TFile("hist.root", "recreate");
+  file -> cd();
   // Drawing
-  drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdep1157keV);
-  drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmear1157keV);
-  drawEfficiency("eff", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdep1157keV);
-  drawEfficiency("eff_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmear1157keV);
-  drawPurity("pur", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdep1157keV);
-  drawPurity("pur_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmear1157keV);
+  drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
+  drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
+  drawEfficiency("eff", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
+  drawEfficiency("eff_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
+  drawPurity("pur", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
+  drawPurity("pur_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
   drawCutPassing(eh.hCutPassing);
 
-  //  cout<<"GATE entries="<<h.hPos->GetEntries()<<" ROOT entriess="<<eh.hRootPos->GetEntries()<<endl;
+  //saving to .root file
+  file->Write();
+  file->Close();
+  delete file;
   return 0;
 }

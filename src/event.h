@@ -14,8 +14,9 @@
 enum DecayType
 {
     WRONG = 0,
+    ONE = 1,
     TWO = 2,
-    TWOandONE = 1,
+    TWOandONE = 4,
     THREE = 3
 };
 

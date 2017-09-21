@@ -8,10 +8,10 @@ MyEventHits::MyEventHits()
 {
     hRootEdep = new TH1F("hRootEdep", "hRootEdep", 200, 0.0, 1.2);
     hRootEdep511keV = new TH1F("hRootEdep511keV", "hRootEdep", 200, 0.0, 1.2);
-    hRootEdep1157keV = new TH1F("hRootEdep1157keV", "hRootEdep", 200, 0.0, 1.2);
+    hRootEdepPrompt = new TH1F("hRootEdepPrompt", "hRootEdep", 200, 0.0, 1.2);
     hRootEdepSmear = new TH1F("hRootEdepSmear", "hRootEdepPre", 200, 0.0, 1.2);
     hRootEdepSmear511keV = new TH1F("hRootEdepSmear511keV", "hRootEdepPre", 200, 0.0, 1.2);
-    hRootEdepSmear1157keV = new TH1F("hRootEdepSmear1157keV", "hRootEdepPre", 200, 0.0, 1.2);
+    hRootEdepSmearPrompt = new TH1F("hRootEdepSmearPrompt", "hRootEdepPre", 200, 0.0, 1.2);
     hCutPassing = new TH1F("hCutPassing", "hCutPassing", 5, 0, 5);
 }
 
@@ -19,10 +19,10 @@ MyEventHits::~MyEventHits()
 {
     delete hRootEdep;
     delete hRootEdep511keV;
-    delete hRootEdep1157keV;
+    delete hRootEdepPrompt;
     delete hRootEdepSmear;
     delete hRootEdepSmear511keV;
-    delete hRootEdepSmear1157keV;
+    delete hRootEdepSmearPrompt;
     delete hCutPassing;
 }
 
@@ -90,9 +90,9 @@ void MyEventHits::Loop()
            TLorentzVector v3(fHitPoint_[2].X() - fEmissionPoint_[2].X(), fHitPoint_[2].Y() - fEmissionPoint_[2].Y(), fHitPoint_[2].Z() - fEmissionPoint_[2].Z(), 0.0);
            TLorentzVector v30(fHitPoint_[2].X(), fHitPoint_[2].Y(), fHitPoint_[2].Z(), 0.0);
            hRootEdep->Fill(fEdep_[2]);
-           hRootEdep1157keV->Fill(fEdep_[2]);
+           hRootEdepPrompt->Fill(fEdep_[2]);
            hRootEdepSmear->Fill(fEdepSmear_[2]);
-           hRootEdepSmear1157keV->Fill(fEdepSmear_[2]);
+           hRootEdepSmearPrompt->Fill(fEdepSmear_[2]);
            hCutPassing->Fill(3);
        }
 

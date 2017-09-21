@@ -34,6 +34,13 @@ ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fS
         fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 1.3);
         fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 1.3);
     }
+    else if(fDecayType_==ONE)
+    {
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.0, 2.0);
+        fTypeString_ = "1";
+        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 2.0);
+        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 2.0);
+    }
     fH_electron_E_->SetFillColor(kBlue);
     fH_electron_E_->SetTitle("Electrons' energy distribution");
     fH_electron_E_->GetXaxis()->SetTitle("E [MeV]");
@@ -229,7 +236,8 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
     c->Divide(2,2);
     c->cd(1);   
     fH_photon_E_depos_->Draw();
-    line->Draw();
+    if(fDecayType_!=ONE)
+        line->Draw();
     c->cd(2);
     fH_photon_theta_->Draw();
     c->cd(3);

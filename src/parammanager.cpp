@@ -19,8 +19,8 @@ ParamManager::ParamManager() :
     fP_(0),
     fL_(700),
     fR_(500),
-    fESc_(1157),
-    fPSc_(0.98),
+    fEPrompt_(1157),
+    fPPrompt_(0.98),
     fSmearLowLimit_(0.0),
     fSmearHighLimit_(2.0),
     fSilentMode_(false),
@@ -40,8 +40,8 @@ ParamManager::ParamManager(const ParamManager &est)
     fP_=est.fP_;
     fR_=est.fP_;
     fL_=est.fL_;
-    fESc_=est.fESc_;
-    fPSc_=est.fPSc_;
+    fEPrompt_=est.fEPrompt_;
+    fPPrompt_=est.fPPrompt_;
     fSmearLowLimit_=est.fSmearLowLimit_;
     fSmearHighLimit_=est.fSmearHighLimit_;
     fSilentMode_=est.fSilentMode_;
@@ -64,8 +64,8 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     fP_=est.fP_;
     fR_=est.fP_;
     fL_=est.fL_;
-    fESc_=est.fESc_;
-    fPSc_=est.fPSc_;
+    fEPrompt_=est.fEPrompt_;
+    fPPrompt_=est.fPPrompt_;
     fSmearLowLimit_=est.fSmearLowLimit_;
     fSmearHighLimit_=est.fSmearHighLimit_;
     fSilentMode_=est.fSilentMode_;
@@ -85,7 +85,7 @@ bool ParamManager::operator==(const ParamManager &est) const
 {
     bool params = ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
             (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
-            (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
+            (fEPrompt_==est.fEPrompt_) && (fPPrompt_==est.fPPrompt_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
             (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && (fSmearHighLimit_==est.fSmearHighLimit_);
     return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin());
 }
@@ -178,10 +178,10 @@ void ParamManager::ImportParams(std::string inFile)
                 fL_ = atof((token[2].c_str()));
               else if (token[0]=="gammas")
                 fNoOfGammas_=atoi(token[2].c_str());
-              else if (token[0]=="ESc")
-                fESc_=atof(token[2].c_str());
-              else if (token[0]=="pSc")
-                fPSc_=atof(token[2].c_str());
+              else if (token[0]=="EPrompt")
+                fEPrompt_=atof(token[2].c_str());
+              else if (token[0]=="pPrompt")
+                fPPrompt_=atof(token[2].c_str());
               else if(token[0]=="smearLow")
                 fSmearLowLimit_=atof(token[2].c_str());
               else if(token[0]=="smearHigh")
@@ -239,6 +239,8 @@ void ParamManager::ImportParams(std::string inFile)
 void ParamManager::PrintParams()
 {
     if(fNoOfGammas_==1)
+        std::cout<<"[INFO] No of decay products: 1"<<std::endl;
+    else if(fNoOfGammas_==4)
         std::cout<<"[INFO] No of decay products: 2+1"<<std::endl;
     else if(fNoOfGammas_!=2 && fNoOfGammas_!=3)
         std::cout<<"[INFO] No of decay products: 2 and 3"<<std::endl;
@@ -249,10 +251,10 @@ void ParamManager::PrintParams()
     std::cout<<"[INFO] Detector radius: "<<fR_<<" [mm]"<<std::endl;
     std::cout<<"[INFO] Detector length: "<<fL_<<" [mm]"<<std::endl;
     std::cout<<"[INFO] Probability to interact with detector: "<<fP_<<std::endl;
-    if(fNoOfGammas_==1)
+    if(fNoOfGammas_==4)
     {
-        std::cout<<"[INFO] Energy of additional gamma: "<<fESc_<<" [keV]"<<std::endl;
-        std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fPSc_<<std::endl;
+        std::cout<<"[INFO] Energy of additional gamma: "<<fEPrompt_<<" [keV]"<<std::endl;
+        std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fPPrompt_<<std::endl;
     }
     std::cout<<"[INFO] Smearing lower limit: "<<fSmearLowLimit_<<" [MeV]"<<std::endl;
     std::cout<<"[INFO] Smearing higher limit: "<<fSmearHighLimit_<<" [MeV]"<<std::endl;

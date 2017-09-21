@@ -18,17 +18,24 @@ PsDecay::PsDecay(DecayType type) :
       fSilentMode_(false),
       fDecayType_(type)
 {
+    fH_12_=nullptr;
+    fH_23_=nullptr;
+    fH_31_=nullptr;
+    fH_23_ = nullptr;
+    fH_31_ = nullptr;
+    fH_12_23_ = nullptr;
+    fH_12_31_ = nullptr;
+    fH_23_31_ = nullptr;
+    fH_min_mid_ = nullptr;
+    fH_min_max_ = nullptr;
+    fH_mid_max_ = nullptr;
     //Creating histograms for angle distributions
     if(fDecayType_ == THREE)
     {
+        fTypeString_="3";
         //general purpose histograms are created here to ensure right limits
         fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 0.6);
-        //unnecessary pointers are set to nullptr
-        fH_12_=nullptr;
-        fH_23_=nullptr;
-        fH_31_=nullptr;
-
         //histograms for all events generated
         fH_12_23_ = new TH2F("fH_12_23_","fH_12_23_all", 50,0, 3.15, 50,0,3.15);
         fH_12_23_ -> SetTitle("Polar angle distr, 12 vs 23");
@@ -72,23 +79,14 @@ PsDecay::PsDecay(DecayType type) :
         fH_mid_max_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_mid_max_ -> GetYaxis()->SetTitle("#theta_{max} [rad]");
         fH_mid_max_ -> GetYaxis()->SetTitleOffset(1.4);
-        fTypeString_="3";
+
     }
     else if(fDecayType_ == TWO)
     {
+        fTypeString_="2";
         //general purpose histograms are created here to ensure right limits
         fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 0.6);
-        //unnecessary pointers are set to nullptr
-        fH_12_23_ = nullptr;
-        fH_12_31_ = nullptr;
-        fH_23_31_ = nullptr;
-        fH_min_mid_ = nullptr;
-        fH_min_max_ = nullptr;
-        fH_mid_max_ = nullptr;
-        fH_23_ = nullptr;
-        fH_31_ = nullptr;
-
         //histogram for all events generated
         fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 3.13, 3.15);
         fH_12_->SetFillColor(kBlue);
@@ -98,20 +96,14 @@ PsDecay::PsDecay(DecayType type) :
         fH_12_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
         fH_12_ -> GetYaxis()->SetTitleOffset(1.4);
-        fTypeString_="2";
+
     }
     else if(fDecayType_ == TWOandONE)
     {
+        fTypeString_="2&1";
         //general purpose histograms are created here to ensure right limits
         fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.3, 1.3);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.3, 1.3);
-        //unnecessary pointers are set to nullptr
-        fH_12_23_ = nullptr;
-        fH_12_31_ = nullptr;
-        fH_23_31_ = nullptr;
-        fH_min_mid_ = nullptr;
-        fH_min_max_ = nullptr;
-        fH_mid_max_ = nullptr;
         //histograms for all events generated
         fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 3.13, 3.15);
         fH_12_->SetFillColor(kBlue);
@@ -137,11 +129,18 @@ PsDecay::PsDecay(DecayType type) :
         fH_31_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_31_ -> GetYaxis()->SetTitle("dN/d#theta_{31}");
         fH_31_ -> GetYaxis()->SetTitleOffset(1.4);
-        fTypeString_="2&1";
+
+    }
+    else if(fDecayType_ == ONE)
+    {
+        fTypeString_="1";
+        //general purpose histograms are created here to ensure right limits
+        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 2.0);
+        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 2.0);
     }
     else
     {
-        throw("Invalid no of decay products!");
+        throw(std::string("Invalid no of decay products!"));
     }
 
     // histograms common for all decay types
@@ -368,7 +367,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
     //drawing histograms for distributions
     dist_all->Divide(2, 2);
     dist_all->cd(1);
-    fH_en_->Draw();
+    fH_en_->Draw("h");
     dist_all->cd(2);
     fH_p_->Draw();
     dist_all->cd(3);
@@ -427,7 +426,6 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
         fH_31_->Draw();
         outFile2 = prefix+std::string("2&1-gammas_angles_all.png");
     }
-    angles_all->Update();
 
     //writing depends on the 'output' prameter
     if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for all events."<<std::endl;
@@ -436,9 +434,15 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
         TImage *img = TImage::Create();
         img->FromPad(dist_all);
         img->WriteImage(outFile1.c_str());
-        TImage *img2 = TImage::Create();
-        img2->FromPad(angles_all);
-        img2->WriteImage(outFile2.c_str());
+        delete img;
+        if(fDecayType_!=ONE)
+        {
+            angles_all->Update();
+            TImage *img2 = TImage::Create();
+            img2->FromPad(angles_all);
+            img2->WriteImage(outFile2.c_str());
+            delete img2;
+        }
         if(fDecayType_==THREE)
         {
             TImage *img3 = TImage::Create();
@@ -446,18 +450,20 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
             img3->WriteImage(outFile3.c_str());
             delete img3;
         }
-        delete img;
-        delete img2;
     }
     if(output==BOTH || output==TREE)
     {
         dist_all->Write();
-        angles_all->Write();
+        if(fDecayType_!=ONE)
+        {
+            angles_all->Update();
+            angles_all->Write();
+        }
         if(fDecayType_==THREE)
             angles_sorted_all->Write();
     }
 
     if(angles_sorted_all) delete angles_sorted_all;
-    delete dist_all;
-    delete angles_all;
+    if(dist_all) delete dist_all;
+    if(angles_all) delete angles_all;
 }

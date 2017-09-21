@@ -43,16 +43,16 @@ class ParamManager
         inline float GetP() const {return fP_;}
         inline float GetR() const {return fR_;}
         inline float GetL() const {return fL_;}
-        inline float GetESc() const {return fESc_;} //in keV
-        inline float GetPSc() const {return fPSc_;}
+        inline float GetEPrompt() const {return fEPrompt_;} //in keV
+        inline float GetPPrompt() const {return fPPrompt_;}
         inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
         inline float GetSmearHighLimit() const {return fSmearHighLimit_;}
         inline bool IsSilentMode() const {return fSilentMode_;}
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
         inline void SetP(float p) {fP_=p;}
-        inline void SetESc(float e) {fESc_=e;} //in keV
-        inline void SetPSc(float p) {fPSc_=p;}
+        inline void SetEPrompt(float e) {fEPrompt_=e;} //in keV
+        inline void SetPPrompt(float p) {fPPrompt_=p;}
         inline void SetSmearLowLimit(float limit) {fSmearLowLimit_=limit;}
         inline void SetSmearHighLimit(float limit) {fSmearHighLimit_=limit;}
         inline void SetNoOfGammas(int no) {fNoOfGammas_=no;}
@@ -76,8 +76,8 @@ class ParamManager
         float fP_; //interaction probability
         float fL_; //detector length
         float fR_; //detector radius
-        float fESc_; //energy in keV of additional gamma emitted in 2+1 event mode
-        float fPSc_; //probability of emitting an additional gamma in 2+1 event mode
+        float fEPrompt_; //energy in keV of additional gamma emitted in 2+1 event mode
+        float fPPrompt_; //probability of emitting an additional gamma in 2+1 event mode
         float fSmearLowLimit_; //lower limit for smearing effect
         float fSmearHighLimit_; //higher limit for smearing effect
         bool fSilentMode_; //if set to true, less output to std::cout will be printed

@@ -12,10 +12,10 @@ class MyEventHits : public EventHits
 public:
     TH1F* hRootEdep;
     TH1F* hRootEdep511keV;
-    TH1F* hRootEdep1157keV;
+    TH1F* hRootEdepPrompt;
     TH1F* hRootEdepSmear;
     TH1F* hRootEdepSmear511keV;
-    TH1F* hRootEdepSmear1157keV;
+    TH1F* hRootEdepSmearPrompt;
     TH1F* hCutPassing;
     MyEventHits();
     virtual ~MyEventHits();
