@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Sep 20 14:06:45 2017 by ROOT version 6.08/06
+// Mon Sep 25 14:47:54 2017 by ROOT version 6.08/06
 // from TTree tree/Tree with events and histograms
-// found on file: sc44/sc44.root
+// found on file: ga68/ga68.root
 //////////////////////////////////////////////////////////
 
 #ifndef EventHits_h
@@ -87,11 +87,11 @@ EventHits::EventHits(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("sc44/sc44.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("ga68/ga68.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("sc44/sc44.root");
+         f = new TFile("ga68/ga68.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("sc44/sc44.root:/0_0_0_0_0_0");
+      TDirectory * dir = (TDirectory*)f->Get("ga68/ga68.root:/0_0_0_0_0_0");
       dir->GetObject("tree",tree);
 
    }

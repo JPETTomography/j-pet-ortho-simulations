@@ -1,0 +1,8 @@
+# Provide data in a format:
+# decay_banch_prob prompt1_energy prompt1_prob prompt2_energy prompt2_prob ...
+# lines that start with hash are ignored
+#Sc44 
+1.0 1157 0.98
+#I124 
+#
+#0.52 603 0.63

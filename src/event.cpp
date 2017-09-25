@@ -36,21 +36,21 @@ Event::Event()
 /// \param weights Weight of the event.
 /// \param type Type of the event.
 ///
-Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weight, DecayType type) :
+Event::Event(std::vector<TLorentzVector*>* emissionCoordinates, std::vector<TLorentzVector*>* fourMomentum, double weight, DecayType type) :
     fWeight_(weight),
     fDecayType_(type),
     fPassFlag_(true)
 {
     fCounter_++;
     fId = fCounter_;
-    int totalGammaNo = type ==TWO ? 2 : 3;
+    int totalGammaNo = emissionCoordinates->size();
     for(int ii=0; ii<totalGammaNo; ii++)
     {
-        if(emissionCoordinates[ii])
-            fEmissionPoint_.push_back(*emissionCoordinates[ii]);
-        if(fourMomentum[ii])
+        if(emissionCoordinates->at(ii))
+            fEmissionPoint_.push_back(*emissionCoordinates->at(ii));
+        if(fourMomentum->at(ii))
         {
-            fFourMomentum_.push_back(*fourMomentum[ii]*1000); //scale from GeV to MeV
+            fFourMomentum_.push_back(*fourMomentum->at(ii)*1000); //scale from GeV to MeV
 //            fPhi_.push_back(fourMomentum[ii]->Phi());
 //            fTheta_.push_back(fourMomentum[ii]->Theta());
             fCutPassing_.push_back(true);

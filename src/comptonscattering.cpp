@@ -34,6 +34,13 @@ ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fS
         fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 1.3);
         fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 1.3);
     }
+    else if(fDecayType_==TWOandN)
+    {
+        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 104, 0.0, 4.0);
+        fTypeString_ = "2&1";
+        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 104, 0.0, 4.0);
+        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 104, 0.0, 4.0);
+    }
     else if(fDecayType_==ONE)
     {
         fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.0, 2.0);
@@ -273,7 +280,7 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
 ///
 void ComptonScattering::Scatter(Event* event) const
 {
-    for(int ii=0; ii<3; ii++)
+    for(int ii=0; ii<event->GetNumberOfDecayProducts(); ii++)
     {
         if(event->GetFourMomentumOf(ii) != nullptr && event->GetCutPassingOf(ii))
         {

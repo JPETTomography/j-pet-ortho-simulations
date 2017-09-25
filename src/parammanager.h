@@ -40,19 +40,20 @@ class ParamManager
         inline int GetSimEvents() const {return fSimEvents_;}
         inline int GetSimRuns() const {return fSimRuns_;}
         inline int GetNoOfGammas() const {return fNoOfGammas_;}
-        inline float GetP() const {return fP_;}
+        inline float GetEff() const {return fEff_;}
         inline float GetR() const {return fR_;}
         inline float GetL() const {return fL_;}
-        inline float GetEPrompt() const {return fEPrompt_;} //in keV
-        inline float GetPPrompt() const {return fPPrompt_;}
+        inline float GetE() const {return fE_;} //in keV
+        inline float GetP() const {return fP_;}
         inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
         inline float GetSmearHighLimit() const {return fSmearHighLimit_;}
         inline bool IsSilentMode() const {return fSilentMode_;}
+        inline bool Is2nNDataImported() const {return f2nNdataImported_;}
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
+        inline void SetEff(float eff) {fEff_=eff;}
+        inline void SetE(float e) {fE_=e;} //in keV
         inline void SetP(float p) {fP_=p;}
-        inline void SetEPrompt(float e) {fEPrompt_=e;} //in keV
-        inline void SetPPrompt(float p) {fPPrompt_=p;}
         inline void SetSmearLowLimit(float limit) {fSmearLowLimit_=limit;}
         inline void SetSmearHighLimit(float limit) {fSmearHighLimit_=limit;}
         inline void SetNoOfGammas(int no) {fNoOfGammas_=no;}
@@ -62,28 +63,45 @@ class ParamManager
         inline void SetOutputType(OutputOptions type) {fOutput_=type;}
         inline EventTypeToSave GetEventTypeToSave() const {return fEventTypeToSave_;}
         inline void SetEventTypeToSave(EventTypeToSave type) {fEventTypeToSave_=type;}
+        inline double GetDecayBranchProbability(const unsigned index) const
+            {if(index<fDecayBranchProbability_.size()) return fDecayBranchProbability_[index]; else return 0;}
+        inline double GetGammaEmissionProbability(const unsigned branch, const unsigned gamma) const
+            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEmissionProbability_.size()) return (fGammaEmissionProbability_[branch])[gamma]; else return 0;}
+        inline double GetGammaEnergy(const unsigned branch, const unsigned gamma) const
+            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEnergy_.size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
         //access source parameters
-        std::vector<double> GetDataAt(int index=0);
+        std::vector<double> GetDataAt(const int index=0) const;
         //import parameters from external file
         void ImportParams(std::string inFile="simpar.par");
+
+        void Import2nNdata(std::string inFile="2nN_data.dat");
+
         //print parameters to the stdout
         void PrintParams();
+
+        void Print2nNdata();
 
     private:
         int fSimEvents_; //loaded from file
         int fSimRuns_; //calculated as the number of sets of source parameters
         int fNoOfGammas_;
-        float fP_; //interaction probability
+        float fEff_; //scintillator's efficiency
         float fL_; //detector length
         float fR_; //detector radius
-        float fEPrompt_; //energy in keV of additional gamma emitted in 2+1 event mode
-        float fPPrompt_; //probability of emitting an additional gamma in 2+1 event mode
+        float fE_; //energy in keV of additional gamma emitted in 2+1 event mode or gamma in 1-gamma mode
+        float fP_; //probability of emitting an additional gamma in 2+1 event mode
         float fSmearLowLimit_; //lower limit for smearing effect
         float fSmearHighLimit_; //higher limit for smearing effect
         bool fSilentMode_; //if set to true, less output to std::cout will be printed
+        bool f2nNdataImported_;
         OutputOptions fOutput_; //what kind of output will be produced
         EventTypeToSave fEventTypeToSave_; //what kind of events should be saved
         std::vector<std::vector<double> > fData_; //this is where source parameters are stored
+        //fields to store info for 2&N decays
+        std::vector<double> fDecayBranchProbability_;
+        std::vector<std::vector<double> > fGammaEmissionProbability_;
+        std::vector<std::vector<double> > fGammaEnergy_; //keV
+        void ValidatePromptData_();
 };
 
 #endif // PARAMMANAGER_H

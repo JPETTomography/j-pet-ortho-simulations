@@ -15,9 +15,10 @@ enum DecayType
 {
     WRONG = 0,
     ONE = 1,
-    TWO = 2,
+    TWO = 2,    
+    THREE = 3,
     TWOandONE = 4,
-    THREE = 3
+    TWOandN = 5
 };
 
 ///
@@ -27,7 +28,7 @@ class Event : public TObject
 {
     public:
         Event();
-        Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weight, DecayType type);
+        Event(std::vector<TLorentzVector*>* emissionCoordinates, std::vector<TLorentzVector*>* fourMomentum, double weight, DecayType type);
         Event(const Event& est);
         Event& operator=(const Event &est);
         virtual ~Event();
@@ -36,6 +37,7 @@ class Event : public TObject
             {return index<fEmissionPoint_.size() ? const_cast<TLorentzVector*>(&fEmissionPoint_[index]) : NULL;}
         inline TLorentzVector* GetFourMomentumOf(const unsigned index) const
             {return index<fFourMomentum_.size() ? const_cast<TLorentzVector*>(&fFourMomentum_[index]) : NULL;}
+        inline int GetNumberOfDecayProducts() const {return fFourMomentum_.size();}
         inline TLorentzVector* GetHitPointOf(const unsigned index) const
             {return index<fHitPoint_.size() ? const_cast<TLorentzVector*>(&fHitPoint_[index]) : NULL;}
         inline bool GetCutPassingOf(const unsigned index) const
@@ -60,7 +62,7 @@ class Event : public TObject
         //number of event
         long fId;
         //ROOT stuff
-        ClassDef(Event, 13)
+        ClassDef(Event, 16)
 
     private:
         static long fCounter_; //static variable incremented with every call of a constructor (but not copy constructor)

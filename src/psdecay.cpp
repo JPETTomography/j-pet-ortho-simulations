@@ -131,6 +131,23 @@ PsDecay::PsDecay(DecayType type) :
         fH_31_ -> GetYaxis()->SetTitleOffset(1.4);
 
     }
+    else if(fDecayType_ == TWOandN)
+    {
+        fTypeString_="2&N";
+        //general purpose histograms are created here to ensure right limits
+        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 104, 0.0, 4.0);
+        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 104, 0.0, 4.0);
+        //histogram for all events generated
+        fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 0, 3.2);
+        fH_12_->SetFillColor(kBlue);
+        fH_12_ -> SetTitle("Distribution of polar angle between 2 gammas");
+        fH_12_ -> GetXaxis()->SetNdivisions(5, false);
+        fH_12_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
+        fH_12_ -> GetXaxis()->SetTitleOffset(1.4);
+        fH_12_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
+        fH_12_ -> GetYaxis()->SetTitleOffset(1.4);
+
+    }
     else if(fDecayType_ == ONE)
     {
         fTypeString_="1";
@@ -297,7 +314,7 @@ PsDecay::~PsDecay()
 void PsDecay::AddEvent(const Event* event) const
 {
     bool thirdGammaExists = false; //check if 3rd pointer !=nullptr
-    for(int ii=0; ii<3; ii++)
+    for(int ii=0; ii<event->GetNumberOfDecayProducts(); ii++)
     {
         if(event->GetFourMomentumOf(ii)!=nullptr)
         {
@@ -309,18 +326,15 @@ void PsDecay::AddEvent(const Event* event) const
             fH_cosTheta_->Fill(event->GetFourMomentumOf(ii)->CosTheta());
         }
     }
-    if(fDecayType_==TWO)
+    if(fDecayType_==TWO || fDecayType_==TWOandONE || fDecayType_==TWOandN)
     {
         fH_12_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
     }
-    else if(fDecayType_==TWOandONE)
+
+    if((fDecayType_==TWOandONE) & thirdGammaExists)
     {
-        fH_12_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
-        if(thirdGammaExists)
-        {
-            fH_23_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
-            fH_31_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
-        }
+        fH_23_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
+        fH_31_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
     }
     else if(fDecayType_==THREE)
     {
@@ -402,7 +416,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
         fH_mid_max_->Draw("colz");
         angles_sorted_all->cd(3);
         fH_min_max_->Draw("colz");
-        outFile3 = prefix+std::string("3-gammas_angles_sorted_all.png");
+        outFile3 = prefix+fTypeString_+std::string("-gammas_angles_sorted_all.png");
     }
     else if(fDecayType_==TWO)
     {
@@ -410,7 +424,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
                                                (std::string("Angle ditribution for all generated ")\
                                                +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
         fH_12_->Draw();
-        outFile2 = prefix+std::string("2-gammas_angles_all.png");
+        outFile2 = prefix+fTypeString_+std::string("-gammas_angles_all.png");
     }
     else if(fDecayType_==TWOandONE)
     {
@@ -424,7 +438,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
         fH_23_->Draw();
         angles_all->cd(3);
         fH_31_->Draw();
-        outFile2 = prefix+std::string("2&1-gammas_angles_all.png");
+        outFile2 = prefix+fTypeString_+std::string("-gammas_angles_all.png");
     }
 
     //writing depends on the 'output' prameter

@@ -196,6 +196,65 @@ void drawCutPassing(TH1F* hCutPassing)
 }
 
 
+void calculatePurityEfficiency(const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdepPrompt, const double Etreshold = 0.4)
+{
+    int n =hEdep->GetXaxis()->GetNbins();
+    int n511 =hEdep511keV->GetXaxis()->GetNbins();
+    int nPrompt =hEdepPrompt->GetXaxis()->GetNbins();
+    int index = 0;
+    int index511 = 0;
+    int indexPrompt = 0;
+    for(int ii=0; ii<n; ii++)
+    {
+        if(hEdep->GetBinLowEdge(ii+1)>=Etreshold)
+        {
+            std::cout<<hEdep->GetBinLowEdge(ii)<<" < " <<Etreshold<<" < "<<hEdep->GetBinLowEdge(ii+1)<<std::endl;
+            index = ii;
+            std::cout<<ii<<std::endl;
+            break;
+        }
+    }
+    if(n==n511 && n==nPrompt)
+    {
+        index511=index;
+        indexPrompt=index;
+    }
+    else
+    {
+        std::cout<<"511 gammas:"<<std::endl;
+        for(int ii=0; ii<n511; ii++)
+        {
+            if(hEdep511keV->GetBinLowEdge(ii+1)>=Etreshold)
+            {
+                std::cout<<hEdep511keV->GetBinLowEdge(ii)<<" < " <<Etreshold<<" < "<<hEdep511keV->GetBinLowEdge(ii+1)<<std::endl;
+                index511 = ii;
+                std::cout<<ii<<std::endl;
+                break;
+            }
+        }
+        std::cout<<"Prompt gammas:"<<std::endl;
+        for(int ii=0; ii<nPrompt; ii++)
+        {
+            if(hEdepPrompt->GetBinLowEdge(ii+1)>=Etreshold)
+            {
+                std::cout<<hEdepPrompt->GetBinLowEdge(ii)<<" < " <<Etreshold<<" < "<<hEdepPrompt->GetBinLowEdge(ii+1)<<std::endl;
+                indexPrompt = ii;
+                std::cout<<ii<<std::endl;
+                break;
+            }
+        }
+        std::cout<<"Results:"<<std::endl;
+    }
+
+    double eff511 = hEdep511keV->Integral(0, index511) / hEdep511keV->Integral();
+    double purity511 = hEdep511keV->Integral(0, index511) / (hEdep->Integral(0, index));
+    double purityPrompt = hEdepPrompt->Integral(0, indexPrompt) / (hEdep->Integral(0, index));
+    std::cout<<"511keV eff="<<eff511*100<<" %"<<std::endl;
+    std::cout<<"511keV purity="<<purity511*100<<" %"<<std::endl;
+    std::cout<<"Prompt purity="<<purityPrompt*100<<" %"<<std::endl;
+
+}
+
 ///
 /// \brief main Main function of the program, used to call drawing functions.
 /// \param argc
@@ -208,6 +267,12 @@ int main (int argc, char* argv[])
   eh.Loop();
   TFile* file = new TFile("hist.root", "recreate");
   file -> cd();
+
+  double Etreshold = 0.354; //MeV
+  std::cout<<"NO SMEARING"<<std::endl;
+  calculatePurityEfficiency(eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt, Etreshold);
+  std::cout<<"WITH SMEARING"<<std::endl;
+  calculatePurityEfficiency(eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt, Etreshold);
   // Drawing
   drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
   drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
