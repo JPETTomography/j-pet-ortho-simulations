@@ -24,7 +24,7 @@ using namespace std;
 /// \param hEdep511keV Histogram containing data for 511 keV gammas only.
 /// \param hEdep1157keV Histogram containing data for 1157 keV gammas only.
 ///
-void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdep1157keV)
+void drawEdep(const string& text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdep1157keV)
 {
 
     TCanvas* cEdep = new TCanvas("cEdep", text.c_str(), 600, 400);
@@ -70,7 +70,7 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdep1157
 /// \param hEdep511keV Histogram containing data for 511 keV gammas only.
 /// \param hEdep1157keV Histogram containing data for 1157 keV gammas only.
 ///
-void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdep1157keV)
+void drawEfficiency(const string& text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdep1157keV)
 {
 
     TCanvas* cEfficiency = new TCanvas("cEfficiency", "(1-) Efficiency", 600, 400);
@@ -124,7 +124,7 @@ void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511ke
 /// \param hEdep511keV Histogram containing data for 511 keV gammas only.
 /// \param hEdep1157keV Histogram containing data for 1157 keV gammas only.
 ///
-void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdep1157keV)
+void drawPurity(const string& text, const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdep1157keV)
 {
 
     TCanvas* cPurity = new TCanvas("cPurity", "(1-) Purity", 600, 400);

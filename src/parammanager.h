@@ -65,7 +65,7 @@ class ParamManager
         //access source parameters
         std::vector<double> GetDataAt(int index=0);
         //import parameters from external file
-        void ImportParams(std::string inFile="simpar.par");
+        void ImportParams(std::string& inFile="simpar.par");
         //print parameters to the stdout
         void PrintParams();
 

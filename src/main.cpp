@@ -97,26 +97,20 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
        double weight = event.Generate();
        TLorentzVector* gamma1 = event.GetDecay(0);
        TLorentzVector* gamma2 = event.GetDecay(1);
-       TLorentzVector* gamma3;
+       TLorentzVector* gamma3 = nullptr;
        //Generating emission point inside a ball
-       TLorentzVector* emission1;
+       TLorentzVector* emission1 = nullptr;
        if(source.T() != 0)
             emission1= new TLorentzVector(source.X()+rand.Uniform(-1.0,1.0)*source.T(), source.Y()+rand.Uniform(-1.0,1.0)*source.T(),\
                                                       source.Z()+rand.Uniform(-1.0,1.0)*source.T(), 0.0);
        else
            emission1 = new TLorentzVector(source.X(), source.Y(), source.Z(), 0.0);
        TLorentzVector* emission2 = new TLorentzVector(*emission1); //making copies
-       TLorentzVector* emission3;
+       TLorentzVector* emission3 = nullptr;
        if(type == THREE)
        {
            gamma3=event.GetDecay(2);
            emission3 = new TLorentzVector(*emission1);
-       }
-       else if(type == TWO)
-       {
-           gamma3 = nullptr;
-           emission3 = nullptr;
-
        }
        else if(type == TWOandONE)
        {
@@ -128,11 +122,6 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
                double P = pManag.GetESc()/1000000.0; //GeV
                gamma3 = new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
                emission3 = new TLorentzVector(*emission1);
-           }
-           else
-           {
-               gamma3 = nullptr;
-               emission3=nullptr;
            }
        }
        //Packing everything to EVENT object
@@ -158,8 +147,8 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
            tree->Fill();
        }
        delete eventDecay;
-       delete emission1;
-       delete emission2;
+       if(emission1) delete emission1;
+       if(emission2) delete emission2;
        if(emission3) delete emission3;
     }
     //***   END OF EVENT LOOP   ***
@@ -185,21 +174,20 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    TLorentzVector Ps;
    TLorentzVector sourcePos; //x,y,z,r !
    int noOfGammas = 0;
-   double x,y,z,px,py,pz,r;
    std::string subDir;
    TTree* tree = nullptr;
    TDirectory* runDir = nullptr;
    TDirectory* histDir = nullptr;
    //reading source parameters
    noOfGammas = pManag.GetNoOfGammas();
-   std::vector<double> sourceParams = (pManag.GetDataAt(simRun));
-   x=(sourceParams)[0];
-   y=(sourceParams)[1];
-   z=(sourceParams)[2];
-   px=(sourceParams)[3];
-   py=(sourceParams)[4];
-   pz=(sourceParams)[5];
-   r=TMath::Abs((sourceParams)[6]);
+   std::vector<double> sourceParams = pManag.GetDataAt(simRun);
+   double x = sourceParams[0];
+   double y = sourceParams[1];
+   double z = sourceParams[2];
+   double px = sourceParams[3];
+   double py = sourceParams[4];
+   double pz = sourceParams[5];
+   double r = TMath::Abs(sourceParams[6]);
 
    //checking if source position is correct
    if((TMath::Abs(x)+r)*(TMath::Abs(x)+r)+(TMath::Abs(y)+r)*(TMath::Abs(y)+r) >= pManag.GetR()*pManag.GetR() || (TMath::Abs(z)+r)>=pManag.GetL())
