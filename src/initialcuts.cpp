@@ -29,7 +29,6 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     fNumberOfEvents_(0),
     fNumberOfGammas_(0)
 {
-    fRand_ = new TRandom3(0);
     fH_12_pass_=nullptr;
     fH_12_fail_=nullptr;
     fH_23_pass_=nullptr;
@@ -367,7 +366,6 @@ InitialCuts::InitialCuts(const InitialCuts& est)
     fDetectionProbability_ = est.fDetectionProbability_;
     fDecayType_ = est.fDecayType_;
     fTypeString_ = est.fTypeString_;
-    fRand_ = new TRandom3(0);
 
     fH_12_pass_ = nullptr;
     fH_12_fail_ = nullptr;
@@ -441,8 +439,6 @@ InitialCuts& InitialCuts::operator=(const InitialCuts& est)
     fDetectionProbability_ = est.fDetectionProbability_;
     fDecayType_ = est.fDecayType_;
     fTypeString_ = est.fTypeString_;
-
-    fRand_ = new TRandom3(0);
 
     fH_12_pass_ = nullptr;
     fH_12_fail_ = nullptr;
@@ -535,7 +531,6 @@ InitialCuts::~InitialCuts()
     if(fH_en_pass_event_) delete fH_en_pass_event_;
     if(fH_event_cuts_) delete fH_event_cuts_;
     if(fH_gamma_cuts_) delete fH_gamma_cuts_;
-    if(fRand_) delete fRand_;
 }
 
 ///
@@ -596,7 +591,7 @@ bool InitialCuts::DetectionCut_()
         pass = true;
     else
     {
-        float p = fRand_->Uniform(0.0, 1.0);
+        float p = gRandom->Uniform(0.0, 1.0);
         pass = p <= fDetectionProbability_;
     }
     if(pass)

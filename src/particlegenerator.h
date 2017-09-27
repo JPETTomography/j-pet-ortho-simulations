@@ -10,11 +10,11 @@
 #include <iostream>
 #include <typeinfo>
 
-TLorentzVector* generateSingleGamma(TRandom3 &rand, double energy)
+TLorentzVector* generateSingleGamma(double energy)
 {
     //generating additional gamma from Sc decay in the same place as the Ps decay
-        double theta = TMath::ACos(rand.Uniform(-1.0, 1.0));
-        double phi = rand.Uniform(0.0, 2*TMath::Pi());
+        double theta = TMath::ACos(gRandom->Uniform(-1.0, 1.0));
+        double phi = gRandom->Uniform(0.0, 2*TMath::Pi());
         double P = energy/1000.0; //GeV
         return new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
 }
@@ -57,7 +57,7 @@ std::string recognizeType(const DecayType type, int& noOfGammas)
     return type_string;
 }
 
-Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source, const ParamManager& pManag, TRandom3& rand, const DecayType type)
+Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source, const ParamManager& pManag, const DecayType type)
 {
        //Generation of a decay
        double weight;
@@ -68,7 +68,7 @@ Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source
            if(pManag.GetE()<=0.0)
                throw("[ERROR] When gamma has no energy there is no gamma!");
            weight = 1.0;
-           fourMomenta.push_back(generateSingleGamma(rand, pManag.GetE()/1000.0));
+           fourMomenta.push_back(generateSingleGamma(pManag.GetE()/1000.0));
        }
        else
        {
@@ -78,11 +78,10 @@ Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source
            fourMomenta.push_back(new TLorentzVector(*phaseSpaceGen.GetDecay(1)));
        }
 
-
        //Generating emission point inside a ball
        if(source.T() != 0)
-            sourcePar.push_back(new TLorentzVector(source.X()+rand.Uniform(-1.0,1.0)*source.T(), source.Y()+rand.Uniform(-1.0,1.0)*source.T(),\
-                                                      source.Z()+rand.Uniform(-1.0,1.0)*source.T(), 0.0));
+            sourcePar.push_back(new TLorentzVector(source.X()+gRandom->Uniform(-1.0,1.0)*source.T(), source.Y()+gRandom->Uniform(-1.0,1.0)*source.T(),\
+                                                      source.Z()+gRandom->Uniform(-1.0,1.0)*source.T(), 0.0));
        else
            sourcePar.push_back(new TLorentzVector(source.X(), source.Y(), source.Z(), 0.0));
 
@@ -94,9 +93,9 @@ Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source
            fourMomenta.push_back(new TLorentzVector(*phaseSpaceGen.GetDecay(2)));
            sourcePar.push_back(new TLorentzVector(*sourcePar.at(0)));
        }
-       else if(type == TWOandONE && rand.Uniform() < pManag.GetP() && pManag.GetE()>0.0)
+       else if(type == TWOandONE && gRandom->Uniform() < pManag.GetP() && pManag.GetE()>0.0)
        {
-           fourMomenta.push_back(generateSingleGamma(rand, pManag.GetE()/1000.0)); //E in [MeV]
+           fourMomenta.push_back(generateSingleGamma(pManag.GetE()/1000.0)); //E in [MeV]
            sourcePar.push_back(new TLorentzVector(*sourcePar.at(0)));
        }
 
@@ -105,7 +104,9 @@ Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source
 
        //Releasing memory
        for(std::vector<TLorentzVector*>::iterator it = fourMomenta.begin(); it != fourMomenta.end(); ++it)
-            delete *it;
+       {
+           delete *it;
+       }
        for(std::vector<TLorentzVector*>::iterator it = sourcePar.begin(); it != sourcePar.end(); ++it)
             delete *it;
        fourMomenta.clear();

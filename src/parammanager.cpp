@@ -23,6 +23,7 @@ ParamManager::ParamManager() :
     fP_(0.98),
     fSmearLowLimit_(0.0),
     fSmearHighLimit_(2.0),
+    fSeed_(0),
     fSilentMode_(false),
     f2nNdataImported_(false),
     fOutput_(PNG),
@@ -45,6 +46,7 @@ ParamManager::ParamManager(const ParamManager &est)
     fP_=est.fP_;
     fSmearLowLimit_=est.fSmearLowLimit_;
     fSmearHighLimit_=est.fSmearHighLimit_;
+    fSeed_=est.fSeed_;
     fSilentMode_=est.fSilentMode_;
     f2nNdataImported_=est.f2nNdataImported_;
     fOutput_=est.fOutput_;
@@ -76,6 +78,7 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     fP_=est.fP_;
     fSmearLowLimit_=est.fSmearLowLimit_;
     fSmearHighLimit_=est.fSmearHighLimit_;
+    fSeed_=est.fSeed_;
     fSilentMode_=est.fSilentMode_;
     f2nNdataImported_=est.f2nNdataImported_;
     fOutput_=est.fOutput_;
@@ -102,7 +105,7 @@ bool ParamManager::operator==(const ParamManager &est) const
             (fEff_==est.fEff_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
             (fE_==est.fE_) && (fP_==est.fP_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
             (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && \
-            (fSmearHighLimit_==est.fSmearHighLimit_) && (f2nNdataImported_==est.f2nNdataImported_);
+            (fSmearHighLimit_==est.fSmearHighLimit_) && (f2nNdataImported_==est.f2nNdataImported_) && fSeed_==est.fSeed_;
     return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin())\
             && std::equal(fDecayBranchProbability_.begin(), fDecayBranchProbability_.end(), est.fDecayBranchProbability_.begin())\
             && std::equal(fGammaEmissionProbability_.begin(), fGammaEmissionProbability_.end(), est.fGammaEmissionProbability_.begin())\
@@ -163,7 +166,7 @@ std::string reduce(const std::string& str,
 /// \brief ParamManager::ImportParams Imports prameters from file.
 /// \param inFile Path to the file with parameters.
 ///
-void ParamManager::ImportParams(std::string inFile)
+void ParamManager::ImportParams(const std::string& inFile)
 {
     std::cout<<"[INFO] Importing parameters from file: "<<inFile<<std::endl;
     std::ifstream param_file(inFile.c_str());
@@ -203,6 +206,8 @@ void ParamManager::ImportParams(std::string inFile)
                 fE_=atof(token[2].c_str());
               else if (token[0]=="p")
                 fP_=atof(token[2].c_str());
+              else if (token[0]=="seed")
+                fSeed_=atof(token[2].c_str());
               else if(token[0]=="smearLow")
                 fSmearLowLimit_=atof(token[2].c_str());
               else if(token[0]=="smearHigh")
@@ -254,7 +259,7 @@ void ParamManager::ImportParams(std::string inFile)
     std::cout<<"[INFO] Parameters imported.\n"<<std::endl;
 }
 
-void ParamManager::Import2nNdata(std::string inFile)
+void ParamManager::Import2nNdata(const std::string& inFile)
 {
     std::cout<<"[INFO] Importing 2&Ndata from file: "<<inFile<<std::endl;
     std::ifstream param_file(inFile.c_str());
@@ -313,6 +318,8 @@ void ParamManager::PrintParams()
         std::cout<<"[INFO] Energy of single gamma: "<<fE_<<" [keV]"<<std::endl;
         std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fP_<<std::endl;
     }
+    std::string seedToShow = fSeed_==0 ? "random" : std::to_string(fSeed_);
+    std::cout<<"[INFO] Seed: "<<seedToShow<<std::endl;
     std::cout<<"[INFO] Smearing lower limit: "<<fSmearLowLimit_<<" [MeV]"<<std::endl;
     std::cout<<"[INFO] Smearing higher limit: "<<fSmearHighLimit_<<" [MeV]"<<std::endl;
     std::cout<<"[INFO] Silent mode: ";

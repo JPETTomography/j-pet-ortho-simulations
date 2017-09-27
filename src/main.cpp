@@ -50,7 +50,6 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
 {
     std::string type_string;
     int noOfGammas = 0;
-    TRandom3 rand(0); //setting the seed for random number generation
     type_string = recognizeType(type, noOfGammas);
     ////////////////////////////////////////////////////////////////////////
     double* masses = new double[noOfGammas]();
@@ -81,7 +80,7 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     for (Int_t n=0; n<pManag.GetSimEvents(); n++)
     {
        //generation of an Event
-       eventDecay = generateEvent(phaseSpaceGen, source, pManag, rand,type);
+       eventDecay = generateEvent(phaseSpaceGen, source, pManag, type);
        //Filling histograms, event analysis
        try
        {
@@ -114,9 +113,9 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     //***   END OF EVENT LOOP   ***
 
     //Drawing results
-    decay.DrawHistograms(filePrefix, pManag.GetOutputType());
-    cuts.DrawHistograms(filePrefix, pManag.GetOutputType());
-    cs.DrawComptonHistograms(filePrefix, pManag.GetOutputType()); //Draw histograms with scattering angle and electron's energy distributions.
+//    decay.DrawHistograms(filePrefix, pManag.GetOutputType());
+//    cuts.DrawHistograms(filePrefix, pManag.GetOutputType());
+//    cs.DrawComptonHistograms(filePrefix, pManag.GetOutputType()); //Draw histograms with scattering angle and electron's energy distributions.
     delete[] masses;
 }
 
@@ -135,21 +134,20 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    TLorentzVector Ps;
    TLorentzVector sourcePos; //x,y,z,r !
    int noOfGammas = 0;
-   double x,y,z,px,py,pz,r;
    std::string subDir;
    TTree* tree = nullptr;
    TDirectory* runDir = nullptr;
    TDirectory* histDir = nullptr;
    //reading source parameters
    noOfGammas = pManag.GetNoOfGammas();
-   std::vector<double> sourceParams = (pManag.GetDataAt(simRun));
-   x=(sourceParams)[0];
-   y=(sourceParams)[1];
-   z=(sourceParams)[2];
-   px=(sourceParams)[3];
-   py=(sourceParams)[4];
-   pz=(sourceParams)[5];
-   r=TMath::Abs((sourceParams)[6]);
+   std::vector<double> sourceParams = pManag.GetDataAt(simRun);
+   double x = sourceParams[0];
+   double y = sourceParams[1];
+   double z = sourceParams[2];
+   double px = sourceParams[3];
+   double py = sourceParams[4];
+   double pz = sourceParams[5];
+   double r = TMath::Abs(sourceParams[6]);
 
    //checking if source position is correct
    if((TMath::Abs(x)+r)*(TMath::Abs(x)+r)+(TMath::Abs(y)+r)*(TMath::Abs(y)+r) >= pManag.GetR()*pManag.GetR() || (TMath::Abs(z)+r)>=pManag.GetL())
@@ -284,6 +282,8 @@ int main(int argc, char* argv[])
     treeFile->cd();
   }
 
+  //setting the seed for global pseudo-random number generator
+  gRandom = new TRandom3(par_man.GetSeed());
   //loop with simulation runs
   for(int ii=0; ii< (par_man.GetSimRuns()); ii++)
   {

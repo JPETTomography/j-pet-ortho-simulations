@@ -32,7 +32,7 @@ $(OBJDIR)/EventDict.o: $(SRCDIR)/EventDict.cpp
 	@echo "Compiling $@"
 	@$(CC) $(SRCDIR)/EventDict.cpp -o $(OBJDIR)/EventDict.o -c $(CXXFLAGS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDIR)/particlegenerator.h
 	@echo "Compiling $@"
 	@$(CC) $(CXXFLAGS) -c -o $@ $<
 

@@ -8,22 +8,30 @@ MyEventHits::MyEventHits()
 {
     hRootEdep = new TH1F("hRootEdep", "hRootEdep", 200, 0.0, 1.2);
     hRootEdep511keV = new TH1F("hRootEdep511keV", "hRootEdep", 200, 0.0, 1.2);
+    hRootEdep511keVOne = new TH1F("hRootEdep511keVOne", "hRootEdep", 200, 0.0, 1.2);
+    hRootEdep511keVTwo = new TH1F("hRootEdep511keVTwo", "hRootEdep", 200, 0.0, 1.2);
     hRootEdepPrompt = new TH1F("hRootEdepPrompt", "hRootEdep", 200, 0.0, 1.2);
-    hRootEdepSmear = new TH1F("hRootEdepSmear", "hRootEdepPre", 200, 0.0, 1.2);
+    hRootEdepSmear = new TH1F("hRootEdepSmear", "hRootEdepPre", 200, 0.0, 1.2);;
     hRootEdepSmear511keV = new TH1F("hRootEdepSmear511keV", "hRootEdepPre", 200, 0.0, 1.2);
+    hRootEdepSmear511keVOne = new TH1F("hRootEdepSmear511keVOne", "hRootEdepPre", 200, 0.0, 1.2);
+    hRootEdepSmear511keVTwo = new TH1F("hRootEdepSmear511keVTwo", "hRootEdepPre", 200, 0.0, 1.2);
     hRootEdepSmearPrompt = new TH1F("hRootEdepSmearPrompt", "hRootEdepPre", 200, 0.0, 1.2);
     hCutPassing = new TH1F("hCutPassing", "hCutPassing", 5, 0, 5);
 }
 
 MyEventHits::~MyEventHits()
 {
-    delete hRootEdep;
-    delete hRootEdep511keV;
-    delete hRootEdepPrompt;
-    delete hRootEdepSmear;
-    delete hRootEdepSmear511keV;
-    delete hRootEdepSmearPrompt;
-    delete hCutPassing;
+    if(hRootEdep) delete hRootEdep;
+    if(hRootEdep511keV) delete hRootEdep511keV;
+    if(hRootEdepPrompt) delete hRootEdepPrompt;
+    if(hRootEdepSmear) delete hRootEdepSmear;
+    if(hRootEdepSmear511keV) delete hRootEdepSmear511keV;
+    if(hRootEdepSmearPrompt) delete hRootEdepSmearPrompt;
+    if(hCutPassing) delete hCutPassing;
+    if(hRootEdep511keVOne) delete hRootEdep511keVOne;
+    if(hRootEdep511keVTwo) delete hRootEdep511keVTwo;
+    if(hRootEdepSmear511keVOne) delete hRootEdepSmear511keVOne;
+    if(hRootEdepSmear511keVTwo) delete hRootEdepSmear511keVTwo;
 }
 
 void MyEventHits::Loop()
@@ -56,6 +64,9 @@ void MyEventHits::Loop()
    Long64_t nentries = fChain->GetEntriesFast();
 
    Long64_t nbytes = 0, nb = 0;
+
+   double RemoveSmearBellowE = 0.000; //MeV
+
    for (Long64_t jentry=0; jentry<nentries;jentry++)
    {
        GetEntry(jentry);
@@ -73,16 +84,38 @@ void MyEventHits::Loop()
        {
            hRootEdep->Fill(fEdep_[0]);
            hRootEdep511keV->Fill(fEdep_[0]);
-           hRootEdepSmear->Fill(fEdepSmear_[0]);
-           hRootEdepSmear511keV->Fill(fEdepSmear_[0]);
+           hRootEdep511keVOne->Fill(fEdep_[0]);
+           if(fEdep_[0] > RemoveSmearBellowE)
+           {
+               hRootEdepSmear->Fill(fEdepSmear_[0]);
+               hRootEdepSmear511keV->Fill(fEdepSmear_[0]);
+               hRootEdepSmear511keVOne->Fill(fEdepSmear_[0]);
+           }
+           else
+           {
+               hRootEdepSmear->Fill(fEdep_[0]);
+               hRootEdepSmear511keV->Fill(fEdep_[0]);
+               hRootEdepSmear511keVOne->Fill(fEdep_[0]);
+           }
            hCutPassing->Fill(1);
        }
        if(fCutPassing_[1] && fEdep_[1]>COMPTON_E_TH_0)
        {
            hRootEdep->Fill(fEdep_[1]);
            hRootEdep511keV->Fill(fEdep_[1]);
-           hRootEdepSmear->Fill(fEdepSmear_[1]);
-           hRootEdepSmear511keV->Fill(fEdepSmear_[1]);
+           hRootEdep511keVTwo->Fill(fEdep_[1]);
+           if(fEdep_[1]>RemoveSmearBellowE)
+           {
+                hRootEdepSmear->Fill(fEdepSmear_[1]);
+                hRootEdepSmear511keV->Fill(fEdepSmear_[1]);
+                hRootEdepSmear511keVTwo->Fill(fEdepSmear_[1]);
+           }
+           else
+           {
+               hRootEdepSmear->Fill(fEdep_[1]);
+               hRootEdepSmear511keV->Fill(fEdep_[1]);
+               hRootEdepSmear511keVTwo->Fill(fEdep_[1]);
+           }
            hCutPassing->Fill(2);
        }
        if(fCutPassing_.size() > 2 && fCutPassing_[2] && fEdep_[2]>COMPTON_E_TH_0)
@@ -91,8 +124,16 @@ void MyEventHits::Loop()
            TLorentzVector v30(fHitPoint_[2].X(), fHitPoint_[2].Y(), fHitPoint_[2].Z(), 0.0);
            hRootEdep->Fill(fEdep_[2]);
            hRootEdepPrompt->Fill(fEdep_[2]);
-           hRootEdepSmear->Fill(fEdepSmear_[2]);
-           hRootEdepSmearPrompt->Fill(fEdepSmear_[2]);
+           if(fEdep_[2]>RemoveSmearBellowE)
+           {
+               hRootEdepSmear->Fill(fEdepSmear_[2]);
+               hRootEdepSmearPrompt->Fill(fEdepSmear_[2]);
+           }
+           else
+           {
+               hRootEdepSmear->Fill(fEdep_[2]);
+               hRootEdepSmearPrompt->Fill(fEdep_[2]);
+           }
            hCutPassing->Fill(3);
        }
 

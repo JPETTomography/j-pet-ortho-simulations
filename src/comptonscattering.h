@@ -39,7 +39,6 @@ class ComptonScattering
         bool fSilentMode_;
         DecayType fDecayType_;
         std::string fTypeString_;
-        TRandom3* fRand_; //set seed
         TH1F* fH_electron_E_;   //energy distribution for electrons
         TH1F* fH_electron_E_blur_;   //energy distribution for electrons blurred by detector effects
         TH1F* fH_photon_E_depos_; //distribution of energy deposited by incident photons

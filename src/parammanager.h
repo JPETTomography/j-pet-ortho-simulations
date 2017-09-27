@@ -47,8 +47,15 @@ class ParamManager
         inline float GetP() const {return fP_;}
         inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
         inline float GetSmearHighLimit() const {return fSmearHighLimit_;}
+        inline int GetSeed() const {return fSeed_;}
         inline bool IsSilentMode() const {return fSilentMode_;}
         inline bool Is2nNDataImported() const {return f2nNdataImported_;}
+        inline double GetDecayBranchProbability(const unsigned index) const
+            {if(index<fDecayBranchProbability_.size()) return fDecayBranchProbability_[index]; else return 0;}
+        inline double GetGammaEmissionProbability(const unsigned branch, const unsigned gamma) const
+            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEmissionProbability_.size()) return (fGammaEmissionProbability_[branch])[gamma]; else return 0;}
+        inline double GetGammaEnergy(const unsigned branch, const unsigned gamma) const
+            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEnergy_.size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
         inline void SetEff(float eff) {fEff_=eff;}
@@ -63,18 +70,13 @@ class ParamManager
         inline void SetOutputType(OutputOptions type) {fOutput_=type;}
         inline EventTypeToSave GetEventTypeToSave() const {return fEventTypeToSave_;}
         inline void SetEventTypeToSave(EventTypeToSave type) {fEventTypeToSave_=type;}
-        inline double GetDecayBranchProbability(const unsigned index) const
-            {if(index<fDecayBranchProbability_.size()) return fDecayBranchProbability_[index]; else return 0;}
-        inline double GetGammaEmissionProbability(const unsigned branch, const unsigned gamma) const
-            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEmissionProbability_.size()) return (fGammaEmissionProbability_[branch])[gamma]; else return 0;}
-        inline double GetGammaEnergy(const unsigned branch, const unsigned gamma) const
-            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEnergy_.size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
+        inline void SetSeed(int seed){fSeed_=seed;}
         //access source parameters
         std::vector<double> GetDataAt(const int index=0) const;
         //import parameters from external file
-        void ImportParams(std::string inFile="simpar.par");
+        void ImportParams(const std::string& inFile="simpar.par");
 
-        void Import2nNdata(std::string inFile="2nN_data.dat");
+        void Import2nNdata(const std::string& inFile="2nN_data.dat");
 
         //print parameters to the stdout
         void PrintParams();
@@ -92,8 +94,10 @@ class ParamManager
         float fP_; //probability of emitting an additional gamma in 2+1 event mode
         float fSmearLowLimit_; //lower limit for smearing effect
         float fSmearHighLimit_; //higher limit for smearing effect
+        int fSeed_; //seed of the random generator, if set to 0 then different for different program executions
         bool fSilentMode_; //if set to true, less output to std::cout will be printed
         bool f2nNdataImported_;
+
         OutputOptions fOutput_; //what kind of output will be produced
         EventTypeToSave fEventTypeToSave_; //what kind of events should be saved
         std::vector<std::vector<double> > fData_; //this is where source parameters are stored

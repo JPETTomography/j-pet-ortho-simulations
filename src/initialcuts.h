@@ -57,7 +57,6 @@ class InitialCuts
         int fNumberOfEvents_; //total number of events
         int fNumberOfGammas_; //total number of gammas
 
-        TRandom3* fRand_; //set random seed
         // histograms with relative angles for events that passed cuts
         TH1F* fH_12_pass_;
         TH1F* fH_23_pass_;

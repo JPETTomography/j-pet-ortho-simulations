@@ -11,7 +11,6 @@
 ///
 ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fSilentMode_(false), fDecayType_(type), fSmearLowLimit_(low), fSmearHighLimit_(high)
 {
-    fRand_ = new TRandom3(0); //set seed for the random generator
     if(fDecayType_==THREE)
     {
         fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.0, 0.600);
@@ -160,7 +159,6 @@ ComptonScattering::~ComptonScattering()
     if(fH_PDF_Theta_) delete fH_PDF_Theta_;
     if(fH_PDF_Theta_cross) delete fH_PDF_Theta_cross;
     if(fPDF_Theta) delete fPDF_Theta;
-    if(fRand_) delete fRand_;
 }
 
 ///
@@ -295,7 +293,7 @@ void ComptonScattering::Scatter(Event* event) const
             //if new_E is within limit -- smear, otherwise fill histogram with new_E
             if((new_E >= fSmearLowLimit_) && (new_E <= fSmearHighLimit_))
             {
-                double Esmear = fRand_->Gaus(new_E, sigmaE(E));
+                double Esmear = gRandom->Gaus(new_E, sigmaE(E));
                 fH_electron_E_blur_->Fill(Esmear);
                 event->SetEdepSmearOf(ii, Esmear);
             }

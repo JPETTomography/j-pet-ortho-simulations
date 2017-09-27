@@ -25,36 +25,58 @@ using namespace std;
 /// \param hEdep Histogram containing data for all types of gamma.
 /// \param hEdep511keV Histogram containing data for 511 keV gammas only.
 /// \param hEdepPrompt Histogram containing data for Prompt keV gammas only.
+/// \param additionalHist Provide this only for o-Ps three gamma decay.
 ///
-void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepPrompt)
+void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepPrompt, TH1F* additionalHist = nullptr)
 {
 
     TCanvas* cEdep = new TCanvas("cEdep", text.c_str(), 600, 400);
     cEdep->Divide(1,1);
-    TLegend* legEdep = new TLegend(0.55, 0.4, 0.85, 0.7);
+    TLegend* legEdep = new TLegend(0.55, 0.4, 0.85, 0.6);
     cEdep->cd(1);
 
     hEdep->SetLineColor(kBlue);
     hEdep->SetLineWidth(2);
-    legEdep -> AddEntry(hEdep, ("all, N="+to_string((int)hEdep->GetEntries())).c_str());
+//    legEdep -> AddEntry(hEdep, ("all, N="+to_string((int)hEdep->GetEntries())).c_str());
     hEdep->SetTitle(text.c_str());
-    hEdep->Draw();
+    hEdep->GetXaxis()->SetTitle("Edep [MeV]");
+//    double scaleFact = 1.0/hEdep->Integral();
+//    hEdep->Scale(scaleFact);
+    hEdep->GetXaxis()->SetRangeUser(0.06, 1.2);
+//    hEdep->Draw();
 
     if(hEdep511keV)
     {
         hEdep511keV->SetLineColor(kRed);
         hEdep511keV->SetLineWidth(2);
+//        hEdep511keV->Scale(hEdepPrompt->GetEntries()/hEdep511keV->GetEntries());
+        hEdep511keV->GetXaxis()->SetRangeUser(0.06, 1.2);
         hEdep511keV->Draw("same");
-        legEdep -> AddEntry(hEdep511keV, ("511 keV, N="+to_string((int)hEdep511keV->GetEntries())).c_str());
+        if(additionalHist)
+            legEdep -> AddEntry(hEdep511keV, ("gamma1, N="+to_string((int)hEdep511keV->GetEntries())).c_str());
+        else
+            legEdep -> AddEntry(hEdep511keV, ("511 keV"));//, N="+to_string((int)hEdep511keV->GetEntries())).c_str());
     }
     if(hEdepPrompt)
     {
         hEdepPrompt->SetLineColor(kGreen+2);
         hEdepPrompt->SetLineWidth(2);
+        hEdepPrompt->GetXaxis()->SetRangeUser(0.06, 1.2);
+//        hEdepPrompt->Scale(scaleFact);
         hEdepPrompt->Draw("same");
-        legEdep -> AddEntry(hEdepPrompt, ("Prompt keV, N="+to_string((int)hEdepPrompt->GetEntries())).c_str());
+        if(additionalHist)
+            legEdep -> AddEntry(hEdepPrompt, ("gamma2, N="+to_string((int)hEdepPrompt->GetEntries())).c_str());
+        else
+            legEdep -> AddEntry(hEdepPrompt, ("Prompt 1157 keV"));//, N="+to_string((int)hEdepPrompt->GetEntries())).c_str());
     }
-    if(hEdep511keV && hEdepPrompt)
+    if(additionalHist)
+    {
+        additionalHist->SetLineColor(kViolet);
+        additionalHist->SetLineWidth(2);
+        additionalHist->Draw("same");
+        legEdep->AddEntry(additionalHist, ("gamma3, N="+to_string((int)additionalHist->GetEntries())).c_str());
+    }
+    if(hEdep511keV && hEdepPrompt && !additionalHist)
         cout<<setprecision(2)<<"Ratio 2*(Prompt)/(511keV)="<<2*hEdepPrompt->GetEntries()/hEdep511keV->GetEntries()<<endl;
 
     legEdep->Draw();
@@ -78,7 +100,7 @@ void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511ke
 
     TCanvas* cEfficiency = new TCanvas("cEfficiency", "(1-) Efficiency", 600, 400);
     cEfficiency->cd(1);
-    TLegend* legEff = new TLegend(0.60, 0.4, 0.90, 0.6);
+    TLegend* legEff = new TLegend(0.55, 0.4, 0.90, 0.6);
 
     int NBins = 200;
 
@@ -99,9 +121,9 @@ void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511ke
 
     for(int ii=1; ii<NBins+1; ii++)
     {
-        hEff511keV->SetBinContent(ii, hEdep511keV->Integral(0, ii));
+        hEff511keV->SetBinContent(ii, hEdep511keV->Integral(1, ii));
         //below 1-eff histogram is filled
-        hEffPrompt->SetBinContent(ii, hEdepPrompt->Integral()-hEdepPrompt->Integral(0, ii));
+        hEffPrompt->SetBinContent(ii, hEdepPrompt->Integral()-hEdepPrompt->Integral(1, ii));
     }
     hEff511keV->Scale(1.0/hEdep511keV->Integral());
     hEffPrompt->Scale(1.0/hEdepPrompt->Integral());
@@ -154,10 +176,10 @@ void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, c
 
     for(int ii=1; ii<NBins+1; ii++)
     {
-        if(hEdep->Integral(0, ii) == 0) // if integral in the denominator == 0 then set bin to 1
+        if(hEdep->Integral(1, ii) == 0) // if integral in the denominator == 0 then set bin to 1
             hPur511keV->SetBinContent(ii, 1);
         else
-            hPur511keV->SetBinContent(ii, hEdep511keV->Integral(0, ii) / (double)(hEdep->Integral(0, ii)));
+            hPur511keV->SetBinContent(ii, hEdep511keV->Integral(1, ii) / (double)(hEdep->Integral(1, ii)));
         if(hEdep->Integral(ii, NBins) == 0)// if integral in the denominator == 0 then set bin to 1
             hPurPrompt->SetBinContent(ii, 1);
         else
@@ -246,9 +268,10 @@ void calculatePurityEfficiency(const TH1F* hEdep, const TH1F* hEdep511keV, const
         std::cout<<"Results:"<<std::endl;
     }
 
-    double eff511 = hEdep511keV->Integral(0, index511) / hEdep511keV->Integral();
-    double purity511 = hEdep511keV->Integral(0, index511) / (hEdep->Integral(0, index));
-    double purityPrompt = hEdepPrompt->Integral(0, indexPrompt) / (hEdep->Integral(0, index));
+    double eff511 = hEdep511keV->Integral(1, index511) / hEdep511keV->Integral(1, n511);
+//    std::cout<<hEdep511keV->Integral(1, hEdep511keV->GetXaxis()->GetNbins())<<" "<<hEdep511keV->Integral();
+    double purity511 = hEdep511keV->Integral(1, index511) / (hEdep->Integral(1, index));
+    double purityPrompt = hEdepPrompt->Integral(1, indexPrompt) / (hEdep->Integral(1, index));
     std::cout<<"511keV eff="<<eff511*100<<" %"<<std::endl;
     std::cout<<"511keV purity="<<purity511*100<<" %"<<std::endl;
     std::cout<<"Prompt purity="<<purityPrompt*100<<" %"<<std::endl;
@@ -281,6 +304,13 @@ int main (int argc, char* argv[])
   drawPurity("pur", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
   drawPurity("pur_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
   drawCutPassing(eh.hCutPassing);
+//  drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keVOne, eh.hRootEdep511keVTwo, eh.hRootEdepPrompt);
+//  drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keVOne, eh.hRootEdepSmear511keVTwo,eh.hRootEdepSmearPrompt);
+//  drawEfficiency("eff", eh.hRootEdep, eh.hRootEdep511keVOne, eh.hRootEdep511keVTwo, eh.hRootEdepPrompt);
+//  drawEfficiency("eff_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keVOne, eh.hRootEdepSmear511keVTwo,eh.hRootEdepSmearPrompt);
+//  drawPurity("pur", eh.hRootEdep, eh.hRootEdep511keVOne, eh.hRootEdep511keVTwo, eh.hRootEdepPrompt);
+//  drawPurity("pur_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keVOne, eh.hRootEdepSmear511keVTwo,eh.hRootEdepSmearPrompt);
+//  drawCutPassing(eh.hCutPassing);
 
   //saving to .root file
   file->Write();

@@ -12,9 +12,13 @@ class MyEventHits : public EventHits
 public:
     TH1F* hRootEdep;
     TH1F* hRootEdep511keV;
+    TH1F* hRootEdep511keVOne;
+    TH1F* hRootEdep511keVTwo;
     TH1F* hRootEdepPrompt;
     TH1F* hRootEdepSmear;
     TH1F* hRootEdepSmear511keV;
+    TH1F* hRootEdepSmear511keVOne;
+    TH1F* hRootEdepSmear511keVTwo;
     TH1F* hRootEdepSmearPrompt;
     TH1F* hCutPassing;
     MyEventHits();
