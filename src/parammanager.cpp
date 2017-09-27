@@ -144,7 +144,7 @@ std::string reduce(const std::string& str,
 /// \brief ParamManager::ImportParams Imports prameters from file.
 /// \param inFile Path to the file with parameters.
 ///
-void ParamManager::ImportParams(std::string inFile)
+void ParamManager::ImportParams(const std::string& inFile)
 {
     std::cout<<"[INFO] Importing parameters from file: "<<inFile<<std::endl;
     std::ifstream param_file(inFile.c_str());

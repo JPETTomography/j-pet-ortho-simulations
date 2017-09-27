@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
   if(!pars_imported)
   {
       std::cout<<"[WARNING] Input file not provided! Trying to load simpar.par!"<<std::endl;
-      par_man.ImportParams();
+      par_man.ImportParams("simpar.par");
   }
   //creating directories for storing the results
   mkdir(generalPrefix.c_str(), ACCESSPERMS);
