@@ -55,8 +55,6 @@ ParamManager::ParamManager(const ParamManager &est)
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
     fDecayBranchProbability_.resize(est.fDecayBranchProbability_.size());
     std::copy(est.fDecayBranchProbability_.begin(), est.fDecayBranchProbability_.end(), fDecayBranchProbability_.begin());
-    for(unsigned ii=0; ii<fGammaEmissionProbability_.size(); ii++)
-        fGammaEmissionProbability_.push_back(est.fGammaEmissionProbability_[ii]);
     for(unsigned ii=0; ii<fGammaEnergy_.size(); ii++)
         fGammaEnergy_.push_back(est.fGammaEnergy_[ii]);
 }
@@ -87,8 +85,6 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
     fDecayBranchProbability_.resize(est.fDecayBranchProbability_.size());
     std::copy(est.fDecayBranchProbability_.begin(), est.fDecayBranchProbability_.end(), fDecayBranchProbability_.begin());
-    for(unsigned ii=0; ii<fGammaEmissionProbability_.size(); ii++)
-        fGammaEmissionProbability_.push_back(est.fGammaEmissionProbability_[ii]);
     for(unsigned ii=0; ii<fGammaEnergy_.size(); ii++)
         fGammaEnergy_.push_back(est.fGammaEnergy_[ii]);
     return *this;
@@ -108,7 +104,6 @@ bool ParamManager::operator==(const ParamManager &est) const
             (fSmearHighLimit_==est.fSmearHighLimit_) && (f2nNdataImported_==est.f2nNdataImported_) && fSeed_==est.fSeed_;
     return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin())\
             && std::equal(fDecayBranchProbability_.begin(), fDecayBranchProbability_.end(), est.fDecayBranchProbability_.begin())\
-            && std::equal(fGammaEmissionProbability_.begin(), fGammaEmissionProbability_.end(), est.fGammaEmissionProbability_.begin())\
             && std::equal(fGammaEnergy_.begin(), fGammaEnergy_.end(), est.fGammaEnergy_.begin());
 }
 
@@ -275,20 +270,16 @@ void ParamManager::Import2nNdata(const std::string& inFile)
           row = reduce(row);
           std::istringstream is(row);
           double pB;
-          double pG;
           double eG;
           is >> pB;
           if(pB > 0.0)
           {
             fDecayBranchProbability_.push_back(pB);
-            fGammaEmissionProbability_.push_back(std::vector<double>());
             fGammaEnergy_.push_back(std::vector<double>());
           }
-          int index = fGammaEmissionProbability_.size()-1;
-          while(is>> pG)
+          int index = fGammaEnergy_.size()-1;
+          while(is>> eG)
           {
-              is >> eG;
-              (fGammaEmissionProbability_.at(index)).push_back(pG);
               (fGammaEnergy_.at(index)).push_back(eG);
           }
     f2nNdataImported_=true;
@@ -362,11 +353,10 @@ void ParamManager::Print2nNdata()
     for(unsigned ii = 0; ii< fDecayBranchProbability_.size(); ii++)
     {
         std::cout<<fDecayBranchProbability_.at(ii)<<" ";
-        for(unsigned jj = 0; jj < fGammaEmissionProbability_.at(ii).size(); jj++)
+        for(unsigned jj = 0; jj < fGammaEnergy_.at(ii).size(); jj++)
         {
-            double pG = (fGammaEmissionProbability_.at(ii)).at(jj);
             double eG = (fGammaEnergy_.at(ii)).at(jj);
-            std::cout<<pG<<" "<<eG<<" ";
+            std::cout<<eG<<" ";
         }
         std::cout<<std::endl;
     }
@@ -389,15 +379,5 @@ std::vector<double> ParamManager::GetDataAt(const int index) const
 
 void ParamManager::ValidatePromptData_()
 {
-    bool isOK = (fDecayBranchProbability_.size() == fGammaEmissionProbability_.size()) && \
-            (fDecayBranchProbability_.size() == fGammaEnergy_.size()) ? true : false;
-    for(unsigned ii=0; ii<fGammaEnergy_.size(); ii++)
-        if(fGammaEnergy_[ii].size() != fGammaEmissionProbability_[ii].size())
-        {
-            isOK =false;
-            break;
-        }
 
-    if(!isOK)
-        throw("[ERROR] Prompt gamma data is invalid!");
 }

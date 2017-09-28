@@ -12,11 +12,12 @@
 
 TLorentzVector* generateSingleGamma(double energy)
 {
-    //generating additional gamma from Sc decay in the same place as the Ps decay
-        double theta = TMath::ACos(gRandom->Uniform(-1.0, 1.0));
-        double phi = gRandom->Uniform(0.0, 2*TMath::Pi());
-        double P = energy/1000.0; //GeV
-        return new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
+    if(energy==0)
+        return nullptr;
+    double theta = TMath::ACos(gRandom->Uniform(-1.0, 1.0));
+    double phi = gRandom->Uniform(0.0, 2*TMath::Pi());
+    double P = energy/1000.0; //GeV
+    return new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
 }
 
 
@@ -97,6 +98,23 @@ Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source
        {
            fourMomenta.push_back(generateSingleGamma(pManag.GetE()/1000.0)); //E in [MeV]
            sourcePar.push_back(new TLorentzVector(*sourcePar.at(0)));
+       }
+       else if(type == TWOandN)
+       {
+           //loop over all beta decay branches
+           for(int ii=0; ii< pManag.GetNumberOfDecayBranches(); ii++)
+           {
+               //check if a beta decay occurs
+               if(gRandom->Uniform() < pManag.GetDecayBranchProbabilityAt(ii))
+               {
+                   //loop over all possible gamma emissions
+                   for(int jj=0; jj<pManag.GetBranchSize(ii); jj++)
+                   {
+                       fourMomenta.push_back(generateSingleGamma(pManag.GetGammaEnergyAt(ii, jj)/1000.0)); //E in [MeV]
+                       sourcePar.push_back(new TLorentzVector(*sourcePar.at(0)));
+                   }
+               }
+           }
        }
 
        //Packing everything to EVENT object

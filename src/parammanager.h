@@ -50,11 +50,12 @@ class ParamManager
         inline int GetSeed() const {return fSeed_;}
         inline bool IsSilentMode() const {return fSilentMode_;}
         inline bool Is2nNDataImported() const {return f2nNdataImported_;}
-        inline double GetDecayBranchProbability(const unsigned index) const
+        inline int GetNumberOfDecayBranches() const {return fDecayBranchProbability_.size();}
+        inline int GetBranchSize(const unsigned index) const
+            {return fGammaEnergy_[index].size();}
+        inline double GetDecayBranchProbabilityAt(const unsigned index) const
             {if(index<fDecayBranchProbability_.size()) return fDecayBranchProbability_[index]; else return 0;}
-        inline double GetGammaEmissionProbability(const unsigned branch, const unsigned gamma) const
-            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEmissionProbability_.size()) return (fGammaEmissionProbability_[branch])[gamma]; else return 0;}
-        inline double GetGammaEnergy(const unsigned branch, const unsigned gamma) const
+        inline double GetGammaEnergyAt(const unsigned branch, const unsigned gamma) const
             {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEnergy_.size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
@@ -103,7 +104,6 @@ class ParamManager
         std::vector<std::vector<double> > fData_; //this is where source parameters are stored
         //fields to store info for 2&N decays
         std::vector<double> fDecayBranchProbability_;
-        std::vector<std::vector<double> > fGammaEmissionProbability_;
         std::vector<std::vector<double> > fGammaEnergy_; //keV
         void ValidatePromptData_();
 };

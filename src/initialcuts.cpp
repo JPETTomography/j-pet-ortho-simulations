@@ -225,7 +225,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_en_pass_event_->GetXaxis()->SetNdivisions(5, false);
 
         //histogram for events that passed cuts
-        fH_12_pass_ = new TH1F(("fH_12_pass"+std::to_string(objectID_)).c_str(), "fH_12_pass", 100, 0.0, 3.2);
+        fH_12_pass_ = new TH1F(("fH_12_pass"+std::to_string(objectID_)).c_str(), "fH_12_pass", 19, 3.1, 3.2);
         fH_12_pass_->SetFillColor(kBlue);
         fH_12_pass_ -> SetTitle("Distribution of polar angle between 2 gammas");
         fH_12_pass_ -> GetXaxis()->SetNdivisions(5, false);
@@ -234,7 +234,7 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_12_pass_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
         fH_12_pass_ -> GetYaxis()->SetTitleOffset(1.4);
         // histogram for events that did not passed cuts
-        fH_12_fail_ = new TH1F(("fH_12_fail"+std::to_string(objectID_)).c_str(), "fH_12_fail", 100, 0.0, 3.2);
+        fH_12_fail_ = new TH1F(("fH_12_fail"+std::to_string(objectID_)).c_str(), "fH_12_fail", 19, 3.1, 3.2);
         fH_12_fail_->SetFillColor(kBlue);
         fH_12_fail_ -> SetTitle("Distribution of polar angle between 2 gammas");
         fH_12_fail_ -> GetXaxis()->SetNdivisions(5, false);
@@ -551,7 +551,7 @@ void InitialCuts::AddCuts(Event* event)
         {
             fH_gamma_cuts_->Fill(0); //gammas at the beginning
             fNumberOfGammas_++;
-            bool geo_pass = event->GetHitPhiOf(ii)==-4 ? false : true;
+            bool geo_pass = event->GetHitPhiOf(ii)!=-4;
             if(geo_pass)
                 fH_gamma_cuts_->Fill(1);
             bool inter_pass = geo_pass ? DetectionCut_() : false; //if passed geom. then test detector eff
@@ -587,12 +587,12 @@ void InitialCuts::AddCuts(Event* event)
 bool InitialCuts::DetectionCut_()
 {
     bool pass = false;
-    if(fDetectionProbability_==1.0)
+    if(fDetectionProbability_ == 1)
         pass = true;
     else
     {
-        float p = gRandom->Uniform(0.0, 1.0);
-        pass = p <= fDetectionProbability_;
+        float p = gRandom->Uniform();
+        pass = p < fDetectionProbability_;
     }
     if(pass)
     {
@@ -764,14 +764,14 @@ void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
     //drawing histograms
     //for gammas
     cuts->cd(1);
-    fH_gamma_cuts_->Scale(100.0/fNumberOfGammas_);
+    fH_gamma_cuts_->Scale(100.0/(double)fNumberOfGammas_);
     fH_gamma_cuts_->GetYaxis()->SetRangeUser(0.0, 101.0);
     fH_gamma_cuts_->SetStats(kFALSE);
     fH_gamma_cuts_->Draw("hist");
     labelBefore -> DrawText(0.15, 0.55, "before cuts");
     labelGeo -> DrawText(0.4, 0.55, "geom. accept.");
     labelP -> DrawText(0.65, 0.55, "interaction prob.");
-    ss<<fAcceptedGammas_/(double)fNumberOfGammas_*100.0;
+    ss<<(double)fAcceptedGammas_/(double)fNumberOfGammas_*100.0;
     labelPercent->DrawText(0.75, 0.2, (ss.str()+std::string("%")).c_str());
     ss.str(std::string());
     //for events

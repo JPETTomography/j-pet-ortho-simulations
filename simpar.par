@@ -1,7 +1,7 @@
 #Lines that start with '#' are treated as comments.
-gammas := 2 #no of decay products, select 1, 2 or 3, put 4 if you want to have 2+1 decay,
+gammas := 5 #no of decay products, select 1, 2 or 3, put 4 if you want to have 2+1 decay,
 # put 5 for 2&N gamma decays, if other number provided both types will be simulated
-events := 3000 #no of decays to be simulated
+events := 1000 #no of decays to be simulated
 eff := 1 #0.17 #scintillatoor's efficiency
 R := 437.3 #radius of the detector
 L := 500 #length of the detector

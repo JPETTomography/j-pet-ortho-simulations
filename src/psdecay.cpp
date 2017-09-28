@@ -138,7 +138,7 @@ PsDecay::PsDecay(DecayType type) :
         fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 104, 0.0, 4.0);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 104, 0.0, 4.0);
         //histogram for all events generated
-        fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 0, 3.2);
+        fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 3.10, 3.2);
         fH_12_->SetFillColor(kBlue);
         fH_12_ -> SetTitle("Distribution of polar angle between 2 gammas");
         fH_12_ -> GetXaxis()->SetNdivisions(5, false);
@@ -418,7 +418,7 @@ void PsDecay::DrawHistograms(std::string prefix, OutputOptions output)
         fH_min_max_->Draw("colz");
         outFile3 = prefix+fTypeString_+std::string("-gammas_angles_sorted_all.png");
     }
-    else if(fDecayType_==TWO)
+    else if(fDecayType_==TWO || fDecayType_==TWOandN)
     {
         angles_all = new TCanvas((fTypeString_+"-gammas_angles_all").c_str(), \
                                                (std::string("Angle ditribution for all generated ")\

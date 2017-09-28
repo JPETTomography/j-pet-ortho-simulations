@@ -59,7 +59,7 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     // creating necessary objects
     Event* eventDecay = nullptr;//new Event;
     PsDecay decay(type);
-    InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetP());
+    InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetEff());
     ComptonScattering cs(type, pManag.GetSmearLowLimit(), pManag.GetSmearHighLimit());
     //setting SilentMode if necessary
     if(pManag.IsSilentMode())
@@ -113,9 +113,9 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     //***   END OF EVENT LOOP   ***
 
     //Drawing results
-//    decay.DrawHistograms(filePrefix, pManag.GetOutputType());
-//    cuts.DrawHistograms(filePrefix, pManag.GetOutputType());
-//    cs.DrawComptonHistograms(filePrefix, pManag.GetOutputType()); //Draw histograms with scattering angle and electron's energy distributions.
+    decay.DrawHistograms(filePrefix, pManag.GetOutputType());
+    cuts.DrawHistograms(filePrefix, pManag.GetOutputType());
+    cs.DrawComptonHistograms(filePrefix, pManag.GetOutputType()); //Draw histograms with scattering angle and electron's energy distributions.
     delete[] masses;
 }
 
@@ -199,6 +199,11 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
         std::cout<<"::::::::::::Simulating 2+1-gamma decays::::::::::::"<<std::endl;
         simulateDecay(Ps, sourcePos, pManag, TWOandONE, generalPrefix+outputFileAndDirName+subDir, tree);
    }
+   else if(noOfGammas==5)
+   {
+        std::cout<<"::::::::::::Simulating 2+N-gamma decays::::::::::::"<<std::endl;
+        simulateDecay(Ps, sourcePos, pManag, TWOandN, generalPrefix+outputFileAndDirName+subDir, tree);
+   }
    else
    {
        std::cout<<"::::::::::::Simulating both 2-gamma and 3-gammas decays::::::::::::"<<std::endl;
@@ -267,6 +272,7 @@ int main(int argc, char* argv[])
   {
       std::cout<<"[WARNING] Data file for 2&N decays not provided! Trying to load 2nN_data.dat!"<<std::endl;
       par_man.Import2nNdata();
+      par_man.Print2nNdata();
   }
   //creating directories for storing the results
   mkdir(generalPrefix.c_str(), ACCESSPERMS);
