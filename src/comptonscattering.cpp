@@ -36,7 +36,7 @@ ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fS
     else if(fDecayType_==TWOandN)
     {
         fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 104, 0.0, 4.0);
-        fTypeString_ = "2&1";
+        fTypeString_ = "2&N";
         fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 104, 0.0, 4.0);
         fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 104, 0.0, 4.0);
     }

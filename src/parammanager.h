@@ -56,7 +56,7 @@ class ParamManager
         inline double GetDecayBranchProbabilityAt(const unsigned index) const
             {if(index<fDecayBranchProbability_.size()) return fDecayBranchProbability_[index]; else return 0;}
         inline double GetGammaEnergyAt(const unsigned branch, const unsigned gamma) const
-            {if(branch<fDecayBranchProbability_.size() && gamma<fGammaEnergy_.size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
+            {if(branch<fDecayBranchProbability_.size() && gamma<(fGammaEnergy_.at(branch)).size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
         inline void SetEff(float eff) {fEff_=eff;}

@@ -8,6 +8,7 @@
 #include <iterator>
 #include <cstring>
 #include <algorithm>
+#include <TMath.h>
 #include "parammanager.h"
 ///
 /// \brief ParamManager::ParamManager Basic constructor.
@@ -245,7 +246,7 @@ void ParamManager::ImportParams(const std::string& inFile)
               fData_.push_back(std::vector<double>(std::istream_iterator<double>(is), std::istream_iterator<double>()));
           }
     }
-    //The number of simulation runs is determined basing on the number of data sets with source's parameters.
+    //The number of simulation runs is dete#include <algorithm>rmined basing on the number of data sets with source's parameters.
     fSimRuns_=fData_.size();
     if(!fSilentMode_)
         PrintParams();
@@ -284,6 +285,7 @@ void ParamManager::Import2nNdata(const std::string& inFile)
           }
     f2nNdataImported_=true;
     }
+    ValidatePromptData_();
 }
 
 ///
@@ -350,6 +352,7 @@ void ParamManager::PrintParams()
 
 void ParamManager::Print2nNdata()
 {
+    std::cout<<"[INFO] Printing decay branches:"<<std::endl;
     for(unsigned ii = 0; ii< fDecayBranchProbability_.size(); ii++)
     {
         std::cout<<fDecayBranchProbability_.at(ii)<<" ";
@@ -379,5 +382,15 @@ std::vector<double> ParamManager::GetDataAt(const int index) const
 
 void ParamManager::ValidatePromptData_()
 {
+    double sum = 0;
+    for(std::vector<double>::iterator it = fDecayBranchProbability_.begin(); it!=fDecayBranchProbability_.end(); ++it)
+    {
+        sum+=*it;
+    }
+    if(TMath::Abs(sum - 1.00) > 1e-6)
+    {
+        std::cout<<"[WARNING] Decay branch probabilities don\'t sum to 1! Renormalizing."<<std::endl;
+        std::for_each(fDecayBranchProbability_.begin(), fDecayBranchProbability_.end(), [sum](double &p){ p/=sum; });
+    }
 
 }

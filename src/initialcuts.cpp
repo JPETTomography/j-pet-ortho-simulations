@@ -630,6 +630,11 @@ void InitialCuts::FillValidEventHistograms_(const Event* event)
     fH_en_pass_high_->Fill(event->GetFourMomentumOf(maxIndex)->Energy());
     if(fDecayType_==THREE)
     {
+        if(event->GetNumberOfDecayProducts() != 3)
+        {
+            std::cout<<"[ERROR] Invalid number of decay products for event of type: THREE"<<std::endl;
+            throw("[ERROR] Invalid number of decay products for event of type: THREE");
+        }
         //If there are 3 gammas, draw also middle value.
         int midIndex = minIndex==maxIndex ? minIndex : 3-minIndex-maxIndex;
         fH_en_pass_mid_->Fill(event->GetFourMomentumOf(midIndex)->Energy());
