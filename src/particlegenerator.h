@@ -10,7 +10,7 @@
 #include <iostream>
 #include <typeinfo>
 
-TLorentzVector* generateSingleGamma(double energy)
+inline TLorentzVector* generateSingleGamma(double energy)
 {
     if(energy==0)
         return nullptr;
@@ -22,7 +22,7 @@ TLorentzVector* generateSingleGamma(double energy)
 
 
 
-std::string recognizeType(const DecayType type, int& noOfGammas)
+inline std::string recognizeType(const DecayType type, int& noOfGammas)
 {
     std::string type_string;
     if(type==ONE)
@@ -58,7 +58,7 @@ std::string recognizeType(const DecayType type, int& noOfGammas)
     return type_string;
 }
 
-Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source, const ParamManager& pManag, const DecayType type)
+inline Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source, const ParamManager& pManag, const DecayType type)
 {
        //Generation of a decay
        double weight;

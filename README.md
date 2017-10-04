@@ -20,7 +20,7 @@ To run the application type
 **output_subfolder_name** is also a name of the root file if tree output is selected. if the flag '-n' is not provided, system's date and time will be used.
 
 ### Changing the simulation parameters
-For details see simupar.par file.
+For details see simpar.par file.
 
 ### Results 
 By deault all results will be saved to the *results/* directory. You can change it by editing src/simulate.cpp file. There is static variable at the beginning of the file called:

@@ -22,6 +22,7 @@ class ComptonScattering
         ComptonScattering(DecayType type, float low=0.0, float high=2.0);
         ComptonScattering(const ComptonScattering& est);
         ComptonScattering& operator=(const ComptonScattering& est);
+        bool operator==(const ComptonScattering &cs) const;
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
         void DrawComptonHistograms(std::string filePrefix, OutputOptions output=PNG);
@@ -52,6 +53,8 @@ class ComptonScattering
         static long double KleinNishina_(double* angle, double* energy); //Klein-Nishina function
         static long double KleinNishinaTheta_(double* angle, double* energy); //Klein-Nishina based theta PDF
         double sigmaE(double E, double coeff=0.0444) const; //calculate std dev for the smearing effevt
+
+        static unsigned objectID_;
 
 };
 

@@ -257,7 +257,7 @@ void ParamManager::ImportParams(const std::string& inFile)
 
 void ParamManager::Import2nNdata(const std::string& inFile)
 {
-    std::cout<<"[INFO] Importing 2&Ndata from file: "<<inFile<<std::endl;
+    if(!fSilentMode_) std::cout<<"[INFO] Importing 2&Ndata from file: "<<inFile<<std::endl;
     std::ifstream param_file(inFile.c_str());
     std::string row;
 

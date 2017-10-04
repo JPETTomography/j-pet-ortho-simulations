@@ -1,13 +1,13 @@
 /// @file simulate.cpp
 /// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
-/// @date 13.07.2017
-/// @version 1.5
+/// @date 3.10.2017
+/// @version 1.6
 ///
 /// @section DESCRIPTION
-/// Simple simulation of positronium decay to 2 or 3 gammas or 2 gammas and 1 additional from Sc decay.
+/// Simple simulation of 1/2/3 gammas or 2+1 or 2+N.
 ///
 /// @section USAGE
-/// To use, compile using Makefile, then simply run.
+/// To use, compile using Makefile, then simply run. See README.md for more details.
 
 #include <unistd.h>
 #include <sys/stat.h>

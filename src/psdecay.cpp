@@ -10,6 +10,9 @@
 #include "TText.h"
 #include "psdecay.h"
 
+unsigned PsDecay::objectID_;
+
+
 ///
 /// \brief PsDecay::PsDecay The only used constructor.
 /// \param type Type of decay. Can be TWO, THREE or TWOandONE.
@@ -34,24 +37,24 @@ PsDecay::PsDecay(DecayType type) :
     {
         fTypeString_="3";
         //general purpose histograms are created here to ensure right limits
-        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 0.6);
         //histograms for all events generated
-        fH_12_23_ = new TH2F("fH_12_23_","fH_12_23_all", 50,0, 3.15, 50,0,3.15);
+        fH_12_23_ = new TH2F((std::string("fH_12_23_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(),"fH_12_23_all", 50,0, 3.15, 50,0,3.15);
         fH_12_23_ -> SetTitle("Polar angle distr, 12 vs 23");
         fH_12_23_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
         fH_12_23_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_23_ -> GetYaxis()->SetTitle("#theta_{23} [rad]");
         fH_12_23_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_12_31_ = new TH2F("fH_12_31_","fH_12_31_all", 50,0, 3.15, 50, 0, 3.15);
+        fH_12_31_ = new TH2F((std::string("fH_12_31_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(),"fH_12_31_all", 50,0, 3.15, 50, 0, 3.15);
         fH_12_31_ -> SetTitle("Polar angle distr, 12 vs 31");
         fH_12_31_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
         fH_12_31_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_31_ -> GetYaxis()->SetTitle("#theta_{31} [rad]");
         fH_12_31_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_23_31_ = new TH2F("fH_23_31_","fH_23_31_all", 50,0, 3.15, 50,0,3.15);
+        fH_23_31_ = new TH2F((std::string("fH_23_31_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(),"fH_23_31_all", 50,0, 3.15, 50,0,3.15);
         fH_23_31_ -> SetTitle("Polar angle distr, 23 vs 31");
         fH_23_31_ -> GetXaxis()->SetTitle("#theta_{23} [rad]");
         fH_23_31_ -> GetXaxis()->SetTitleOffset(1.4);
@@ -59,21 +62,21 @@ PsDecay::PsDecay(DecayType type) :
         fH_23_31_ -> GetYaxis()->SetTitleOffset(1.4);
 
         //histograms for all events generated with ordered angles
-        fH_min_mid_ = new TH2F("fH_min_mid_","fH_min_mid_all", 50,0, 3.15, 50,0,3.15);
+        fH_min_mid_ = new TH2F((std::string("fH_min_mid_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(),"fH_min_mid_all", 50,0, 3.15, 50,0,3.15);
         fH_min_mid_ -> SetTitle("Polar angle distr, min vs med");
         fH_min_mid_ -> GetXaxis()->SetTitle("#theta_{min} [rad]");
         fH_min_mid_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_min_mid_ -> GetYaxis()->SetTitle("#theta_{med} [rad]");
         fH_min_mid_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_min_max_ = new TH2F("fH_min_max_","fH_min_max_all", 50,0, 3.15, 50, 0, 3.15);
+        fH_min_max_ = new TH2F((std::string("fH_min_max_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(),"fH_min_max_all", 50,0, 3.15, 50, 0, 3.15);
         fH_min_max_ -> SetTitle("Polar angle distr, min vs max");
         fH_min_max_ -> GetXaxis()->SetTitle("#theta_{min} [rad]");
         fH_min_max_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_min_max_ -> GetYaxis()->SetTitle("#theta_{max} [rad]");
         fH_min_max_ -> GetYaxis()->SetTitleOffset(1.4);
 
-        fH_mid_max_ = new TH2F("fH_mid_max_","fH_mid_max_all", 50,0, 3.15, 50,0,3.15);
+        fH_mid_max_ = new TH2F((std::string("fH_mid_max_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(),"fH_mid_max_all", 50,0, 3.15, 50,0,3.15);
         fH_mid_max_ -> SetTitle("Polar angle distr, mid vs max");
         fH_mid_max_ -> GetXaxis()->SetTitle("#theta_{mid} [rad]");
         fH_mid_max_ -> GetXaxis()->SetTitleOffset(1.4);
@@ -85,10 +88,10 @@ PsDecay::PsDecay(DecayType type) :
     {
         fTypeString_="2";
         //general purpose histograms are created here to ensure right limits
-        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 0.6);
-        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 0.6);
+        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
+        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
         //histogram for all events generated
-        fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 3.13, 3.15);
+        fH_12_ = new TH1F((std::string("fH_12_all")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_12_all", 19, 3.13, 3.15);
         fH_12_->SetFillColor(kBlue);
         fH_12_ -> SetTitle("Distribution of polar angle between 2 gammas");
         fH_12_ -> GetXaxis()->SetNdivisions(5, false);
@@ -102,10 +105,10 @@ PsDecay::PsDecay(DecayType type) :
     {
         fTypeString_="2&1";
         //general purpose histograms are created here to ensure right limits
-        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.3, 1.3);
-        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.3, 1.3);
+        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.3, 1.3);
+        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.3, 1.3);
         //histograms for all events generated
-        fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 3.13, 3.15);
+        fH_12_ = new TH1F((std::string("fH_12_all")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_12_all", 19, 3.13, 3.15);
         fH_12_->SetFillColor(kBlue);
         fH_12_ -> SetTitle("Polar angle distribution between gamma1 and gamma2");
         fH_12_ -> GetXaxis()->SetNdivisions(5, false);
@@ -113,7 +116,7 @@ PsDecay::PsDecay(DecayType type) :
         fH_12_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_12_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
         fH_12_ -> GetYaxis()->SetTitleOffset(1.4);
-        fH_23_ = new TH1F("fH_23_all", "fH_23_all", 50, 0, 3.15);
+        fH_23_ = new TH1F((std::string("fH_23_all")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_23_all", 50, 0, 3.15);
         fH_23_->SetFillColor(kBlue);
         fH_23_ -> SetTitle("Polar angle distribution between gamma2 and gamma3");
         fH_23_ -> GetXaxis()->SetNdivisions(5, false);
@@ -121,7 +124,7 @@ PsDecay::PsDecay(DecayType type) :
         fH_23_ -> GetXaxis()->SetTitleOffset(1.4);
         fH_23_ -> GetYaxis()->SetTitle("dN/d#theta_{23}");
         fH_23_ -> GetYaxis()->SetTitleOffset(1.4);
-        fH_31_ = new TH1F("fH_31_all", "fH_31_all", 50, 0, 3.15);
+        fH_31_ = new TH1F((std::string("fH_31_all")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_31_all", 50, 0, 3.15);
         fH_31_->SetFillColor(kBlue);
         fH_31_ -> SetTitle("Polar angle distribution between gamma1 and gamma3");
         fH_31_ -> GetXaxis()->SetNdivisions(5, false);
@@ -135,8 +138,8 @@ PsDecay::PsDecay(DecayType type) :
     {
         fTypeString_="2&N";
         //general purpose histograms are created here to ensure right limits
-        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 104, 0.0, 4.0);
-        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 104, 0.0, 4.0);
+        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_en_", 104, 0.0, 4.0);
+        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_p_", 104, 0.0, 4.0);
         //histogram for all events generated
         fH_12_ = new TH1F("fH_12_all", "fH_12_all", 19, 3.10, 3.2);
         fH_12_->SetFillColor(kBlue);
@@ -152,8 +155,8 @@ PsDecay::PsDecay(DecayType type) :
     {
         fTypeString_="1";
         //general purpose histograms are created here to ensure right limits
-        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_).c_str(), "fH_en_", 52, 0.0, 2.0);
-        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_).c_str(), "fH_p_", 52, 0.0, 2.0);
+        fH_en_ = new TH1F((std::string("fH_en_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 2.0);
+        fH_p_ = new TH1F((std::string("fH_p_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 2.0);
     }
     else
     {
@@ -173,14 +176,14 @@ PsDecay::PsDecay(DecayType type) :
     fH_p_ -> GetXaxis()->SetTitleOffset(1.6);
     fH_p_ -> GetYaxis()->SetTitle("dN/dp");
     fH_p_ -> GetYaxis()->SetTitleOffset(1.8);
-    fH_phi_ = new TH1F((std::string("fH_phi_")+fTypeString_).c_str(), "fH_phi_", 52, -3.2, 3.2);
+    fH_phi_ = new TH1F((std::string("fH_phi_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_phi_", 52, -3.2, 3.2);
     fH_phi_->SetFillColor(kBlue);
     fH_phi_ -> SetTitle("Azimuthal angle distribution");
     fH_phi_ -> GetXaxis()->SetTitle("#phi [rad]");
     fH_phi_ -> GetXaxis()->SetTitleOffset(1.6);
     fH_phi_ -> GetYaxis()->SetTitle("dN/d #phi");
     fH_phi_ -> GetYaxis()->SetTitleOffset(1.8);
-    fH_cosTheta_ = new TH1F((std::string("fH_cosTheta_")+fTypeString_).c_str(), "fH_cosTheta_", 52, -1.01, 1.01);
+    fH_cosTheta_ = new TH1F((std::string("fH_cosTheta_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_cosTheta_", 52, -1.01, 1.01);
     fH_cosTheta_->SetFillColor(kBlue);
     fH_cosTheta_ -> SetTitle("Cosine of polar angle distribution");
     fH_cosTheta_ -> GetXaxis()->SetTitle("cos(#theta)");
@@ -188,6 +191,7 @@ PsDecay::PsDecay(DecayType type) :
     fH_cosTheta_ -> GetYaxis()->SetTitle("dN/d cos(#theta)");
     fH_cosTheta_ -> GetYaxis()->SetTitleOffset(1.8);
 
+    objectID_++;
 }
 
 ///

@@ -26,6 +26,8 @@ enum EventTypeToSave
     ALL = 2
 };
 
+class TwoAndNTestFixture; // for testing
+
 ///
 /// \brief The ParamManager class Class responsible for loadind simulation parameters from external file. (by default simpar.par)
 ///
@@ -106,6 +108,8 @@ class ParamManager
         std::vector<double> fDecayBranchProbability_;
         std::vector<std::vector<double> > fGammaEnergy_; //keV
         void ValidatePromptData_();
+
+        friend class TwoAndNTestFixture; // for testing
 };
 
 #endif // PARAMMANAGER_H

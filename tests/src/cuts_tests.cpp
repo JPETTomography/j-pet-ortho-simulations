@@ -1,7 +1,7 @@
 ﻿/// @file cuts_tests.cpp
 /// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
-/// @date 24.07.2017
-/// @version 1.2
+/// @date 02.10.2017
+/// @version 1.3
 ///
 /// @section DESCRIPTION
 /// The following tests test the functionality of InitialCuts class.
@@ -93,7 +93,8 @@ TEST_F (cutsTestFixture, GeometricalAcceptanceTestCenter)
     cuts3->EnableSilentMode();
 
     //r is the distance between the source and the edge of detecting area
-    double r = TMath::Sqrt(R*R+0.25*L*L); //distance from the center to the edge of detecting region
+    double r = TMath::Sqrt(R*R+0.25*L*L);
+    //one can calculate that the expression below is the probability to git the detector when source is in the center
     double pForGammaToPass = eff*L/2/r;
     //// 3 GAMMA DECAYS
     event->SetDecay(Ps, 3, masses3);
@@ -147,7 +148,7 @@ TEST_F (cutsTestFixture, GeometricalAcceptanceTestCenter)
 
 ///
 /// \brief TEST_F (decayTestFixture, GeometricalAcceptanceTestZAxis) Tests if the geometrical acceptance is correctly calculated for both 2- and 3-gamma decays, when source is somewhere on the main symmetry axis of the barrel.
-/// \attention Max error allowed for the probability to hit the detector is set to 1.1% for circa 30k events. Scales slowly for larger number of events, main reason: floating point numbers arithmetics.
+/// \attention Max error allowed for the probability to hit the detector is set to 1.0% for circa 30k events. Scales slowly for larger number of events, main reason: floating point numbers arithmetics.
 ///
 TEST_F (cutsTestFixture, GeometricalAcceptanceTestZAxis)
 {
@@ -217,13 +218,13 @@ TEST_F (cutsTestFixture, GeometricalAcceptanceTestZAxis)
     }
 //    // how many gammas hit the detector
     double reallyPassed2 = ((double)cuts2->GetAcceptedGammas())/(double)simSteps/2.0;
-    EXPECT_NEAR(pForGammaToPass, reallyPassed2, 0.01); //ASSERTION HERE with maximum error of 1.1%
+    EXPECT_NEAR(pForGammaToPass, reallyPassed2, 0.01); //ASSERTION HERE with maximum error of 1.0%
     delete cuts2;
 }
 
 /////
 ///// \brief TEST_F(decayTestFixture, InteractionProbability3Gammas) Tests if the number of accepted 3-gamma events scales correctly with the probability of interacting with a detector (like p^3). p is random from (0.1; 0.3).
-///// \attention Maximum relative error is set to 2% for 150k. If set to 2% then 1 or 2 out of 100 will fail. Depends mainly on statistics.
+///// \attention Maximum relative error is set to 2.5% for 150k. Depends mainly on statistics.
 /////
 TEST_F(cutsTestFixture, InteractionProbability3Gammas)
 {
