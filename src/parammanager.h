@@ -4,7 +4,7 @@
 #ifndef PARAMMANAGER_H
 #define PARAMMANAGER_H
 #include <string>
-#include<vector>
+#include <vector>
 
 ///
 /// \brief The OutputOptions enum Specifies type of output.
@@ -51,6 +51,7 @@ class ParamManager
         inline float GetSmearHighLimit() const {return fSmearHighLimit_;}
         inline int GetSeed() const {return fSeed_;}
         inline bool IsSilentMode() const {return fSilentMode_;}
+        //methods used for 2&N decays
         inline bool Is2nNDataImported() const {return f2nNdataImported_;}
         inline int GetNumberOfDecayBranches() const {return fDecayBranchProbability_.size();}
         inline int GetBranchSize(const unsigned index) const
@@ -59,6 +60,7 @@ class ParamManager
             {if(index<fDecayBranchProbability_.size()) return fDecayBranchProbability_[index]; else return 0;}
         inline double GetGammaEnergyAt(const unsigned branch, const unsigned gamma) const
             {if(branch<fDecayBranchProbability_.size() && gamma<(fGammaEnergy_.at(branch)).size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
+        //////////////////////////////////
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
         inline void SetEff(float eff) {fEff_=eff;}
@@ -76,14 +78,13 @@ class ParamManager
         inline void SetSeed(int seed){fSeed_=seed;}
         //access source parameters
         std::vector<double> GetDataAt(const int index=0) const;
+
         //import parameters from external file
         void ImportParams(const std::string& inFile="simpar.par");
-
         void Import2nNdata(const std::string& inFile="2nN_data.dat");
 
         //print parameters to the stdout
         void PrintParams();
-
         void Print2nNdata();
 
     private:
@@ -99,15 +100,15 @@ class ParamManager
         float fSmearHighLimit_; //higher limit for smearing effect
         int fSeed_; //seed of the random generator, if set to 0 then different for different program executions
         bool fSilentMode_; //if set to true, less output to std::cout will be printed
-        bool f2nNdataImported_;
+        bool f2nNdataImported_; //set to true after importing 2&N data
 
         OutputOptions fOutput_; //what kind of output will be produced
         EventTypeToSave fEventTypeToSave_; //what kind of events should be saved
         std::vector<std::vector<double> > fData_; //this is where source parameters are stored
         //fields to store info for 2&N decays
-        std::vector<double> fDecayBranchProbability_;
+        std::vector<double> fDecayBranchProbability_; //probability that a certain decay branch will be realized (can be abundance also)
         std::vector<std::vector<double> > fGammaEnergy_; //keV
-        void ValidatePromptData_();
+        void ValidatePromptData_(); //validate the 2&N data
 
         friend class TwoAndNTestFixture; // for testing
 };

@@ -10,6 +10,11 @@
 #include <iostream>
 #include <typeinfo>
 
+///
+/// \brief generateSingleGamma Generates a single gamma in a random direction.
+/// \param energy Energy of emitted gamma.
+/// \return Pointer to fourmomentum of created gamma.
+///
 inline TLorentzVector* generateSingleGamma(double energy)
 {
     if(energy==0)
@@ -21,7 +26,12 @@ inline TLorentzVector* generateSingleGamma(double energy)
 }
 
 
-
+///
+/// \brief recognizeType Sets "type_string" and "noOfGammas" based on DecayType value.
+/// \param type DecayType enum value.
+/// \param noOfGammas Reference to pass how many gammas DON'T originate from deexcitation.
+/// \return String value representing decay type.
+///
 inline std::string recognizeType(const DecayType type, int& noOfGammas)
 {
     std::string type_string;
@@ -58,6 +68,14 @@ inline std::string recognizeType(const DecayType type, int& noOfGammas)
     return type_string;
 }
 
+///
+/// \brief generateEvent
+/// \param phaseSpaceGen Reference to TGenPhaseSpace object used to quickly generate Ps decays.
+/// \param source Position and radius of the source.
+/// \param pManag Reference to ParamManger with all parameters of the program stored.
+/// \param type Type of decay.
+/// \return Pointer to Event object, which contains all information about the event (emitted gammas, energy deposited etc.).
+///
 inline Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector& source, const ParamManager& pManag, const DecayType type)
 {
        //Generation of a decay
@@ -83,12 +101,13 @@ inline Event* generateEvent(TGenPhaseSpace& phaseSpaceGen, const TLorentzVector&
        if(source.T() != 0)
             sourcePar.push_back(new TLorentzVector(source.X()+gRandom->Uniform(-1.0,1.0)*source.T(), source.Y()+gRandom->Uniform(-1.0,1.0)*source.T(),\
                                                       source.Z()+gRandom->Uniform(-1.0,1.0)*source.T(), 0.0));
-       else
+       else //or just using a point source
            sourcePar.push_back(new TLorentzVector(source.X(), source.Y(), source.Z(), 0.0));
 
-       if(type != ONE)
+       if(type != ONE) //origination point of second gamma
            sourcePar.push_back(new TLorentzVector(*sourcePar.at(0))); //making copies
 
+       //adding additional (3,4,5..) photons
        if(type == THREE)
        {
            fourMomenta.push_back(new TLorentzVector(*phaseSpaceGen.GetDecay(2)));

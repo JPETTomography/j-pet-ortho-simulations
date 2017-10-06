@@ -58,7 +58,7 @@ class Event : public TObject
         void DeducePassFlag();
         //calculates hit point of gammas on a detectors surface and fills fHitTheta_ and fHitPhi_ histograms
         // angles are calculated in reference to the center of the reference system's center !!!
-        void CalculateHitPoints(double R);
+        void CalculateHitPoints(double R, double L);
         //number of event
         long fId;
         //ROOT stuff

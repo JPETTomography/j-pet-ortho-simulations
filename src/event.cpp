@@ -111,9 +111,12 @@ Event::~Event()
 
 }
 
-void Event::CalculateHitPoints(double R)
+///
+/// \brief Event::CalculateHitPoints Calculates hit points on the detector's surface
+/// \param R Radius of the detector.
+///
+void Event::CalculateHitPoints(double R, double L)
 {
-    double L = 500;
     for(auto it = fFourMomentum_.begin(); it != fFourMomentum_.end(); ++it)
     {
         if(it->Pt() > TMath::Power(10, -10))

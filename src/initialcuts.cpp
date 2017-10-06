@@ -540,7 +540,7 @@ InitialCuts::~InitialCuts()
 void InitialCuts::AddCuts(Event* event)
 {
     //Calculate real hit points for pass, and fake hit points for fail (we assume infinite long detector)
-    event->CalculateHitPoints(fR_); //calculates hit points position and their theta/phi angles
+    event->CalculateHitPoints(fR_, fL_); //calculates hit points position and their theta/phi angles
     fNumberOfEvents_++;
     bool geo_event_pass = true;
     bool inter_event_pass = true;
@@ -551,12 +551,12 @@ void InitialCuts::AddCuts(Event* event)
         {
             fH_gamma_cuts_->Fill(0); //gammas at the beginning
             fNumberOfGammas_++;
-            bool geo_pass = event->GetHitPhiOf(ii)!=-4;
+            bool geo_pass = event->GetHitPhiOf(ii)!=-4; //Event::CalculateHitPoints(D, D) sets Phi to -4 when a particle missed detector
             if(geo_pass)
                 fH_gamma_cuts_->Fill(1);
             bool inter_pass = geo_pass ? DetectionCut_() : false; //if passed geom. then test detector eff
             event->SetCutPassing(ii, inter_pass);
-            if(!(ii>=2 && event->GetDecayType() != THREE))
+            if(!(ii>=2 && event->GetDecayType() != THREE)) // gammas from deexcitation are not required to reconstruct event
             {
                 geo_event_pass &= geo_pass;
                 inter_event_pass &= inter_pass;
@@ -824,7 +824,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for gammas that passed cuts."<<std::endl;
     TCanvas* angles_pass;
 
-    TCanvas* dist_pass = new TCanvas((fTypeString_+"-gammas_dist_pass").c_str(),\
+    TCanvas* dist_pass = new TCanvas((fTypeString_+"-gammas_dist_pass"+std::to_string(objectID_)).c_str(),\
                                      ("Basic distributions for passed "\
                                      +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
     //differentation of low, mid and high energy gammas
@@ -854,7 +854,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     //angle distribution depends on the number of decay products
     if(fDecayType_ == THREE)
     {
-        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass_"+std::to_string(objectID_)).c_str(),\
                                     ("Angle ditribution for all generated "\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_pass->Divide(3,1);
@@ -868,7 +868,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     }
     else if(fDecayType_ == TWO || fDecayType_ == TWOandN)
     {
-        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass"+std::to_string(objectID_)).c_str(),\
                                   ("Angle ditribution for all generated "\
                                   +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
         fH_12_pass_->Draw();
@@ -876,7 +876,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     }
     else if(fDecayType_ == TWOandONE)
     {
-        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass"+std::to_string(objectID_)).c_str(),\
                                     ("Angle ditribution for all generated "\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_pass->Divide(3,1);
@@ -997,7 +997,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         std::string outFile2;
         if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for events that did not pass cuts."<<std::endl;
         TCanvas* angles_fail;
-        TCanvas* dist_fail= new TCanvas((fTypeString_+"-gammas_dist_fail").c_str(), ("Basic distributions for passed "\
+        TCanvas* dist_fail= new TCanvas((fTypeString_+"-gammas_dist_fail"+std::to_string(objectID_)).c_str(), ("Basic distributions for passed "\
                                          +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
         dist_fail->Divide(2, 2);
         dist_fail->cd(1);
@@ -1013,7 +1013,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         //angle distribution depends on the number of decay products
         if(fDecayType_ == THREE)
         {
-            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail"+std::to_string(objectID_)).c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
 
@@ -1029,7 +1029,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         }
         else if(fDecayType_ == TWO || fDecayType_==TWOandN)
         {
-            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail"+std::to_string(objectID_)).c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
 
@@ -1038,7 +1038,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         }
         else if(fDecayType_ == TWOandONE)
         {
-            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail"+std::to_string(objectID_)).c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
 

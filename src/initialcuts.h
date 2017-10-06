@@ -16,7 +16,7 @@
 class InitialCuts
 {
     public:
-        InitialCuts(DecayType type=TWO, float R=500, float L=700, float p=1.0);
+        InitialCuts(DecayType type=TWO, float R=437.3, float L=500, float p=1.0);
         InitialCuts(const InitialCuts&);
         InitialCuts& operator=(const InitialCuts& est);
         ~InitialCuts();
@@ -93,7 +93,6 @@ class InitialCuts
         TH1F* fH_gamma_cuts_;
         TH1F* fH_event_cuts_;
 
-        bool GeometricalAcceptance_(const TLorentzVector *source, const TLorentzVector* gamma);
         bool DetectionCut_();
         void FillValidEventHistograms_(const Event* event);
         void FillInvalidEventHistograms_(const Event* event);

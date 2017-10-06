@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <TMath.h>
 #include "parammanager.h"
+
 ///
 /// \brief ParamManager::ParamManager Basic constructor.
 ///
@@ -255,6 +256,10 @@ void ParamManager::ImportParams(const std::string& inFile)
     std::cout<<"[INFO] Parameters imported.\n"<<std::endl;
 }
 
+///
+/// \brief ParamManager::Import2nNdata Imports data for 2&N decays from a file.
+/// \param inFile Text file containing data.
+///
 void ParamManager::Import2nNdata(const std::string& inFile)
 {
     if(!fSilentMode_) std::cout<<"[INFO] Importing 2&Ndata from file: "<<inFile<<std::endl;
@@ -264,28 +269,28 @@ void ParamManager::Import2nNdata(const std::string& inFile)
     //read line by line
     while (getline(param_file, row))
     {
-          if(!row.length() || row[0]=='#')
+          if(!row.length() || row[0]=='#') //lines that start with "#" are treated as comments
           {
               continue; //ignore lines starting with '#'
           }
-          row = reduce(row);
+          row = reduce(row); //get rid of white spaces
           std::istringstream is(row);
-          double pB;
-          double eG;
+          double pB; //probability of choosing a particular decay branch
+          double eG; //energy of emitted gamma
           is >> pB;
           if(pB > 0.0)
           {
             fDecayBranchProbability_.push_back(pB);
-            fGammaEnergy_.push_back(std::vector<double>());
+            fGammaEnergy_.push_back(std::vector<double>()); //making space for gamma energies
           }
           int index = fGammaEnergy_.size()-1;
           while(is>> eG)
           {
-              (fGammaEnergy_.at(index)).push_back(eG);
+              (fGammaEnergy_.at(index)).push_back(eG); //pushing gamma energies
           }
     f2nNdataImported_=true;
     }
-    ValidatePromptData_();
+    ValidatePromptData_(); //checking if data is OK
 }
 
 ///
@@ -350,6 +355,10 @@ void ParamManager::PrintParams()
     }
 }
 
+///
+/// \brief ParamManager::Print2nNdata Prints data from 2&N data file to the standard output
+///
+///
 void ParamManager::Print2nNdata()
 {
     std::cout<<"[INFO] Printing decay branches:"<<std::endl;
@@ -380,6 +389,9 @@ std::vector<double> ParamManager::GetDataAt(const int index) const
     return data;
 }
 
+///
+/// \brief ParamManager::ValidatePromptData_ Cheks if decay branch probabilities sum to 1. If not, then it renormalizes it.
+///
 void ParamManager::ValidatePromptData_()
 {
     double sum = 0;

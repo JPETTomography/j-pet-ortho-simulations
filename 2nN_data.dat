@@ -1,9 +1,16 @@
+# Lines that start with hash are ignored by the parser
 # Provide data in a format:
-# decay_banch_prob prompt1_energy prompt1_prob prompt2_energy prompt2_prob ...
-# lines that start with hash are ignored
-#Sc44 
-#1.0 1157
-# 
+# decay_banch_prob prompt1_energy prompt2_energy  ...
+# Energy is in keV.
+# You can use abundance instead of probabilities (which should in principle sum to 1), then it will be renormalized to probabilities.
+#
+#
+# Sc44      
+# 98% of e-e+ anihilations will be assisted with additional 1157 keV gamma from deexcitation.
+0.98 1157
+0.02 0.0
+#
+#
 #test ion source
-0.52 1603 
-0.48 0
+#0.52 1603 
+#0.48 0
