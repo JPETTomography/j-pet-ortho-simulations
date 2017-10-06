@@ -27,7 +27,8 @@ All rights reserved.
 `sudo apt-get install libboost-all-dev`
 
 ### Building tests:
-Simply run `make` in the *tests/* directory.
+Build the main application.
+Then simply run `make` in the *tests/* directory.
 
 ### Usage:
 To run all tests:

@@ -27,4 +27,4 @@ $(OBJDIR)/cuts_tests.o: $(INCS)
 	$(CXX) $(CXXFLAGS) ./$(SRCDIR)/cuts_tests.cpp  -o $(OBJDIR)/cuts_tests.o 
 
 clean:
-	rm obj/*.o $(SRCDIR)/*.so $(SRCDIR)/*.d testAll  testAll.xml 
+	rm obj/*.o  testAll EventDict* 
