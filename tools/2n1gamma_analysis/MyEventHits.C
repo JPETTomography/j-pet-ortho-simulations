@@ -17,6 +17,12 @@ MyEventHits::MyEventHits()
     hRootEdepSmear511keVTwo = new TH1F("hRootEdepSmear511keVTwo", "hRootEdepPre", 200, 0.0, 1.2);
     hRootEdepSmearPrompt = new TH1F("hRootEdepSmearPrompt", "hRootEdepPre", 200, 0.0, 1.2);
     hCutPassing = new TH1F("hCutPassing", "hCutPassing", 5, 0, 5);
+    hRootEdepSum = new TH1F("hRootEdepSum", "hRootEdepSum", 200, 0.0, 1.2);
+    hRootEdepSumSmear = new TH1F("hRootEdepSumSmear", "hRootEdepSumSmear", 200, 0.0, 1.2);
+    hFermiBall = new TH3F("hFermiBall", "hFermiBall", 200, 0.0, 0.4, 200, 0.0, 0.4, 200, 0.0, 0.4);
+    hFermiBallSmear = new TH3F("hFermiBallSmear", "hFermiBallSmear", 200, 0.0, 0.4, 200, 0.0, 0.4, 200, 0.0, 0.4);
+    hFermiCircle = new TH2F("hFermiCircle", "hFermiCircle", 200, 0.0, 0.4, 200, 0.0, 0.4);
+    hFermiCircleSmear = new TH2F("hFermiCircleSmear", "hFermiCircleSmear", 200, 0.0, 0.4, 200, 0.0, 0.4);
 }
 
 MyEventHits::~MyEventHits()
@@ -32,6 +38,12 @@ MyEventHits::~MyEventHits()
     if(hRootEdep511keVTwo) delete hRootEdep511keVTwo;
     if(hRootEdepSmear511keVOne) delete hRootEdepSmear511keVOne;
     if(hRootEdepSmear511keVTwo) delete hRootEdepSmear511keVTwo;
+    if(hRootEdepSum) delete hRootEdepSum;
+    if(hRootEdepSumSmear) delete hRootEdepSumSmear;
+    if(hFermiBall) delete hFermiBall;
+    if(hFermiBallSmear) delete hFermiBallSmear;
+    if(hFermiCircle) delete hFermiCircle;
+    if(hFermiCircleSmear) delete hFermiCircleSmear;
 }
 
 void MyEventHits::Loop()
@@ -79,20 +91,24 @@ void MyEventHits::Loop()
 
        //Lower treshhold on energy (not blurred!) in MeV
        double COMPTON_E_TH_0 = 0.010;
-
+       double edepSum = 0.0;
+       double edepSumSmear = 0.0;
        if(fCutPassing_[0] && fEdep_[0]>COMPTON_E_TH_0)
        {
            hRootEdep->Fill(fEdep_[0]);
+           edepSum += fEdep_[0];
            hRootEdep511keV->Fill(fEdep_[0]);
            hRootEdep511keVOne->Fill(fEdep_[0]);
            if(fEdep_[0] > RemoveSmearBellowE)
            {
+               edepSumSmear += fEdepSmear_[0];
                hRootEdepSmear->Fill(fEdepSmear_[0]);
                hRootEdepSmear511keV->Fill(fEdepSmear_[0]);
                hRootEdepSmear511keVOne->Fill(fEdepSmear_[0]);
            }
            else
            {
+               edepSumSmear += fEdep_[0];
                hRootEdepSmear->Fill(fEdep_[0]);
                hRootEdepSmear511keV->Fill(fEdep_[0]);
                hRootEdepSmear511keVOne->Fill(fEdep_[0]);
@@ -102,40 +118,53 @@ void MyEventHits::Loop()
        if(fCutPassing_[1] && fEdep_[1]>COMPTON_E_TH_0)
        {
            hRootEdep->Fill(fEdep_[1]);
+           edepSum += fEdep_[1];
            hRootEdep511keV->Fill(fEdep_[1]);
            hRootEdep511keVTwo->Fill(fEdep_[1]);
            if(fEdep_[1]>RemoveSmearBellowE)
            {
+                edepSumSmear += fEdepSmear_[1];
                 hRootEdepSmear->Fill(fEdepSmear_[1]);
                 hRootEdepSmear511keV->Fill(fEdepSmear_[1]);
                 hRootEdepSmear511keVTwo->Fill(fEdepSmear_[1]);
            }
            else
            {
+               edepSumSmear += fEdep_[1];
                hRootEdepSmear->Fill(fEdep_[1]);
                hRootEdepSmear511keV->Fill(fEdep_[1]);
                hRootEdepSmear511keVTwo->Fill(fEdep_[1]);
            }
            hCutPassing->Fill(2);
+           hFermiCircle->Fill(fEdep_[0], fEdep_[1]);
+           hFermiCircleSmear->Fill(fEdepSmear_[0], fEdepSmear_[1]);
        }
        if(fCutPassing_.size() > 2 && fCutPassing_[2] && fEdep_[2]>COMPTON_E_TH_0)
        {
            TLorentzVector v3(fHitPoint_[2].X() - fEmissionPoint_[2].X(), fHitPoint_[2].Y() - fEmissionPoint_[2].Y(), fHitPoint_[2].Z() - fEmissionPoint_[2].Z(), 0.0);
            TLorentzVector v30(fHitPoint_[2].X(), fHitPoint_[2].Y(), fHitPoint_[2].Z(), 0.0);
            hRootEdep->Fill(fEdep_[2]);
+           edepSum += fEdep_[2];
            hRootEdepPrompt->Fill(fEdep_[2]);
            if(fEdep_[2]>RemoveSmearBellowE)
            {
+               edepSumSmear += fEdepSmear_[2];
                hRootEdepSmear->Fill(fEdepSmear_[2]);
                hRootEdepSmearPrompt->Fill(fEdepSmear_[2]);
            }
            else
            {
+               edepSumSmear += fEdep_[2];
                hRootEdepSmear->Fill(fEdep_[2]);
                hRootEdepSmearPrompt->Fill(fEdep_[2]);
            }
            hCutPassing->Fill(3);
+           hFermiBall->Fill(fEdep_[0], fEdep_[1], fEdep_[2]);
+           hFermiBallSmear->Fill(fEdepSmear_[0], fEdepSmear_[1], fEdepSmear_[2]);
        }
-
+       if(edepSum>0)
+            hRootEdepSum -> Fill(edepSum);
+       if(edepSumSmear>0)
+            hRootEdepSumSmear -> Fill(edepSumSmear);
    }
 }

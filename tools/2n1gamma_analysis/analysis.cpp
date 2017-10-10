@@ -88,6 +88,50 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepProm
     delete cEdep;
 }
 
+void drawEdepSum(const string text, TH1F* h1)
+{
+    TCanvas* canvas = new TCanvas("edepSum", "Sum of Edep in each step", 600, 400);
+    canvas->cd(1);
+
+    h1->SetTitle("Sum of Edep in each step");
+    h1->GetXaxis()->SetTitle("E [MeV]");
+    h1->GetYaxis()->SetTitle("N");
+    h1->Draw();
+    TImage *img = TImage::Create();
+    img->FromPad(canvas);
+    img->WriteImage((text+".png").c_str());
+    canvas->Write();
+    delete img;
+    delete canvas;
+}
+
+void drawFermiBall(const string text, TH3F* h1, TH2F* h2 = nullptr)
+{
+    TCanvas* canvas = new TCanvas("FermiBall", "Edep distribution", 600, 400);
+    canvas->cd(1);
+    if(!h2)
+    {
+        h1->SetTitle("Edep distribution");
+        h1->GetXaxis()->SetTitle("E [MeV]");
+        h1->GetYaxis()->SetTitle("E [MeV]");
+        h1->GetZaxis()->SetTitle("E [MeV]");
+        h1->Draw("iso");
+    }
+    else
+    {
+        h2->SetTitle("Edep distribution");
+        h2->GetXaxis()->SetTitle("E [MeV]");
+        h2->GetYaxis()->SetTitle("E [MeV]");
+        h2->Draw("colz");
+    }
+    TImage *img = TImage::Create();
+    img->FromPad(canvas);
+    img->WriteImage((text+".png").c_str());
+    canvas->Write();
+    delete img;
+    delete canvas;
+}
+
 ///
 /// \brief drawEfficiency Draws efficiency histogram, can be used for both smeared and raw data.
 /// \param text Text used as a picture title and file name.
@@ -304,6 +348,11 @@ int main (int argc, char* argv[])
   drawPurity("pur", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
   drawPurity("pur_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
   drawCutPassing(eh.hCutPassing);
+  drawEdepSum("edepSum", eh.hRootEdepSum);
+  drawEdepSum("edepSumSmear", eh.hRootEdepSumSmear);
+  drawFermiBall("edepBall", eh.hFermiBall);//, eh.hFermiCircle);
+  drawFermiBall("edepBallSmear", eh.hFermiBallSmear);//, eh.hFermiCircleSmear);
+
 //  drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keVOne, eh.hRootEdep511keVTwo, eh.hRootEdepPrompt);
 //  drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keVOne, eh.hRootEdepSmear511keVTwo,eh.hRootEdepSmearPrompt);
 //  drawEfficiency("eff", eh.hRootEdep, eh.hRootEdep511keVOne, eh.hRootEdep511keVTwo, eh.hRootEdepPrompt);

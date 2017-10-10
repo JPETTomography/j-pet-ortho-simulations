@@ -3,6 +3,8 @@
 
 #include "EventHits.h"
 #include <TH3.h>
+#include <TH2.h>
+#include <TGraph2D.h>
 //#include "Constants.h"
 
 //#include <TLorentzVector.h>
@@ -21,6 +23,12 @@ public:
     TH1F* hRootEdepSmear511keVTwo;
     TH1F* hRootEdepSmearPrompt;
     TH1F* hCutPassing;
+    TH1F* hRootEdepSum;
+    TH1F* hRootEdepSumSmear;
+    TH2F* hFermiCircle;
+    TH2F* hFermiCircleSmear;
+    TH3F* hFermiBall;
+    TH3F* hFermiBallSmear;
     MyEventHits();
     virtual ~MyEventHits();
     virtual void Loop();
