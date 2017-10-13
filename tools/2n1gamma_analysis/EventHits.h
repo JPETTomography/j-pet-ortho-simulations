@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Fri Oct  6 14:12:25 2017 by ROOT version 6.08/06
+// Wed Oct 11 14:24:03 2017 by ROOT version 6.08/06
 // from TTree tree/Tree with events and histograms
 // found on file: sc44/sc44.root
 //////////////////////////////////////////////////////////

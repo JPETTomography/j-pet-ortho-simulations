@@ -24,7 +24,9 @@ public:
     TH1F* hRootEdepSmearPrompt;
     TH1F* hCutPassing;
     TH1F* hRootEdepSum;
+    TH1F* hRootEdepSum511kev;
     TH1F* hRootEdepSumSmear;
+    TH1F* hRootEdepSumSmear511kev;
     TH2F* hFermiCircle;
     TH2F* hFermiCircleSmear;
     TH3F* hFermiBall;

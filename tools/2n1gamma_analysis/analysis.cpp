@@ -88,41 +88,78 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepProm
     delete cEdep;
 }
 
-void drawEdepSum(const string text, TH1F* h1)
+void drawEdepSum(const string text, TH1F* h1, TH1F* h2=nullptr)
 {
     TCanvas* canvas = new TCanvas("edepSum", "Sum of Edep in each step", 600, 400);
     canvas->cd(1);
-
+    TLegend* legEdepSum = nullptr;
+    double scale = h1->GetEntries();
+    if(h2)
+    {
+        h2->SetLineColor(kRed);
+        h2->Draw();
+        legEdepSum = new TLegend(0.55, 0.6, 0.85, 0.8);
+        legEdepSum -> AddEntry(h2, "e+e-");
+    }
     h1->SetTitle("Sum of Edep in each step");
     h1->GetXaxis()->SetTitle("E [MeV]");
     h1->GetYaxis()->SetTitle("N");
-    h1->Draw();
+    if(h2)
+    {
+        h1->Draw("same");
+        legEdepSum->AddEntry(h1, "prompt");
+        legEdepSum->Draw();
+    }
+    else
+        h1->Draw();
     TImage *img = TImage::Create();
     img->FromPad(canvas);
     img->WriteImage((text+".png").c_str());
     canvas->Write();
     delete img;
     delete canvas;
+    if(legEdepSum) delete legEdepSum;
 }
 
 void drawFermiBall(const string text, TH3F* h1, TH2F* h2 = nullptr)
 {
-    TCanvas* canvas = new TCanvas("FermiBall", "Edep distribution", 600, 400);
+    TCanvas* canvas;
+    if(h2)
+    {
+        canvas = new TCanvas("FermiBall", "Edep distribution", 600, 800);
+        canvas->Divide(1,2);
+    }
+    else
+    {
+         canvas = new TCanvas("FermiBall", "Edep distribution", 600, 400);
+    }
     canvas->cd(1);
     if(!h2)
     {
         h1->SetTitle("Edep distribution");
-        h1->GetXaxis()->SetTitle("E [MeV]");
-        h1->GetYaxis()->SetTitle("E [MeV]");
-        h1->GetZaxis()->SetTitle("E [MeV]");
+        h1->GetXaxis()->SetTitle("E1 [MeV]");
+        h1->GetYaxis()->SetTitle("E2 [MeV]");
+        h1->GetZaxis()->SetTitle("E3 [MeV]");
+        gPad->SetTheta(45);
+        gPad->SetPhi(210);
         h1->Draw("iso");
+        std::cout<<"correlation factor 12 ="<<h1->GetCorrelationFactor(1,2)<<std::endl;
+        std::cout<<"correlation factor 23 ="<<h1->GetCorrelationFactor(2,3)<<std::endl;
+        std::cout<<"correlation factor 13 ="<<h1->GetCorrelationFactor(1,3)<<std::endl;
     }
     else
     {
         h2->SetTitle("Edep distribution");
-        h2->GetXaxis()->SetTitle("E [MeV]");
-        h2->GetYaxis()->SetTitle("E [MeV]");
+        h2->GetXaxis()->SetTitle("E1 [MeV]");
+        h2->GetYaxis()->SetTitle("E2 [MeV]");
         h2->Draw("colz");
+        std::cout<<"correlation factor 12 ="<<h2->GetCorrelationFactor(1,2)<<std::endl;
+        canvas->cd(2);
+        h2->ProjectionX()->Draw();
+        TH1D* hist = h2->ProjectionY();
+        hist->SetLineColor(kRed);
+        hist->Draw("same");
+
     }
     TImage *img = TImage::Create();
     img->FromPad(canvas);
@@ -163,17 +200,19 @@ void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511ke
     legEff -> AddEntry(hEffPrompt, "1 - eff (Prompt keV)");
     legEff -> SetTextSize(0.05);
 
-    for(int ii=1; ii<NBins+1; ii++)
+    for(int ii=1; ii<=NBins; ii++)
     {
         hEff511keV->SetBinContent(ii, hEdep511keV->Integral(1, ii));
         //below 1-eff histogram is filled
-        hEffPrompt->SetBinContent(ii, hEdepPrompt->Integral()-hEdepPrompt->Integral(1, ii));
+        hEffPrompt->SetBinContent(ii, hEdepPrompt->Integral(1, NBins)-hEdepPrompt->Integral(1, ii));
     }
-    hEff511keV->Scale(1.0/hEdep511keV->Integral());
-    hEffPrompt->Scale(1.0/hEdepPrompt->Integral());
-
+    hEff511keV->Scale(1.0/hEdep511keV->Integral(1, NBins));
     hEff511keV->Draw();
-    hEffPrompt->Draw("same");
+    if(hEdepPrompt)
+    {
+        hEffPrompt->Scale(1.0/hEdepPrompt->Integral(1, NBins));
+        hEffPrompt->Draw("same");
+    }
 
     legEff->Draw();
     TImage *img = TImage::Create();
@@ -201,8 +240,7 @@ void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, c
     cPurity->cd(1);
     TLegend* legPur = new TLegend(0.50, 0.15, 0.9, 0.35);
 
-    int NBins = 200;
-
+    int NBins = hEdep->GetXaxis()->GetNbins();
     //creating purity histograms
     double EMax = hEdep->GetXaxis()->GetBinUpEdge(hEdep->GetXaxis()->GetLast());
     TH1F *hPur511keV = new TH1F("hPur511keV","hPur511keV" , NBins, 0.0, EMax);
@@ -218,7 +256,7 @@ void drawPurity(const string text, const TH1F* hEdep, const TH1F* hEdep511keV, c
     legPur -> AddEntry(hPurPrompt, "pur right (Prompt keV)");
     legPur -> SetTextSize(0.05);
 
-    for(int ii=1; ii<NBins+1; ii++)
+    for(int ii=1; ii<=NBins; ii++)
     {
         if(hEdep->Integral(1, ii) == 0) // if integral in the denominator == 0 then set bin to 1
             hPur511keV->SetBinContent(ii, 1);
@@ -348,10 +386,10 @@ int main (int argc, char* argv[])
   drawPurity("pur", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
   drawPurity("pur_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
   drawCutPassing(eh.hCutPassing);
-  drawEdepSum("edepSum", eh.hRootEdepSum);
-  drawEdepSum("edepSumSmear", eh.hRootEdepSumSmear);
-  drawFermiBall("edepBall", eh.hFermiBall);//, eh.hFermiCircle);
-  drawFermiBall("edepBallSmear", eh.hFermiBallSmear);//, eh.hFermiCircleSmear);
+  drawEdepSum("edepSum", eh.hRootEdepSum, eh.hRootEdepSum511kev);
+  drawEdepSum("edepSumSmear", eh.hRootEdepSumSmear, eh.hRootEdepSumSmear511kev);
+  drawFermiBall("edepBall",  eh.hFermiBall);//, eh.hFermiCircle);
+  drawFermiBall("edepBallSmear", eh.hFermiBall);//, eh.hFermiCircleSmear);
 
 //  drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keVOne, eh.hRootEdep511keVTwo, eh.hRootEdepPrompt);
 //  drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keVOne, eh.hRootEdepSmear511keVTwo,eh.hRootEdepSmearPrompt);
