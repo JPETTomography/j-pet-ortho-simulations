@@ -16,14 +16,9 @@ all: sim
 	@echo "COMPILATION COMPLETE!!!"
 
 sim: $(OBJ_FILES) $(OBJDIR)/EventDict.o
-ifeq ($(DICT_EXISTS), 1)
 	@echo "Creating executable: $@"
-	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $(OBJ_FILES) $(LDFLAGS))
-else
-	@echo "Creating executable: $@"
-	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $(OBJ_FILES) $(OBJDIR)/EventDict.o $(LDFLAGS))
-endif
-		
+	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $^ $(LDFLAGS))
+
 $(SRCDIR)/EventDict.cpp: $(SRCDIR)/event.*
 	@echo "Compiling $@"
 	@(cd src && rootcint -f EventDict.cpp -c $(CXXFLAGS) -p  event.h event_linkdef.h)
