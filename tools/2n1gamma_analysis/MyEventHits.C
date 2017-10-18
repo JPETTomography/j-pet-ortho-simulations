@@ -6,21 +6,21 @@
 #include <iostream>
 MyEventHits::MyEventHits()
 {
-    hRootEdep = new TH1F("hRootEdep", "hRootEdep", 200, 0.0, 1.2);
-    hRootEdep511keV = new TH1F("hRootEdep511keV", "hRootEdep", 200, 0.0, 1.2);
-    hRootEdep511keVOne = new TH1F("hRootEdep511keVOne", "hRootEdep", 200, 0.0, 1.2);
-    hRootEdep511keVTwo = new TH1F("hRootEdep511keVTwo", "hRootEdep", 200, 0.0, 1.2);
-    hRootEdepPrompt = new TH1F("hRootEdepPrompt", "hRootEdep", 200, 0.0, 1.2);
-    hRootEdepSmear = new TH1F("hRootEdepSmear", "hRootEdepPre", 200, 0.0, 1.2);;
-    hRootEdepSmear511keV = new TH1F("hRootEdepSmear511keV", "hRootEdepPre", 200, 0.0, 1.2);
-    hRootEdepSmear511keVOne = new TH1F("hRootEdepSmear511keVOne", "hRootEdepPre", 200, 0.0, 1.2);
-    hRootEdepSmear511keVTwo = new TH1F("hRootEdepSmear511keVTwo", "hRootEdepPre", 200, 0.0, 1.2);
-    hRootEdepSmearPrompt = new TH1F("hRootEdepSmearPrompt", "hRootEdepPre", 200, 0.0, 1.2);
+    hRootEdep = new TH1F("hRootEdep", "hRootEdep", 240, 0.0, 1.2);
+    hRootEdep511keV = new TH1F("hRootEdep511keV", "hRootEdep", 240, 0.0, 1.2);
+    hRootEdep511keVOne = new TH1F("hRootEdep511keVOne", "hRootEdep", 240, 0.0, 1.2);
+    hRootEdep511keVTwo = new TH1F("hRootEdep511keVTwo", "hRootEdep", 240, 0.0, 1.2);
+    hRootEdepPrompt = new TH1F("hRootEdepPrompt", "hRootEdep", 240, 0.0, 1.2);
+    hRootEdepSmear = new TH1F("hRootEdepSmear", "hRootEdepPre", 240, 0.0, 1.2);;
+    hRootEdepSmear511keV = new TH1F("hRootEdepSmear511keV", "hRootEdepPre", 240, 0.0, 1.2);
+    hRootEdepSmear511keVOne = new TH1F("hRootEdepSmear511keVOne", "hRootEdepPre", 240, 0.0, 1.2);
+    hRootEdepSmear511keVTwo = new TH1F("hRootEdepSmear511keVTwo", "hRootEdepPre", 240, 0.0, 1.2);
+    hRootEdepSmearPrompt = new TH1F("hRootEdepSmearPrompt", "hRootEdepPre", 240, 0.0, 1.2);
     hCutPassing = new TH1F("hCutPassing", "hCutPassing", 5, 0, 5);
-    hRootEdepSum511kev = new TH1F("hRootEdepSum511kev", "hRootEdepSum511kev", 200, 0.0, 1.2);
-    hRootEdepSum = new TH1F("hRootEdepSum", "hRootEdepSum", 200, 0.0, 1.2);
-    hRootEdepSumSmear = new TH1F("hRootEdepSumSmear", "hRootEdepSumSmear", 200, 0.0, 1.2);
-    hRootEdepSumSmear511kev = new TH1F("hRootEdepSumSmear511kev", "hRootEdepSumSmear511kev", 200, 0.0, 1.2);
+    hRootEdepSum511kev = new TH1F("hRootEdepSum511kev", "hRootEdepSum511kev", 240, 0.0, 1.2);
+    hRootEdepSum = new TH1F("hRootEdepSum", "hRootEdepSum", 240, 0.0, 1.2);
+    hRootEdepSumSmear = new TH1F("hRootEdepSumSmear", "hRootEdepSumSmear", 240, 0.0, 1.2);
+    hRootEdepSumSmear511kev = new TH1F("hRootEdepSumSmear511kev", "hRootEdepSumSmear511kev", 240, 0.0, 1.2);
     hFermiBall = new TH3F("hFermiBall", "hFermiBall", 200, 0.0, 0.4, 200, 0.0, 0.4, 200, 0.0, 0.4);
     hFermiBallSmear = new TH3F("hFermiBallSmear", "hFermiBallSmear", 200, 0.0, 0.4, 200, 0.0, 0.4, 200, 0.0, 0.4);
     hFermiCircle = new TH2F("hFermiCircle", "hFermiCircle", 200, 0.0, 0.4, 200, 0.0, 0.4);

@@ -67,7 +67,7 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepProm
         if(additionalHist)
             legEdep -> AddEntry(hEdepPrompt, ("gamma2, N="+to_string((int)hEdepPrompt->GetEntries())).c_str());
         else
-            legEdep -> AddEntry(hEdepPrompt, ("Prompt 1157 keV"));//, N="+to_string((int)hEdepPrompt->GetEntries())).c_str());
+            legEdep -> AddEntry(hEdepPrompt, ("Prompt"));//, N="+to_string((int)hEdepPrompt->GetEntries())).c_str());
     }
     if(additionalHist)
     {
@@ -77,7 +77,7 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepProm
         legEdep->AddEntry(additionalHist, ("gamma3, N="+to_string((int)additionalHist->GetEntries())).c_str());
     }
     if(hEdep511keV && hEdepPrompt && !additionalHist)
-        cout<<setprecision(2)<<"Ratio 2*(Prompt)/(511keV)="<<2*hEdepPrompt->GetEntries()/hEdep511keV->GetEntries()<<endl;
+        cout<<setprecision(3)<<"Ratio 2*(Prompt)/(511keV)="<<2*hEdepPrompt->GetEntries()/hEdep511keV->GetEntries()<<endl;
 
     legEdep->Draw();
     TImage *img = TImage::Create();
@@ -143,9 +143,9 @@ void drawFermiBall(const string text, TH3F* h1, TH2F* h2 = nullptr)
         gPad->SetTheta(45);
         gPad->SetPhi(210);
         h1->Draw("iso");
-        std::cout<<"correlation factor 12 ="<<h1->GetCorrelationFactor(1,2)<<std::endl;
-        std::cout<<"correlation factor 23 ="<<h1->GetCorrelationFactor(2,3)<<std::endl;
-        std::cout<<"correlation factor 13 ="<<h1->GetCorrelationFactor(1,3)<<std::endl;
+//        std::cout<<"correlation factor 12 ="<<h1->GetCorrelationFactor(1,2)<<std::endl;
+//        std::cout<<"correlation factor 23 ="<<h1->GetCorrelationFactor(2,3)<<std::endl;
+//        std::cout<<"correlation factor 13 ="<<h1->GetCorrelationFactor(1,3)<<std::endl;
     }
     else
     {
@@ -183,7 +183,7 @@ void drawEfficiency(const string text, const TH1F* hEdep, const TH1F* hEdep511ke
     cEfficiency->cd(1);
     TLegend* legEff = new TLegend(0.55, 0.4, 0.90, 0.6);
 
-    int NBins = 200;
+    int NBins = hEdep->GetXaxis()->GetNbins();
 
     //creating efficiency histograms
     double EMax = hEdep->GetXaxis()->GetBinUpEdge(hEdep->GetXaxis()->GetLast());
@@ -300,7 +300,7 @@ void drawCutPassing(TH1F* hCutPassing)
 }
 
 
-void calculatePurityEfficiency(const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdepPrompt, const double Etreshold = 0.4)
+void calculatePurityEfficiency(const TH1F* hEdep, const TH1F* hEdep511keV, const TH1F* hEdepPrompt,  double Etreshold = 0.4)
 {
     int n =hEdep->GetXaxis()->GetNbins();
     int n511 =hEdep511keV->GetXaxis()->GetNbins();
@@ -310,7 +310,7 @@ void calculatePurityEfficiency(const TH1F* hEdep, const TH1F* hEdep511keV, const
     int indexPrompt = 0;
     for(int ii=0; ii<n; ii++)
     {
-        if(hEdep->GetBinLowEdge(ii+1)>=Etreshold)
+        if(hEdep->GetBinLowEdge(ii+1)+TMath::Power(10, -8)>Etreshold)
         {
             std::cout<<hEdep->GetBinLowEdge(ii)<<" < " <<Etreshold<<" < "<<hEdep->GetBinLowEdge(ii+1)<<std::endl;
             index = ii;
@@ -347,15 +347,17 @@ void calculatePurityEfficiency(const TH1F* hEdep, const TH1F* hEdep511keV, const
                 break;
             }
         }
-        std::cout<<"Results:"<<std::endl;
-    }
 
+    }
+    std::cout<<"Results:"<<std::endl;
     double eff511 = hEdep511keV->Integral(1, index511) / hEdep511keV->Integral(1, n511);
 //    std::cout<<hEdep511keV->Integral(1, hEdep511keV->GetXaxis()->GetNbins())<<" "<<hEdep511keV->Integral();
     double purity511 = hEdep511keV->Integral(1, index511) / (hEdep->Integral(1, index));
-    double purityPrompt = hEdepPrompt->Integral(1, indexPrompt) / (hEdep->Integral(1, index));
+    double purityPrompt = hEdepPrompt->Integral(indexPrompt, nPrompt) / (hEdep->Integral(index, n));
+    double effPrompt =  hEdepPrompt->Integral(indexPrompt, nPrompt) / hEdepPrompt->Integral(1, nPrompt);
     std::cout<<"511keV eff="<<eff511*100<<" %"<<std::endl;
     std::cout<<"511keV purity="<<purity511*100<<" %"<<std::endl;
+    std::cout<<"Prompt eff="<<effPrompt*100<<" %"<<std::endl;
     std::cout<<"Prompt purity="<<purityPrompt*100<<" %"<<std::endl;
 
 }
@@ -373,11 +375,15 @@ int main (int argc, char* argv[])
   TFile* file = new TFile("hist.root", "recreate");
   file -> cd();
 
-  double Etreshold = 0.354; //MeV
-  std::cout<<"NO SMEARING"<<std::endl;
-  calculatePurityEfficiency(eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt, Etreshold);
-  std::cout<<"WITH SMEARING"<<std::endl;
-  calculatePurityEfficiency(eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt, Etreshold);
+  double Etreshold = 0.330; //MeV
+  for(int ii=0; ii <=20; ii++)
+  {
+      std::cout<<"NO SMEARING"<<std::endl;
+      calculatePurityEfficiency(eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt, Etreshold+ii*0.005);
+      std::cout<<"WITH SMEARING"<<std::endl;
+      calculatePurityEfficiency(eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt, Etreshold+ii*0.005);
+      std::cout<<std::endl;
+  }
   // Drawing
   drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keV, eh.hRootEdepPrompt);
   drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keV, eh.hRootEdepSmearPrompt);
@@ -390,6 +396,26 @@ int main (int argc, char* argv[])
   drawEdepSum("edepSumSmear", eh.hRootEdepSumSmear, eh.hRootEdepSumSmear511kev);
   drawFermiBall("edepBall",  eh.hFermiBall);//, eh.hFermiCircle);
   drawFermiBall("edepBallSmear", eh.hFermiBall);//, eh.hFermiCircleSmear);
+
+  //Saving basic hostograms
+//  eh.hRootEdep -> Write();
+//  eh.hCutPassing -> Write();
+//  eh.hFermiBall->Write();
+//  eh.hFermiBallSmear->Write();
+//  eh.hFermiCircle->Write();
+//  eh.hFermiCircleSmear->Write();
+//  eh.hRootEdep511keV->Write();
+//  eh.hRootEdep511keVOne->Write();
+//  eh.hRootEdep511keVTwo->Write();
+//  eh.hRootEdepPrompt->Write();
+//  eh.hRootEdepSmearPrompt->Write();
+//  eh.hRootEdepSmear->Write();
+//  eh.hRootEdepSmear511keV->Write();
+//  eh.hRootEdepSmear511keVOne->Write();
+//  eh.hRootEdepSmear511keVTwo->Write();
+//  eh.hRootEdepSum->Write();
+//  eh.hRootEdepSum511kev->Write();
+//  eh.hRootEdepSumSmear511kev->Write();
 
 //  drawEdep("E_dep", eh.hRootEdep, eh.hRootEdep511keVOne, eh.hRootEdep511keVTwo, eh.hRootEdepPrompt);
 //  drawEdep("E_dep_with_smear", eh.hRootEdepSmear, eh.hRootEdepSmear511keVOne, eh.hRootEdepSmear511keVTwo,eh.hRootEdepSmearPrompt);
