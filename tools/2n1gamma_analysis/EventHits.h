@@ -1,8 +1,8 @@
 //////////////////////////////////////////////////////////
 // This class has been automatically generated on
-// Wed Oct 18 11:53:25 2017 by ROOT version 6.08/06
+// Thu Oct 19 11:12:52 2017 by ROOT version 6.08/06
 // from TTree tree/Tree with events and histograms
-// found on file: c10/c10_new.root
+// found on file: o14/o14_new.root
 //////////////////////////////////////////////////////////
 
 #ifndef EventHits_h
@@ -87,11 +87,11 @@ EventHits::EventHits(TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("c10/c10_new.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("o14/o14_new.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("c10/c10_new.root");
+         f = new TFile("o14/o14_new.root");
       }
-      TDirectory * dir = (TDirectory*)f->Get("c10/c10_new.root:/0_0_0_0_0_0");
+      TDirectory * dir = (TDirectory*)f->Get("o14/o14_new.root:/0_0_0_0_0_0");
       dir->GetObject("tree",tree);
 
    }

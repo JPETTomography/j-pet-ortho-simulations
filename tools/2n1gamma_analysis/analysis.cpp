@@ -42,7 +42,7 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepProm
     hEdep->GetXaxis()->SetTitle("Edep [MeV]");
 //    double scaleFact = 1.0/hEdep->Integral();
 //    hEdep->Scale(scaleFact);
-    hEdep->GetXaxis()->SetRangeUser(0.06, 1.2);
+    hEdep->GetXaxis()->SetRangeUser(0.06, 2.4);
 //    hEdep->Draw();
 
     if(hEdep511keV)
@@ -50,7 +50,7 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepProm
         hEdep511keV->SetLineColor(kRed);
         hEdep511keV->SetLineWidth(2);
 //        hEdep511keV->Scale(hEdepPrompt->GetEntries()/hEdep511keV->GetEntries());
-        hEdep511keV->GetXaxis()->SetRangeUser(0.06, 1.2);
+        hEdep511keV->GetXaxis()->SetRangeUser(0.06, 2.4);
         hEdep511keV->Draw("same");
         if(additionalHist)
             legEdep -> AddEntry(hEdep511keV, ("gamma1, N="+to_string((int)hEdep511keV->GetEntries())).c_str());
@@ -61,7 +61,7 @@ void drawEdep(const string text, TH1F* hEdep, TH1F* hEdep511keV, TH1F* hEdepProm
     {
         hEdepPrompt->SetLineColor(kGreen+2);
         hEdepPrompt->SetLineWidth(2);
-        hEdepPrompt->GetXaxis()->SetRangeUser(0.06, 1.2);
+        hEdepPrompt->GetXaxis()->SetRangeUser(0.06, 2.4);
 //        hEdepPrompt->Scale(scaleFact);
         hEdepPrompt->Draw("same");
         if(additionalHist)
