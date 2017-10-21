@@ -5,7 +5,7 @@ LDFLAGS= `root-config --ldflags --glibs`
 OBJDIR=./obj
 SRCDIR=src
 H_FILES := $(wildcard $(SRCDIR)/*.h) 
-CPP_FILES := $(wildcard $(SRCDIR)/*.cpp)
+CPP_FILES := $(wildcard $(SRCDIR)/*.cpp) $(SRCDIR)/EventDict.cpp
 OBJ_FILES := $(addprefix $(OBJDIR)/,$(notdir $(CPP_FILES:.cpp=.o)))
 
 EVPATH = "$(shell pwd)/$(SRCDIR)/"
@@ -33,5 +33,5 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(SRCDIR)/Auto* $(OBJDIR)/*.o $(SRCDIR)/EventDict* EventDict* sim 
+	@rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/EventDict.cpp $(SRCDIR)/*.so $(SRCDIR)/Auto* $(OBJDIR)/*.o $(SRCDIR)/EventDict* EventDict* sim 
 
