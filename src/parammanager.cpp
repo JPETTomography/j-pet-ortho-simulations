@@ -1,11 +1,14 @@
-#include "parammanager.h"
+/// @file parammanager.cpp
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
 #include <iostream>
 #include <sstream>
 #include <fstream>
 #include <typeinfo>
 #include <iterator>
 #include <cstring>
-
+#include <algorithm>
+#include "parammanager.h"
 ///
 /// \brief ParamManager::ParamManager Basic constructor.
 ///
@@ -14,9 +17,15 @@ ParamManager::ParamManager() :
     fSimRuns_(0),
     fNoOfGammas_(0),
     fP_(0),
-    fL_(0.7),
-    fR_(0.5),
-    fSilentMode_(false)
+    fL_(700),
+    fR_(500),
+    fESc_(1157),
+    fPSc_(0.98),
+    fSmearLowLimit_(0.0),
+    fSmearHighLimit_(2.0),
+    fSilentMode_(false),
+    fOutput_(PNG),
+    fEventTypeToSave_(ALL)
     {}
 
 ///
@@ -31,7 +40,13 @@ ParamManager::ParamManager(const ParamManager &est)
     fP_=est.fP_;
     fR_=est.fP_;
     fL_=est.fL_;
+    fESc_=est.fESc_;
+    fPSc_=est.fPSc_;
+    fSmearLowLimit_=est.fSmearLowLimit_;
+    fSmearHighLimit_=est.fSmearHighLimit_;
     fSilentMode_=est.fSilentMode_;
+    fOutput_=est.fOutput_;
+    fEventTypeToSave_=est.fEventTypeToSave_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
 }
@@ -49,7 +64,13 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     fP_=est.fP_;
     fR_=est.fP_;
     fL_=est.fL_;
+    fESc_=est.fESc_;
+    fPSc_=est.fPSc_;
+    fSmearLowLimit_=est.fSmearLowLimit_;
+    fSmearHighLimit_=est.fSmearHighLimit_;
     fSilentMode_=est.fSilentMode_;
+    fOutput_=est.fOutput_;
+    fEventTypeToSave_=est.fEventTypeToSave_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
     return *this;
@@ -62,8 +83,11 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
 ///
 bool ParamManager::operator==(const ParamManager &est) const
 {
-    return ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
-            (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && (fSilentMode_==est.fSilentMode_));
+    bool params = ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
+            (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
+            (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
+            (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && (fSmearHighLimit_==est.fSmearHighLimit_);
+    return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin());
 }
 
 
@@ -116,12 +140,11 @@ std::string reduce(const std::string& str,
     return result;
 }
 
-
 ///
-/// \brief ParamManager::ImportParams Imports prameters from file. It reads the number of simulation steps from the first line, and source's (x,y,z,px,py,pz) from the nect ones.
+/// \brief ParamManager::ImportParams Imports prameters from file.
 /// \param inFile Path to the file with parameters.
 ///
-void ParamManager::ImportParams(std::string inFile)
+void ParamManager::ImportParams(const std::string& inFile)
 {
     std::cout<<"[INFO] Importing parameters from file: "<<inFile<<std::endl;
     std::ifstream param_file(inFile.c_str());
@@ -136,7 +159,7 @@ void ParamManager::ImportParams(std::string inFile)
           }
           row = reduce(row);
           std::istringstream is(row);
-          if (row.find(":=") != std::string::npos)
+          if (row.find(":=") != std::string::npos) // parse parameters
           {
               std::string segment;
               std::vector<std::string> token;
@@ -154,40 +177,126 @@ void ParamManager::ImportParams(std::string inFile)
               else if (token[0]=="L")
                 fL_ = atof((token[2].c_str()));
               else if (token[0]=="gammas")
-                  fNoOfGammas_=atoi(token[2].c_str());
+                fNoOfGammas_=atoi(token[2].c_str());
+              else if (token[0]=="ESc")
+                fESc_=atof(token[2].c_str());
+              else if (token[0]=="pSc")
+                fPSc_=atof(token[2].c_str());
+              else if(token[0]=="smearLow")
+                fSmearLowLimit_=atof(token[2].c_str());
+              else if(token[0]=="smearHigh")
+                fSmearHighLimit_=atof(token[2].c_str());
               else if (token[0]=="silent")
-                  fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
+                fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
+              else if (token[0]=="output")
+              {
+                  if(token[2]=="tree")
+                      fOutput_=TREE;
+                  else if(token[2]=="png")
+                      fOutput_=PNG;
+                  else if(token[2]=="both")
+                      fOutput_=BOTH;
+                  else
+                  {
+                      std::cerr<<"[WARNING] Unrecognized output type! Setting to default (png)."<<std::endl;
+                      fOutput_=PNG;
+                  }
+              }
+              else if (token[0]=="eventType")
+              {
+                  if(token[2]=="all")
+                      fEventTypeToSave_=ALL;
+                  else if(token[2]=="pass")
+                      fEventTypeToSave_=PASS;
+                  else if(token[2]=="fail")
+                      fEventTypeToSave_=FAIL;
+                  else
+                  {
+                      std::cerr<<"[WARNING] Unrecognized event type to save! Setting to default (all)."<<std::endl;
+                      fEventTypeToSave_=ALL;
+                  }
+              }
               else
                 std::cerr<<"[WARNING] Unrecognized parameter in the param file: \""<<token[0]<<"\""<<std::endl;
           }
-          else
+          else //parse source position, momentum and radius
           {
               fData_.push_back(std::vector<double>(std::istream_iterator<double>(is), std::istream_iterator<double>()));
           }
     }
     //The number of simulation runs is determined basing on the number of data sets with source's parameters.
     fSimRuns_=fData_.size();
-    if(fNoOfGammas_!=2 && fNoOfGammas_!=3)
+    if(!fSilentMode_)
+        PrintParams();
+    else
+        std::cout<<"[WARNING] Silent mode is enabled! Some information will not be printed!"<<std::endl;
+    std::cout<<"[INFO] Parameters imported.\n"<<std::endl;
+}
+
+///
+/// \brief PrintParams Prints parameters values to the standard output.
+///
+void ParamManager::PrintParams()
+{
+    if(fNoOfGammas_==1)
+        std::cout<<"[INFO] No of decay products: 2+1"<<std::endl;
+    else if(fNoOfGammas_!=2 && fNoOfGammas_!=3)
         std::cout<<"[INFO] No of decay products: 2 and 3"<<std::endl;
     else
         std::cout<<"[INFO] No of decay products: "<<fNoOfGammas_<<std::endl;
     std::cout<<"[INFO] Events to generate: "<<fSimEvents_<<std::endl;
     std::cout<<"[INFO] Runs to simulate: "<<fSimRuns_<<std::endl;
-    std::cout<<"[INFO] Detector radius: "<<fR_<<std::endl;
-    std::cout<<"[INFO] Detector length: "<<fL_<<std::endl;
+    std::cout<<"[INFO] Detector radius: "<<fR_<<" [mm]"<<std::endl;
+    std::cout<<"[INFO] Detector length: "<<fL_<<" [mm]"<<std::endl;
     std::cout<<"[INFO] Probability to interact with detector: "<<fP_<<std::endl;
+    if(fNoOfGammas_==1)
+    {
+        std::cout<<"[INFO] Energy of additional gamma: "<<fESc_<<" [keV]"<<std::endl;
+        std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fPSc_<<std::endl;
+    }
+    std::cout<<"[INFO] Smearing lower limit: "<<fSmearLowLimit_<<" [MeV]"<<std::endl;
+    std::cout<<"[INFO] Smearing higher limit: "<<fSmearHighLimit_<<" [MeV]"<<std::endl;
     std::cout<<"[INFO] Silent mode: ";
-    if(fSilentMode_) std::cout<<"DISABLED"<<std::endl;
-    else std::cout<<"ENABLED"<<std::endl;
-    std::cout<<"[INFO] Parameters imported!\n"<<std::endl;
+    if(fSilentMode_) std::cout<<"ENABLED"<<std::endl;
+    else std::cout<<"DISABLED"<<std::endl;
+    std::cout<<"[INFO] Output type: ";
+    switch (fOutput_)
+    {
+        case TREE:
+            std::cout<<"ROOT TREE"<<std::endl;
+            break;
+        case PNG:
+            std::cout<<"PNG IMAGES"<<std::endl;
+            break;
+        case BOTH:
+            std::cout<<"ROOT TREE & PNG IMAGES"<<std::endl;
+            break;
+        default:
+            break;
+    }
+    std::cout<<"[INFO] Event type saved to tree: ";
+    switch (fEventTypeToSave_)
+    {
+        case ALL:
+            std::cout<<"ALL"<<std::endl;
+            break;
+        case PASS:
+            std::cout<<"PASS"<<std::endl;
+            break;
+        case FAIL:
+            std::cout<<"FAIL"<<std::endl;
+            break;
+        default:
+            break;
+    }
 }
 
 ///
-/// \brief ParamManager::getDataAt Used to get source's position and momentum.
+/// \brief ParamManager::getDataAt Used to get source's position and momentum and radius.
 /// \param index Number of the run, used to access apropriate data.
-/// \return An array with a set of source's parameters: x, y, z, px, py, pz;
+/// \return An array with a set of source's parameters: x, y, z, px, py, pz, r;
 ///
-std::vector<double> ParamManager::getDataAt(int index)
+std::vector<double> ParamManager::GetDataAt(int index)
 {
     if(index >= fSimRuns_)
         throw ("[ERROR] Invalid index to get from ParamManger!");

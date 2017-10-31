@@ -1,3 +1,9 @@
+/// @file constants.h
+/// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
+/// @date 13.07.2017
+///
+/// Contains hard-coded physics constants.
+///
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 #include "TMath.h"
