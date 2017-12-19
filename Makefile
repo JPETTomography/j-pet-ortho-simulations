@@ -34,4 +34,3 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 clean:
 	@echo "Cleaning..."
 	@rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/EventDict.cpp $(SRCDIR)/*.so $(SRCDIR)/Auto* $(OBJDIR)/*.o $(SRCDIR)/EventDict* EventDict* sim 
-

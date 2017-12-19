@@ -29,22 +29,29 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     fNumberOfEvents_(0),
     fNumberOfGammas_(0)
 {
-    fRand_ = new TRandom3(0);
+    fH_12_pass_=nullptr;
+    fH_12_fail_=nullptr;
+    fH_23_pass_=nullptr;
+    fH_23_fail_=nullptr;
+    fH_31_pass_=nullptr;
+    fH_31_fail_=nullptr;
+    fH_12_23_pass_ = nullptr;
+    fH_12_31_pass_ = nullptr;
+    fH_23_31_pass_ = nullptr;
+    fH_12_23_fail_ = nullptr;
+    fH_12_31_fail_ = nullptr;
+    fH_23_31_fail_ = nullptr;
+    fH_en_pass_mid_ = nullptr;
+
     //Creating histograms for angle distributions
     if(type==THREE)
     {
+        fTypeString_="3";
+
         fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
         fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
-
-        fTypeString_="3";
-        fH_12_pass_=nullptr;
-        fH_12_fail_=nullptr;
-        fH_23_pass_=nullptr;
-        fH_23_fail_=nullptr;
-        fH_31_pass_=nullptr;
-        fH_31_fail_=nullptr;
 
         // histograms for events tha passed cuts
         fH_12_23_pass_ = new TH2F((std::string("fH_12_23_pass_")+std::to_string(objectID_)).c_str(),"fH_12_23_pass", 50,0, 3.15, 50,0,3.15);
@@ -102,25 +109,13 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     }
     else if(type==TWO)
     {
+        fTypeString_ = "2";
+
         fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
         fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 0.6);
         fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 0.6);
 
-        fTypeString_ = "2";
-        fH_12_23_pass_ = nullptr;
-        fH_12_31_pass_ = nullptr;
-        fH_23_31_pass_ = nullptr;
-        fH_23_pass_ = nullptr;
-        fH_31_pass_ = nullptr;
-        fH_12_23_fail_ = nullptr;
-        fH_12_31_fail_ = nullptr;
-        fH_23_31_fail_ = nullptr;
-        fH_23_fail_ = nullptr;
-        fH_31_fail_=nullptr;
-
-
-        fH_en_pass_mid_ = nullptr;
         fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_low_->GetXaxis()->SetNdivisions(5, false);
         fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
@@ -149,19 +144,12 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
     }
     else if(type==TWOandONE)
     {
+        fTypeString_ = "2&1";
+
         fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.3, 1.3);
         fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.3, 1.3);
         fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.3, 1.3);
         fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.3, 1.3);
-
-        fTypeString_ = "2&1";
-        fH_12_23_pass_ = nullptr;
-        fH_12_31_pass_ = nullptr;
-        fH_23_31_pass_ = nullptr;
-        fH_12_23_fail_ = nullptr;
-        fH_12_31_fail_ = nullptr;
-        fH_23_31_fail_ = nullptr;
-        fH_en_pass_mid_ = nullptr;
 
         fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.510, 0.512);
         fH_en_pass_low_->GetXaxis()->SetNdivisions(5, false);
@@ -220,9 +208,59 @@ InitialCuts::InitialCuts(DecayType type, float R, float L, float p) :
         fH_31_fail_ -> GetYaxis()->SetTitle("dN/d#theta_{31}");
         fH_31_fail_ -> GetYaxis()->SetTitleOffset(1.4);
     }
+    else if(type==TWOandN)
+    {
+        fTypeString_ = "2&N";
+
+        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 104, 0.0, 4.0);
+        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 104, 0.0, 4.0);
+        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 104, 0.0, 4.0);
+        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 104, 0.0, 4.0);
+
+        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 29, 0.4, 0.6);
+        fH_en_pass_low_->GetXaxis()->SetNdivisions(5, false);
+        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 29, 0.4, 0.6);
+        fH_en_pass_high_->GetXaxis()->SetNdivisions(5, false);
+        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 29, 0.4, 0.6);
+        fH_en_pass_event_->GetXaxis()->SetNdivisions(5, false);
+
+        //histogram for events that passed cuts
+        fH_12_pass_ = new TH1F(("fH_12_pass"+std::to_string(objectID_)).c_str(), "fH_12_pass", 19, 3.1, 3.2);
+        fH_12_pass_->SetFillColor(kBlue);
+        fH_12_pass_ -> SetTitle("Distribution of polar angle between 2 gammas");
+        fH_12_pass_ -> GetXaxis()->SetNdivisions(5, false);
+        fH_12_pass_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
+        fH_12_pass_ -> GetXaxis()->SetTitleOffset(1.4);
+        fH_12_pass_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
+        fH_12_pass_ -> GetYaxis()->SetTitleOffset(1.4);
+        // histogram for events that did not passed cuts
+        fH_12_fail_ = new TH1F(("fH_12_fail"+std::to_string(objectID_)).c_str(), "fH_12_fail", 19, 3.1, 3.2);
+        fH_12_fail_->SetFillColor(kBlue);
+        fH_12_fail_ -> SetTitle("Distribution of polar angle between 2 gammas");
+        fH_12_fail_ -> GetXaxis()->SetNdivisions(5, false);
+        fH_12_fail_ -> GetXaxis()->SetTitle("#theta_{12} [rad]");
+        fH_12_fail_ -> GetXaxis()->SetTitleOffset(1.4);
+        fH_12_fail_ -> GetYaxis()->SetTitle("dN/d#theta_{12}");
+        fH_12_fail_ -> GetYaxis()->SetTitleOffset(1.4);
+    }
+    else if(fDecayType_ == ONE)
+    {
+        fTypeString_ = "1";
+        fH_en_pass_ = new TH1F((std::string("fH_en_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 2.0);
+        fH_p_pass_ = new TH1F((std::string("fH_p_pass_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 2.0);
+        fH_en_fail_ = new TH1F((std::string("fH_en_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 52, 0.0, 2.0);
+        fH_p_fail_ = new TH1F((std::string("fH_p_fail_")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_p_", 52, 0.0, 2.0);
+
+        fH_en_pass_low_ = new TH1F((std::string("fH_en_pass_LOW")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.0, 2.0);
+        fH_en_pass_low_->GetXaxis()->SetNdivisions(5, false);
+        fH_en_pass_high_ = new TH1F((std::string("fH_en_pass_HIGH")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.0, 2.0);
+        fH_en_pass_high_->GetXaxis()->SetNdivisions(5, false);
+        fH_en_pass_event_ = new TH1F((std::string("fH_en_pass_event")+std::to_string(fDecayType_)+std::to_string(objectID_)).c_str(), "fH_en_", 19, 0.0, 2.0);
+        fH_en_pass_event_->GetXaxis()->SetNdivisions(5, false);
+    }
     else
     {
-        throw("Invalid no of decay products!");
+        throw(std::string("Invalid no of decay products!"));
     }
     //histograms for particles that passed through cuts
     fH_en_pass_->SetFillColor(kBlue);
@@ -328,7 +366,6 @@ InitialCuts::InitialCuts(const InitialCuts& est)
     fDetectionProbability_ = est.fDetectionProbability_;
     fDecayType_ = est.fDecayType_;
     fTypeString_ = est.fTypeString_;
-    fRand_ = new TRandom3(0);
 
     fH_12_pass_ = nullptr;
     fH_12_fail_ = nullptr;
@@ -402,8 +439,6 @@ InitialCuts& InitialCuts::operator=(const InitialCuts& est)
     fDetectionProbability_ = est.fDetectionProbability_;
     fDecayType_ = est.fDecayType_;
     fTypeString_ = est.fTypeString_;
-
-    fRand_ = new TRandom3(0);
 
     fH_12_pass_ = nullptr;
     fH_12_fail_ = nullptr;
@@ -496,7 +531,6 @@ InitialCuts::~InitialCuts()
     if(fH_en_pass_event_) delete fH_en_pass_event_;
     if(fH_event_cuts_) delete fH_event_cuts_;
     if(fH_gamma_cuts_) delete fH_gamma_cuts_;
-    if(fRand_) delete fRand_;
 }
 
 ///
@@ -506,21 +540,23 @@ InitialCuts::~InitialCuts()
 void InitialCuts::AddCuts(Event* event)
 {
     //Calculate real hit points for pass, and fake hit points for fail (we assume infinite long detector)
-    event->CalculateHitPoints(fR_); //calculates hit points position and their theta/phi angles
+    event->CalculateHitPoints(fR_, fL_); //calculates hit points position and their theta/phi angles
     fNumberOfEvents_++;
     bool geo_event_pass = true;
     bool inter_event_pass = true;
     fH_event_cuts_->Fill(0); //events at the beginning
-    for(int ii=0; ii<3; ii++)
+    for(int ii=0; ii<event->GetNumberOfDecayProducts(); ii++)
     {
-        fH_gamma_cuts_->Fill(0); //gammas at the beginning
-        if(event->GetEmissionPointOf(ii)!=nullptr && event->GetFourMomentumOf(ii)!=nullptr)
+        if(event->GetFourMomentumOf(ii)!=nullptr)
         {
+            fH_gamma_cuts_->Fill(0); //gammas at the beginning
             fNumberOfGammas_++;
-            bool geo_pass = event->GetHitPhiOf(ii)==-4 ? false : true;//GeometricalAcceptance_(event->GetEmissionPointOf(ii), event->GetFourMomentumOf(ii));
+            bool geo_pass = event->GetHitPhiOf(ii)!=-4; //Event::CalculateHitPoints(D, D) sets Phi to -4 when a particle missed detector
+            if(geo_pass)
+                fH_gamma_cuts_->Fill(1);
             bool inter_pass = geo_pass ? DetectionCut_() : false; //if passed geom. then test detector eff
             event->SetCutPassing(ii, inter_pass);
-            if(!(event->GetDecayType()==TWOandONE && ii==2))
+            if(!(ii>=2 && event->GetDecayType() != THREE)) // gammas from deexcitation are not required to reconstruct event
             {
                 geo_event_pass &= geo_pass;
                 inter_event_pass &= inter_pass;
@@ -545,42 +581,24 @@ void InitialCuts::AddCuts(Event* event)
 }
 
 ///
-/// \brief InitialCuts::GeometricalAcceptance_ Checks if gamma hit the detector.
-/// \param source Coordinates of the emmision point.
-/// \param gamma Photon's fourmomentum.
-/// \return True if gamma hit the detector, false otherwise.
-///
-bool InitialCuts::GeometricalAcceptance_(const TLorentzVector* source, const TLorentzVector* gamma)
-{
-    int side = (gamma->Pz()>0) ? 1 : -1;
-    double s = (side*fL_/2.0 - source->Z())/gamma->Pz();
-    double x = source->X() + s*(gamma->Px());
-    double y = source->Y() +s*(gamma->Py());
-
-    if(x*x + y*y > fR_*fR_)
-    {
-        fH_gamma_cuts_->Fill(1);
-        return true;
-    }
-    else return false;
-}
-
-///
 /// \brief InitialCuts::DetectionCut_ Checks if gamma interacted with the detector.
 /// \return True if gamma interacted with the detector, false otherwise.
 ///
 bool InitialCuts::DetectionCut_()
 {
     bool pass = false;
-    if(fDetectionProbability_==1.0)
+    if(fDetectionProbability_ == 1)
         pass = true;
     else
     {
-        float p = fRand_->Uniform(0.0, 1.0);
-        pass = p <= fDetectionProbability_;
+        float p = gRandom->Uniform();
+        pass = p < fDetectionProbability_;
     }
     if(pass)
+    {
         fH_gamma_cuts_->Fill(2);
+        fAcceptedGammas_++;
+    }
     return pass;
 }
 
@@ -591,16 +609,16 @@ bool InitialCuts::DetectionCut_()
 void InitialCuts::FillValidEventHistograms_(const Event* event)
 {
     fAcceptedEvents_++;
-    bool thirdGammaSc = false;
+    bool thirdGammaPrompt = false;
     int minIndex=0; //indices of min and max energy out of 2 or 3 gammas
     int maxIndex=0;
-    for(int ii=0; ii<3; ii++)
+    for(int ii=0; ii<event->GetNumberOfDecayProducts(); ii++)
     {
         if(event->GetFourMomentumOf(ii) != nullptr)
         {
-            if(ii==2 && fDecayType_==TWOandONE)
+            if(ii==2 && (fDecayType_==TWOandONE || fDecayType_==TWOandN))
             {
-                thirdGammaSc = true;
+                thirdGammaPrompt = true;
                 break;
             }
             fH_en_pass_event_->Fill(event->GetFourMomentumOf(ii)->Energy());
@@ -612,6 +630,11 @@ void InitialCuts::FillValidEventHistograms_(const Event* event)
     fH_en_pass_high_->Fill(event->GetFourMomentumOf(maxIndex)->Energy());
     if(fDecayType_==THREE)
     {
+        if(event->GetNumberOfDecayProducts() != 3)
+        {
+            std::cout<<"[ERROR] Invalid number of decay products for event of type: THREE"<<std::endl;
+            throw("[ERROR] Invalid number of decay products for event of type: THREE");
+        }
         //If there are 3 gammas, draw also middle value.
         int midIndex = minIndex==maxIndex ? minIndex : 3-minIndex-maxIndex;
         fH_en_pass_mid_->Fill(event->GetFourMomentumOf(midIndex)->Energy());
@@ -622,20 +645,20 @@ void InitialCuts::FillValidEventHistograms_(const Event* event)
         fH_23_31_pass_->Fill(event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()), \
                              event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
     }
-    else if(fDecayType_ == TWO)
+    else if(fDecayType_ == TWO || fDecayType_ == TWOandN)
         fH_12_pass_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
     else if(fDecayType_ == TWOandONE)
     {
         fH_12_pass_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
-        if(thirdGammaSc)
+        if(thirdGammaPrompt)
         {
             fH_23_pass_->Fill(event->GetFourMomentumOf(1)->Angle((event->GetFourMomentumOf(2))->Vect()), event->GetWeight());
             fH_31_pass_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
         }
     }
-    else
+    else if(fDecayType_ != ONE)
     {
-         throw("Invalid no of decay products in InitialCuts!");
+         throw(std::string("Invalid no of decay products in InitialCuts!"));
     }
 }
 
@@ -655,7 +678,7 @@ void InitialCuts::FillInvalidEventHistograms_(const Event* event)
         fH_23_31_fail_->Fill(event->GetFourMomentumOf(1)->Angle(event->GetFourMomentumOf(2)->Vect()), \
                              event->GetFourMomentumOf(2)->Angle(event->GetFourMomentumOf(0)->Vect()), event->GetWeight());
     }
-    else if(fDecayType_ == TWO)
+    else if(fDecayType_ == TWO || fDecayType_ == TWOandN)
         fH_12_fail_->Fill(event->GetFourMomentumOf(0)->Angle((event->GetFourMomentumOf(1))->Vect()), event->GetWeight());
     else if(fDecayType_ == TWOandONE)
     {
@@ -666,9 +689,9 @@ void InitialCuts::FillInvalidEventHistograms_(const Event* event)
                 fH_31_fail_->Fill(event->GetFourMomentumOf(2)->Angle((event->GetFourMomentumOf(0))->Vect()), event->GetWeight());
         }
     }
-    else
+    else if(fDecayType_ != ONE)
     {
-         throw("Invalid no of decay products in InitialCuts!");
+         throw(std::string("Invalid no of decay products in InitialCuts!"));
     }
 }
 
@@ -678,7 +701,7 @@ void InitialCuts::FillInvalidEventHistograms_(const Event* event)
 ///
 void InitialCuts::FillDistributionHistograms_(const Event* event)
 {
-    for(int ii=0; ii<3; ii++)
+    for(int ii=0; ii<event->GetNumberOfDecayProducts(); ii++)
     {
         if(event->GetFourMomentumOf(ii)!=nullptr)
         {
@@ -746,14 +769,14 @@ void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
     //drawing histograms
     //for gammas
     cuts->cd(1);
-    fH_gamma_cuts_->Scale(100.0/fNumberOfGammas_);
+    fH_gamma_cuts_->Scale(100.0/(double)fNumberOfGammas_);
     fH_gamma_cuts_->GetYaxis()->SetRangeUser(0.0, 101.0);
     fH_gamma_cuts_->SetStats(kFALSE);
-    fH_gamma_cuts_->Draw();
+    fH_gamma_cuts_->Draw("hist");
     labelBefore -> DrawText(0.15, 0.55, "before cuts");
     labelGeo -> DrawText(0.4, 0.55, "geom. accept.");
     labelP -> DrawText(0.65, 0.55, "interaction prob.");
-    ss<<fAcceptedGammas_/(double)fNumberOfGammas_*100.0;
+    ss<<(double)fAcceptedGammas_/(double)fNumberOfGammas_*100.0;
     labelPercent->DrawText(0.75, 0.2, (ss.str()+std::string("%")).c_str());
     ss.str(std::string());
     //for events
@@ -761,7 +784,7 @@ void InitialCuts::DrawCutsHistograms(std::string prefix, OutputOptions output)
     fH_event_cuts_->Scale(100.0/fNumberOfEvents_);
     fH_event_cuts_->GetYaxis()->SetRangeUser(0.0, 101.0);
     fH_event_cuts_->SetStats(kFALSE);
-    fH_event_cuts_->Draw();
+    fH_event_cuts_->Draw("hist");
     labelBefore -> DrawText(0.15, 0.55, "before cuts");
     labelGeo -> DrawText(0.4, 0.55, "geom. accept.");
     labelP -> DrawText(0.65, 0.55, "interaction prob.");
@@ -801,7 +824,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for gammas that passed cuts."<<std::endl;
     TCanvas* angles_pass;
 
-    TCanvas* dist_pass = new TCanvas((fTypeString_+"-gammas_dist_pass").c_str(),\
+    TCanvas* dist_pass = new TCanvas((fTypeString_+"-gammas_dist_pass"+std::to_string(objectID_)).c_str(),\
                                      ("Basic distributions for passed "\
                                      +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
     //differentation of low, mid and high energy gammas
@@ -831,7 +854,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     //angle distribution depends on the number of decay products
     if(fDecayType_ == THREE)
     {
-        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass_"+std::to_string(objectID_)).c_str(),\
                                     ("Angle ditribution for all generated "\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_pass->Divide(3,1);
@@ -843,9 +866,9 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
         fH_23_31_pass_->Draw("colz");
         outFile2 = prefix+fTypeString_+"-gammas_angles_pass_.png";
     }
-    else if(fDecayType_ == TWO)
+    else if(fDecayType_ == TWO || fDecayType_ == TWOandN)
     {
-        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass"+std::to_string(objectID_)).c_str(),\
                                   ("Angle ditribution for all generated "\
                                   +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
         fH_12_pass_->Draw();
@@ -853,7 +876,7 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
     }
     else if(fDecayType_ == TWOandONE)
     {
-        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass").c_str(),\
+        angles_pass = new TCanvas((fTypeString_+"-gammas_angles_pass"+std::to_string(objectID_)).c_str(),\
                                     ("Angle ditribution for all generated "\
                                     +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
         angles_pass->Divide(3,1);
@@ -928,29 +951,36 @@ void InitialCuts::DrawPassHistograms(std::string prefix, OutputOptions output)
         img->FromPad(dist_pass);
         outFile1=prefix+fTypeString_+"-gammas_dist_pass_.png";
         img->WriteImage(outFile1.c_str());
-        angles_pass->Update();
-        TImage *img2 = TImage::Create();
-        img2->FromPad(angles_pass);
-        img2->WriteImage(outFile2.c_str());
+        if(fDecayType_!=ONE)
+        {
+            angles_pass->Update();
+            TImage *img2 = TImage::Create();
+            img2->FromPad(angles_pass);
+            img2->WriteImage(outFile2.c_str());
+            delete img2;
+        }
         diff_en->Update();
         TImage *img3 = TImage::Create();
         img3->FromPad(diff_en);
         img3->WriteImage(outFileDiffEn.c_str());
         delete img;
-        delete img2;
         delete img3;
     }
     if(output==BOTH ||output==TREE)
     {
         dist_pass->Write();
-        angles_pass->Write();
+        if(fDecayType_!=ONE)
+        {
+            angles_pass->Update();
+            angles_pass->Write();
+            delete angles_pass;
+        }
         diff_en->Write();
     }
-    delete dist_pass;
-    delete angles_pass;
-    delete diff_en;
-    delete legend;
-    if(objLow) delete objLow;
+    if(dist_pass) delete dist_pass;
+    if(diff_en) delete diff_en;
+    if(legend) delete legend;
+    if(objLow != nullptr) delete objLow;
     if(objMid) delete objMid;
     if(objHigh) delete objHigh;
 }
@@ -967,7 +997,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         std::string outFile2;
         if(!fSilentMode_) std::cout<<"[INFO] Drawing histograms for events that did not pass cuts."<<std::endl;
         TCanvas* angles_fail;
-        TCanvas* dist_fail= new TCanvas((fTypeString_+"-gammas_dist_fail").c_str(), ("Basic distributions for passed "\
+        TCanvas* dist_fail= new TCanvas((fTypeString_+"-gammas_dist_fail"+std::to_string(objectID_)).c_str(), ("Basic distributions for passed "\
                                          +fTypeString_+std::string("-gamma events")).c_str(), 900, 800);
         dist_fail->Divide(2, 2);
         dist_fail->cd(1);
@@ -983,7 +1013,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         //angle distribution depends on the number of decay products
         if(fDecayType_ == THREE)
         {
-            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail"+std::to_string(objectID_)).c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
 
@@ -997,9 +1027,9 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
             outFile2 = prefix+fTypeString_+std::string("-gammas_angles_fail.png");
 
         }
-        else if(fDecayType_ == TWO)
+        else if(fDecayType_ == TWO || fDecayType_==TWOandN)
         {
-            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail"+std::to_string(objectID_)).c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 500, 400);
 
@@ -1008,7 +1038,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
         }
         else if(fDecayType_ == TWOandONE)
         {
-            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail").c_str(), \
+            angles_fail = new TCanvas((fTypeString_+"-gammas_angles_fail"+std::to_string(objectID_)).c_str(), \
                                       ("Angle ditribution for all generated "\
                                       +fTypeString_+std::string("-gamma events")).c_str(), 1200, 400);
 
@@ -1021,7 +1051,7 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
             fH_31_fail_->Draw();
             outFile2 = prefix+fTypeString_+std::string("-gammas_angles_fail.png");
         }
-        angles_fail->Update();
+
         if(!fSilentMode_) std::cout<<"[INFO] Saving histograms for failed events."<<std::endl;
         if(output==BOTH || output==PNG)
         {
@@ -1029,17 +1059,26 @@ void InitialCuts::DrawFailHistograms(std::string prefix, OutputOptions output)
             img->FromPad(dist_fail);
             outFile1=prefix+fTypeString_+std::string("-gammas_dist_fail.png");
             img->WriteImage(outFile1.c_str());
-            TImage *img2 = TImage::Create();
-            img2->FromPad(angles_fail);
-            img2->WriteImage(outFile2.c_str());
+            if(fDecayType_!=ONE)
+            {
+                angles_fail->Update();
+                TImage *img2 = TImage::Create();
+                img2->FromPad(angles_fail);
+                img2->WriteImage(outFile2.c_str());
+                delete img2;
+            }
             delete img;
-            delete img2;
         }
         if(output==BOTH || output==TREE)
         {
             dist_fail->Write();
-            angles_fail->Write();
+            if(fDecayType_!=ONE)
+            {
+                angles_fail->Update();
+                angles_fail->Write();
+                delete angles_fail;
+            }
         }
-        delete dist_fail;
-        delete angles_fail;
+        if(dist_fail) delete dist_fail;
+
 }

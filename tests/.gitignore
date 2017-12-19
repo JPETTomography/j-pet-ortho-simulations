@@ -1,3 +1,4 @@
-testAll
-EventDict*
-obj/
+*.pcm
+./testAll
+*.autosave
+

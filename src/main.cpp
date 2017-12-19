@@ -1,13 +1,13 @@
 /// @file simulate.cpp
 /// @author Rafal Maselek <rafal.maselek@ncbj.gov.pl>
-/// @date 13.07.2017
-/// @version 1.5
+/// @date 3.10.2017
+/// @version 1.6
 ///
 /// @section DESCRIPTION
-/// Simple simulation of positronium decay to 2 or 3 gammas or 2 gammas and 1 additional from Sc decay.
+/// Simple simulation of 1/2/3 gammas or 2+1 or 2+N.
 ///
 /// @section USAGE
-/// To use, compile using Makefile, then simply run.
+/// To use, compile using Makefile, then simply run. See README.md for more details.
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -21,6 +21,8 @@
 #include "parammanager.h"
 #include "psdecay.h"
 #include "initialcuts.h"
+#include "particlegenerator.h"
+#include "phantom.h"
 
 // Paths to folders containing results.
 static std::string generalPrefix("results/");
@@ -35,6 +37,7 @@ std::string toStringPretty(const T a_value)
     out << a_value;
     return out.str();
 }
+
 ///
 /// \brief simulateDecay A function that performs run for many decays with one parameter set.
 /// \param Ps Fourmomentum of the source [GeV]
@@ -48,32 +51,17 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
 {
     std::string type_string;
     int noOfGammas = 0;
-    TRandom3 rand(0); //setting the seed for random number generation
-    if(type==TWO)
-    {
-        type_string = "2";
-        noOfGammas = 2;
-    }
-    else if(type==THREE)
-    {
-        type_string = "3";
-        noOfGammas = 3;
-    }
-    else if(type==TWOandONE)
-    {
-        type_string = "2&1";
-        noOfGammas = 2;
-    }
-
+    type_string = recognizeType(type, noOfGammas);
     ////////////////////////////////////////////////////////////////////////
     double* masses = new double[noOfGammas]();
     //(Momentum, Energy units are Gev/C, GeV)
-    TGenPhaseSpace event;
-    event.SetDecay(Ps, noOfGammas, masses);
+    TGenPhaseSpace phaseSpaceGen;
+    phaseSpaceGen.SetDecay(Ps, noOfGammas, masses);
     // creating necessary objects
     Event* eventDecay = nullptr;//new Event;
     PsDecay decay(type);
-    InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetP());
+    Phantom phantom(pManag.GetPhantomNaive511Prob(), pManag.GetPhantomNaivePromptProb(), pManag.GetPhantomSmear());
+    InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetEff());
     ComptonScattering cs(type, pManag.GetSmearLowLimit(), pManag.GetSmearHighLimit());
     //setting SilentMode if necessary
     if(pManag.IsSilentMode())
@@ -93,49 +81,30 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     //***   EVENT LOOP  ***
     for (Int_t n=0; n<pManag.GetSimEvents(); n++)
     {
-       //Generation of a decay
-       double weight = event.Generate();
-       TLorentzVector* gamma1 = event.GetDecay(0);
-       TLorentzVector* gamma2 = event.GetDecay(1);
-       TLorentzVector* gamma3 = nullptr;
-       //Generating emission point inside a ball
-       TLorentzVector* emission1 = nullptr;
-       if(source.T() != 0)
-            emission1= new TLorentzVector(source.X()+rand.Uniform(-1.0,1.0)*source.T(), source.Y()+rand.Uniform(-1.0,1.0)*source.T(),\
-                                                      source.Z()+rand.Uniform(-1.0,1.0)*source.T(), 0.0);
-       else
-           emission1 = new TLorentzVector(source.X(), source.Y(), source.Z(), 0.0);
-       TLorentzVector* emission2 = new TLorentzVector(*emission1); //making copies
-       TLorentzVector* emission3 = nullptr;
-       if(type == THREE)
-       {
-           gamma3=event.GetDecay(2);
-           emission3 = new TLorentzVector(*emission1);
-       }
-       else if(type == TWOandONE)
-       {
-           //generating additional gamma from Sc decay in the same place as the Ps decay
-           if(rand.Uniform() < pManag.GetPSc())
-           {
-               double theta = TMath::ACos(rand.Uniform(-1.0, 1.0));
-               double phi = rand.Uniform(0.0, 2*TMath::Pi());
-               double P = pManag.GetESc()/1000000.0; //GeV
-               gamma3 = new TLorentzVector(P*TMath::Sin(theta)*TMath::Cos(phi), P*TMath::Sin(theta)*TMath::Sin(phi), P*TMath::Cos(theta), P);
-               emission3 = new TLorentzVector(*emission1);
-           }
-       }
-       //Packing everything to EVENT object
-       TLorentzVector* fourMomenta[3] = {gamma1, gamma2, gamma3};
-       TLorentzVector* sourcePar[3] = {emission1, emission2, emission3};
-       eventDecay = new Event(sourcePar, fourMomenta, weight, type);
 
-       //Getting initial distributions
-       decay.AddEvent(eventDecay);
-       //Applying cuts
-       cuts.AddCuts(eventDecay);
-       //Performing the Compton Scattering
-       cs.Scatter(eventDecay);
-       //we select what kind of events will be saved to the tree and save them
+       //generation of an Event
+       eventDecay = generateEvent(phaseSpaceGen, source, pManag, type);
+       //Filling histograms, event analysis
+       try
+       {
+           //Getting initial distributions
+           decay.AddEvent(eventDecay);
+           //Aplying Compton scattering in phantom
+           if(pManag.GetPhantomUse())
+                phantom.NaiveScatter(eventDecay);
+           //Applying cuts
+           cuts.AddCuts(eventDecay);
+           //Performing the Compton Scattering
+           cs.Scatter(eventDecay);
+           //we select what kind of events will be saved to the tree and save them
+       }
+
+       catch(std::string e)
+       {
+           std::cout<<e;
+           exit(-1);
+       }
+       //writing to tree
        if(tree!=nullptr && ((pManag.GetEventTypeToSave()==PASS && eventDecay->GetPassFlag()) || (pManag.GetEventTypeToSave()==FAIL && !(eventDecay->GetPassFlag())) || (pManag.GetEventTypeToSave()==ALL)))
        {
            if(n==0)
@@ -147,11 +116,10 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
            tree->Fill();
        }
        delete eventDecay;
-       if(emission1) delete emission1;
-       if(emission2) delete emission2;
-       if(emission3) delete emission3;
+
     }
     //***   END OF EVENT LOOP   ***
+
     //Drawing results
     decay.DrawHistograms(filePrefix, pManag.GetOutputType());
     cuts.DrawHistograms(filePrefix, pManag.GetOutputType());
@@ -221,8 +189,8 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    //Performing simulations based on the provided number of gammas
    if(noOfGammas==1)
    {
-        std::cout<<"::::::::::::Simulating 2+1-gamma decays::::::::::::"<<std::endl;
-        simulateDecay(Ps, sourcePos, pManag, TWOandONE, generalPrefix+outputFileAndDirName+subDir, tree);
+       std::cout<<"::::::::::::Simulating 1-gamma generation::::::::::::"<<std::endl;
+       simulateDecay(Ps, sourcePos, pManag, ONE, generalPrefix+outputFileAndDirName+subDir, tree);
    }
    else if(noOfGammas==2)
    {
@@ -233,6 +201,16 @@ TTree* simulate(const int simRun, ParamManager& pManag, TFile* treeFile, std::st
    {
        std::cout<<"::::::::::::Simulating 3-gamma decays::::::::::::"<<std::endl;
        simulateDecay(Ps, sourcePos, pManag, THREE, generalPrefix+outputFileAndDirName+subDir, tree);
+   }
+   else if(noOfGammas==4)
+   {
+        std::cout<<"::::::::::::Simulating 2+1-gamma decays::::::::::::"<<std::endl;
+        simulateDecay(Ps, sourcePos, pManag, TWOandONE, generalPrefix+outputFileAndDirName+subDir, tree);
+   }
+   else if(noOfGammas==5)
+   {
+        std::cout<<"::::::::::::Simulating 2+N-gamma decays::::::::::::"<<std::endl;
+        simulateDecay(Ps, sourcePos, pManag, TWOandN, generalPrefix+outputFileAndDirName+subDir, tree);
    }
    else
    {
@@ -269,7 +247,7 @@ int main(int argc, char* argv[])
   //parsing command line arguments
   for(int nn=1; nn<argc; nn++)
   {
-      if(argc >= 3)
+      if(argc > nn+1)
       {
           if(std::string(argv[nn]) == "-i")
           {
@@ -284,6 +262,12 @@ int main(int argc, char* argv[])
               outputFileAndDirName = std::string(argv[nn+1]);
               nn +=1;
           }
+          else if(std::string(argv[nn]) == "-d") //parsing command line arguments
+          {
+              //importing 2&N data from an external file
+              par_man.Import2nNdata(argv[nn+1]);
+              nn +=1;
+          }
       }
   }
 
@@ -291,6 +275,12 @@ int main(int argc, char* argv[])
   {
       std::cout<<"[WARNING] Input file not provided! Trying to load simpar.par!"<<std::endl;
       par_man.ImportParams("simpar.par");
+  }
+  if(par_man.GetNoOfGammas()==5 && !par_man.Is2nNDataImported())
+  {
+      std::cout<<"[WARNING] Data file for 2&N decays not provided! Trying to load 2nN_data.dat!"<<std::endl;
+      par_man.Import2nNdata();
+      par_man.Print2nNdata();
   }
   //creating directories for storing the results
   mkdir(generalPrefix.c_str(), ACCESSPERMS);
@@ -306,6 +296,8 @@ int main(int argc, char* argv[])
     treeFile->cd();
   }
 
+  //setting the seed for global pseudo-random number generator
+  gRandom = new TRandom3(par_man.GetSeed());
   //loop with simulation runs
   for(int ii=0; ii< (par_man.GetSimRuns()); ii++)
   {

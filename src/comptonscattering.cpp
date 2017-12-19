@@ -3,6 +3,7 @@
 #include "TLine.h"
 #include "comptonscattering.h"
 
+unsigned ComptonScattering::objectID_= 1;
 ///
 /// \brief ComptonScattering::ComptonScattering The only constructor used.
 /// \param type Type of the decay, can be: TWO, THREE or TWOandTHREE.
@@ -11,28 +12,41 @@
 ///
 ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fSilentMode_(false), fDecayType_(type), fSmearLowLimit_(low), fSmearHighLimit_(high)
 {
-    fRand_ = new TRandom3(0); //set seed for the random generator
     if(fDecayType_==THREE)
     {
-        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.0, 0.600);
         fTypeString_ = "3";
-        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 0.511);
-        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 0.511);
+        fH_photon_E_depos_ = new TH1F((std::string("fH_photon_E_depos_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_photon_E_depos_", 52, 0.0, 0.600);
+        fH_electron_E_ = new TH1F((std::string("fH_electron_E_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_", 52, 0.0, 0.511);
+        fH_electron_E_blur_ = new TH1F((std::string("fH_electron_E_blur_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_blur_", 52, 0.0, 0.511);
     }
     else if(fDecayType_==TWO)
     {
-        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 21, 0.510, 0.512);
-        fH_photon_E_depos_->GetXaxis()->SetNdivisions(7, false);
         fTypeString_ = "2";
-        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 0.511);
-        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 0.511);
+        fH_photon_E_depos_ = new TH1F((std::string("fH_photon_E_depos_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_photon_E_depos_", 21, 0.510, 0.512);
+        fH_photon_E_depos_->GetXaxis()->SetNdivisions(7, false);
+        fH_electron_E_ = new TH1F((std::string("fH_electron_E_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_", 52, 0.0, 0.511);
+        fH_electron_E_blur_ = new TH1F((std::string("fH_electron_E_blur_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_blur_", 52, 0.0, 0.511);
     }
     else if(fDecayType_==TWOandONE)
     {
-        fH_photon_E_depos_ = new TH1F("fH_photon_E_depos_", "fH_photon_E_depos_", 52, 0.3, 1.3);
         fTypeString_ = "2&1";
-        fH_electron_E_ = new TH1F("fH_electron_E_", "fH_electron_E_", 52, 0.0, 1.3);
-        fH_electron_E_blur_ = new TH1F("fH_electron_E_blur_", "fH_electron_E_blur_", 52, 0.0, 1.3);
+        fH_photon_E_depos_ = new TH1F((std::string("fH_photon_E_depos_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_photon_E_depos_", 52, 0.3, 1.3);
+        fH_electron_E_ = new TH1F((std::string("fH_electron_E_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_", 52, 0.0, 1.3);
+        fH_electron_E_blur_ = new TH1F((std::string("fH_electron_E_blur_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_blur_", 52, 0.0, 1.3);
+    }
+    else if(fDecayType_==TWOandN)
+    {
+        fTypeString_ = "2&N";
+        fH_photon_E_depos_ = new TH1F((std::string("fH_photon_E_depos_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_photon_E_depos_", 104, 0.0, 4.0);
+        fH_electron_E_ = new TH1F((std::string("fH_electron_E_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_", 104, 0.0, 4.0);
+        fH_electron_E_blur_ = new TH1F((std::string("fH_electron_E_blur_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_blur_", 104, 0.0, 4.0);
+    }
+    else if(fDecayType_==ONE)
+    {
+        fTypeString_ = "1";
+        fH_photon_E_depos_ = new TH1F((std::string("fH_photon_E_depos_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_photon_E_depos_", 52, 0.0, 2.0);
+        fH_electron_E_ = new TH1F((std::string("fH_electron_E_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_", 52, 0.0, 2.0);
+        fH_electron_E_blur_ = new TH1F((std::string("fH_electron_E_blur_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_electron_E_blur_", 52, 0.0, 2.0);
     }
     fH_electron_E_->SetFillColor(kBlue);
     fH_electron_E_->SetTitle("Electrons' energy distribution");
@@ -52,35 +66,37 @@ ComptonScattering::ComptonScattering(DecayType type, float low, float high) : fS
     fH_photon_E_depos_->GetYaxis()->SetTitle("dN/dE");
     fH_photon_E_depos_->GetYaxis()->SetTitleOffset(1.8);
     
-    fH_photon_theta_ = new TH1F("fH_photon_theta_", "fH_photon_theta_", 50, 0.0, TMath::Pi());
+    fH_photon_theta_ = new TH1F((std::string("fH_photon_theta_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_photon_theta_", 50, 0.0, TMath::Pi());
     fH_photon_theta_->SetFillColor(kBlue);
     fH_photon_theta_->SetTitle("Scattering angle distribution");
     fH_photon_theta_->GetXaxis()->SetTitle("#theta");
     fH_photon_theta_->GetYaxis()->SetTitle("dN/d#theta");
     fH_photon_theta_->GetYaxis()->SetTitleOffset(1.8);
 
-    fH_PDF_ = new TH2D("fH_PDF_", "fH_PDF_", 1000, 0.0, 1.022, 1000, 0.0, TMath::Pi());
+    fH_PDF_ = new TH2D((std::string("fH_PDF_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_PDF_", 1000, 0.0, 1.022, 1000, 0.0, TMath::Pi());
     fH_PDF_->SetTitle("Klein-Nishima function");
     fH_PDF_->GetXaxis()->SetTitle("E [MeV]");
     fH_PDF_->GetYaxis()->SetTitle("#theta'");
     fH_PDF_->SetStats(kFALSE);
-    fH_PDF_cross = new TH1D("fH_PDF_cross_", "fH_PDF_cross", 1000, 0.0, TMath::Pi());
+    fH_PDF_cross = new TH1D((std::string("fH_PDF_cross_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_PDF_cross", 1000, 0.0, TMath::Pi());
     fH_PDF_cross->GetYaxis()->SetTitle("d N/ d #Omega");
     fH_PDF_cross->GetXaxis()->SetTitle("#theta'");
     fH_PDF_cross->SetStats(kFALSE);
 
-    fH_PDF_Theta_ = new TH2D("fH_PDF_Theta_", "fH_PDF_Theta_", 1000, 0.0, 1.022, 1000, 0.0, TMath::Pi());
+    fH_PDF_Theta_ = new TH2D((std::string("fH_PDF_Theta_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_PDF_Theta_", 1000, 0.0, 1.022, 1000, 0.0, TMath::Pi());
     fH_PDF_Theta_->SetTitle("Klein-Nishima function * 2*#pi*sin(#theta)");
     fH_PDF_Theta_->GetXaxis()->SetTitle("E [MeV]");
     fH_PDF_Theta_->GetYaxis()->SetTitle("#theta'");
     fH_PDF_Theta_->SetStats(kFALSE);
-    fH_PDF_Theta_cross = new TH1D("fH_PDF_Theta_cross_", "fH_PDF_Theta_cross_", 1000, 0.0, TMath::Pi());
+    fH_PDF_Theta_cross = new TH1D((std::string("fH_PDF_Theta_cross_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), "fH_PDF_Theta_cross_", 1000, 0.0, TMath::Pi());
     fH_PDF_Theta_cross->GetYaxis()->SetTitle("d #N/ d #theta");
     fH_PDF_Theta_cross->GetXaxis()->SetTitle("#theta'");
     fH_PDF_Theta_cross->SetStats(kFALSE);
     //creating function wrapper around KleinNishina_ function
-    fPDF = new TF1("KleinNishima_", KleinNishina_, 0.0 , TMath::Pi(), 1);
-    fPDF_Theta = new TF1("KleinNishimaTheta_", KleinNishinaTheta_, 0.0 , TMath::Pi(), 1);
+    fPDF = new TF1((std::string("KleinNishima_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), KleinNishina_, 0.0 , TMath::Pi(), 1);
+    fPDF_Theta = new TF1((std::string("KleinNishimaTheta_")+fTypeString_+"_"+std::to_string(objectID_)).c_str(), KleinNishinaTheta_, 0.0 , TMath::Pi(), 1);
+
+    objectID_++;
 }
 
 ///
@@ -130,6 +146,25 @@ ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
     fH_PDF_Theta_cross = new TH1D(*est.fH_PDF_Theta_cross);
     return *this;
 }
+///
+/// \brief equal_histograms Checks integral, number of entries and mean of two histograms.
+/// \param h1 First histogram to be compared.
+/// \param h2 Second histogram to be compared.
+/// \return True if integral, number of entries and mean are equal. False otherwise.
+///
+bool equal_histograms(const TH1* h1, const TH1* h2)
+{
+    return (h1->Integral() == h2->Integral() && h1->GetEntries() == h2->GetEntries() && h1->GetMean() == h2->GetMean());
+}
+
+bool ComptonScattering::operator==(const ComptonScattering &est) const
+{
+    bool isEqual = (fDecayType_==est.fDecayType_) && (fSilentMode_==est.fSilentMode_) && (fTypeString_==est.fTypeString_) &&
+         (fSmearLowLimit_==est.fSmearLowLimit_) && (fSmearHighLimit_==est.fSmearHighLimit_) && \
+          equal_histograms(fH_photon_E_depos_, est.fH_photon_E_depos_) && equal_histograms(fH_electron_E_, est.fH_electron_E_) &&\
+          equal_histograms(fH_electron_E_blur_, est.fH_electron_E_blur_) && equal_histograms(fH_photon_theta_, est.fH_photon_theta_);
+    return isEqual;
+}
 
 ///
 /// \brief ComptonScattering::~ComptonScattering Destructor, releases memory after histograms.
@@ -146,7 +181,6 @@ ComptonScattering::~ComptonScattering()
     if(fH_PDF_Theta_) delete fH_PDF_Theta_;
     if(fH_PDF_Theta_cross) delete fH_PDF_Theta_cross;
     if(fPDF_Theta) delete fPDF_Theta;
-    if(fRand_) delete fRand_;
 }
 
 ///
@@ -229,7 +263,8 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
     c->Divide(2,2);
     c->cd(1);   
     fH_photon_E_depos_->Draw();
-    line->Draw();
+    if(fDecayType_!=ONE)
+        line->Draw();
     c->cd(2);
     fH_photon_theta_->Draw();
     c->cd(3);
@@ -263,9 +298,16 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
 /// \brief ComptonScattering::Scatter Scatters gammas from the event, performs smearing and fills histograms.
 /// \param event Pointer to Event object that is to be scattered.
 ///
-void ComptonScattering::Scatter(Event* event) const
+void ComptonScattering::Scatter(Event* event, int index) const
 {
-    for(int ii=0; ii<3; ii++)
+    int lowLimit = 0;
+    int highLimit = event->GetNumberOfDecayProducts();
+    if(index > -1)
+    {
+        lowLimit = index;
+        highLimit = index+1;
+    }
+    for(int ii=lowLimit; ii<highLimit; ii++)
     {
         if(event->GetFourMomentumOf(ii) != nullptr && event->GetCutPassingOf(ii))
         {
@@ -280,7 +322,7 @@ void ComptonScattering::Scatter(Event* event) const
             //if new_E is within limit -- smear, otherwise fill histogram with new_E
             if((new_E >= fSmearLowLimit_) && (new_E <= fSmearHighLimit_))
             {
-                double Esmear = fRand_->Gaus(new_E, sigmaE(E));
+                double Esmear = gRandom->Gaus(new_E, sigmaE(E));
                 fH_electron_E_blur_->Fill(Esmear);
                 event->SetEdepSmearOf(ii, Esmear);
             }

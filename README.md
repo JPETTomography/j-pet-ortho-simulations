@@ -5,7 +5,7 @@
 
 ### Requirements:
 + ROOT 6 (You may have to manually load the environment, if it is not set in *~/.bashrc* To learn how to do it see ROOT installation manual.
-+ GCC > 4.9 (default version on cluster is too old, load more recent one, e.g. 4.9.4)
++ GCC > 4.9 (default version on NCBJ cluster is too old, load 4.9.4 instead)
 + Unix (tested on Kubuntu 16.04)
 
 ### Installation:
@@ -20,7 +20,7 @@ To run the application type
 **output_subfolder_name** is also a name of the root file if tree output is selected. if the flag '-n' is not provided, system's date and time will be used.
 
 ### Changing the simulation parameters
-For details see simupar.par file.
+For details see simpar.par file.
 
 ### Results 
 By deault all results will be saved to the *results/* directory. You can change it by editing src/simulate.cpp file. There is static variable at the beginning of the file called:
