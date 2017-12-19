@@ -22,6 +22,7 @@
 #include "psdecay.h"
 #include "initialcuts.h"
 #include "particlegenerator.h"
+#include "phantom.h"
 
 // Paths to folders containing results.
 static std::string generalPrefix("results/");
@@ -59,6 +60,7 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
     // creating necessary objects
     Event* eventDecay = nullptr;//new Event;
     PsDecay decay(type);
+    Phantom phantom(pManag.GetPhantomNaive511Prob(), pManag.GetPhantomNaivePromptProb(), pManag.GetPhantomSmear());
     InitialCuts cuts(type, pManag.GetR(), pManag.GetL(), pManag.GetEff());
     ComptonScattering cs(type, pManag.GetSmearLowLimit(), pManag.GetSmearHighLimit());
     //setting SilentMode if necessary
@@ -86,6 +88,9 @@ void simulateDecay(TLorentzVector Ps, const TLorentzVector& source, const ParamM
        {
            //Getting initial distributions
            decay.AddEvent(eventDecay);
+           //Aplying Compton scattering in phantom
+           if(pManag.GetPhantomUse())
+                phantom.NaiveScatter(eventDecay);
            //Applying cuts
            cuts.AddCuts(eventDecay);
            //Performing the Compton Scattering

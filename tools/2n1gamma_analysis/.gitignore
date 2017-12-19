@@ -8,3 +8,6 @@
 !*.h
 !Makefile
 !*.py
+EventHits*
+macros
+src

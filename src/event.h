@@ -42,17 +42,22 @@ class Event : public TObject
             {return index<fHitPoint_.size() ? const_cast<TLorentzVector*>(&fHitPoint_[index]) : NULL;}
         inline bool GetCutPassingOf(const unsigned index) const
             {return index<fCutPassing_.size() ? fCutPassing_[index] : false;}
-        inline void SetCutPassing(unsigned ii, bool val)
-            {if(ii<fCutPassing_.size()) fCutPassing_[ii]=val;}
+        inline bool GetPrimaryPhoton(const unsigned index) const
+            {return index<fPrimaryPhoton_.size() ? fPrimaryPhoton_[index] : false;}
         inline double GetWeight() const {return fWeight_;}
         inline DecayType GetDecayType() const {return fDecayType_;}
         inline bool GetPassFlag() const {return fPassFlag_;}
         inline double GetHitPhiOf(const unsigned index) const {return fHitPhi_[index];}
         inline double GetHitThetaOf(const unsigned index) const {return fHitTheta_[index];}
         inline double GetEdepOf(const unsigned index) const {return fEdep_[index];}
-        inline double GetEdepSmearOf(const unsigned index) const {return fEdep_[index];}
-        inline void SetEdepOf(int ii, double val) {fEdep_[ii]=val;}
-        inline void SetEdepSmearOf(int ii, double val) {fEdepSmear_[ii]=val;}
+        inline double GetEdepSmearOf(const unsigned index) const {return fEdepSmear_[index];}
+        inline void SetFourMomentumOf(const unsigned index, TLorentzVector& vector)
+        { if(index < fFourMomentum_.size()) fFourMomentum_[index] = TLorentzVector(vector);}
+        inline void SetCutPassing(const unsigned ii, bool val)
+            {if(ii<fCutPassing_.size()) fCutPassing_[ii]=val;}
+        inline void SetPrimaryPhoton(const unsigned ii, bool isPrimary) {fPrimaryPhoton_.at(ii)=isPrimary;}
+        inline void SetEdepOf(const unsigned ii, double val) {fEdep_[ii]=val;}
+        inline void SetEdepSmearOf(const unsigned ii, double val) {fEdepSmear_[ii]=val;}
 
         //set fPassFlag_ by checking values in fCutPassing_
         void DeducePassFlag();
@@ -62,7 +67,7 @@ class Event : public TObject
         //number of event
         long fId;
         //ROOT stuff
-        ClassDef(Event, 16)
+        ClassDef(Event, 17)
 
     private:
         static long fCounter_; //static variable incremented with every call of a constructor (but not copy constructor)
@@ -72,12 +77,13 @@ class Event : public TObject
         double fWeight_; //weight of the event
         DecayType fDecayType_; //type of the event
         bool fPassFlag_; //if true, event can be reconstructed -- all necessary gammas passed through cuts
+        std::vector<bool> fPrimaryPhoton_; //true is photon is primary (not scattered)
         //Estimated values for hit points, ALWAYS CHECK CUTS PASSING BEFORE USING !!! (fails included)
         std::vector<double> fHitPhi_; //values of azimuthal angle for hit points
         std::vector<double> fHitTheta_;//values of polar angle for hit points
         std::vector<TLorentzVector> fHitPoint_; //x, y, z, t [mm and mikro s]
-        std::vector<double> fEdep_;
-        std::vector<double> fEdepSmear_;
+        std::vector<double> fEdep_; //deposited energy by gammas
+        std::vector<double> fEdepSmear_; //deposited energy by gammas with experimental smearing
         typedef TObject inherited;
 
 

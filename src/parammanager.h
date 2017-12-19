@@ -60,6 +60,10 @@ class ParamManager
             {if(index<fDecayBranchProbability_.size()) return fDecayBranchProbability_[index]; else return 0;}
         inline double GetGammaEnergyAt(const unsigned branch, const unsigned gamma) const
             {if(branch<fDecayBranchProbability_.size() && gamma<(fGammaEnergy_.at(branch)).size()) return (fGammaEnergy_[branch])[gamma]; else return 0;}
+        inline double GetPhantomNaive511Prob() const {return fPPhantom511_;}
+        inline double GetPhantomNaivePromptProb() const {return fPPhantomPrompt_;}
+        inline double GetPhantomUse() const {return fUsePhantom_;}
+        inline bool GetPhantomSmear() const {return fPhantomSmear_;}
         //////////////////////////////////
         inline void SetR(float r) {fR_=r;}
         inline void SetL(float l) {fL_=l;}
@@ -76,6 +80,10 @@ class ParamManager
         inline EventTypeToSave GetEventTypeToSave() const {return fEventTypeToSave_;}
         inline void SetEventTypeToSave(EventTypeToSave type) {fEventTypeToSave_=type;}
         inline void SetSeed(int seed){fSeed_=seed;}
+        inline void SetUseOfPhantom(bool isPhantom){fUsePhantom_=isPhantom;}
+        inline void SetPhantomNaive511Prob(double p){fPPhantom511_=p;}
+        inline void SetPhantomNaivePromptProb(double p){fPPhantomPrompt_=p;}
+        inline void SetPhantomSmear(bool isSmear){fPhantomSmear_=isSmear;}
         //access source parameters
         std::vector<double> GetDataAt(const int index=0) const;
 
@@ -101,6 +109,10 @@ class ParamManager
         int fSeed_; //seed of the random generator, if set to 0 then different for different program executions
         bool fSilentMode_; //if set to true, less output to std::cout will be printed
         bool f2nNdataImported_; //set to true after importing 2&N data
+        bool fUsePhantom_; //set true to use phantom
+        double fPPhantom511_; //probability for a 511 keV phantom to scatter inside a phantom in naive mode
+        double fPPhantomPrompt_; //probability for a prompt phantom to scatter inside a phantom in naive mode
+        bool fPhantomSmear_;
 
         OutputOptions fOutput_; //what kind of output will be produced
         EventTypeToSave fEventTypeToSave_; //what kind of events should be saved

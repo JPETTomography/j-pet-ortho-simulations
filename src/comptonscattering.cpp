@@ -146,7 +146,12 @@ ComptonScattering& ComptonScattering::operator=(const ComptonScattering &est)
     fH_PDF_Theta_cross = new TH1D(*est.fH_PDF_Theta_cross);
     return *this;
 }
-
+///
+/// \brief equal_histograms Checks integral, number of entries and mean of two histograms.
+/// \param h1 First histogram to be compared.
+/// \param h2 Second histogram to be compared.
+/// \return True if integral, number of entries and mean are equal. False otherwise.
+///
 bool equal_histograms(const TH1* h1, const TH1* h2)
 {
     return (h1->Integral() == h2->Integral() && h1->GetEntries() == h2->GetEntries() && h1->GetMean() == h2->GetMean());
@@ -293,9 +298,16 @@ void ComptonScattering::DrawComptonHistograms(std::string filePrefix, OutputOpti
 /// \brief ComptonScattering::Scatter Scatters gammas from the event, performs smearing and fills histograms.
 /// \param event Pointer to Event object that is to be scattered.
 ///
-void ComptonScattering::Scatter(Event* event) const
+void ComptonScattering::Scatter(Event* event, int index) const
 {
-    for(int ii=0; ii<event->GetNumberOfDecayProducts(); ii++)
+    int lowLimit = 0;
+    int highLimit = event->GetNumberOfDecayProducts();
+    if(index > -1)
+    {
+        lowLimit = index;
+        highLimit = index+1;
+    }
+    for(int ii=lowLimit; ii<highLimit; ii++)
     {
         if(event->GetFourMomentumOf(ii) != nullptr && event->GetCutPassingOf(ii))
         {

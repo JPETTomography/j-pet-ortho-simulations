@@ -28,6 +28,10 @@ ParamManager::ParamManager() :
     fSeed_(0),
     fSilentMode_(false),
     f2nNdataImported_(false),
+    fUsePhantom_(false),
+    fPPhantom511_(0.0),
+    fPPhantomPrompt_(0.0),
+    fPhantomSmear_(false),
     fOutput_(PNG),
     fEventTypeToSave_(ALL)
     {}
@@ -59,6 +63,10 @@ ParamManager::ParamManager(const ParamManager &est)
     std::copy(est.fDecayBranchProbability_.begin(), est.fDecayBranchProbability_.end(), fDecayBranchProbability_.begin());
     for(unsigned ii=0; ii<fGammaEnergy_.size(); ii++)
         fGammaEnergy_.push_back(est.fGammaEnergy_[ii]);
+    fPPhantom511_=est.fPPhantom511_;
+    fPPhantomPrompt_=est.fPPhantomPrompt_;
+    fUsePhantom_=est.fUsePhantom_;
+    fPhantomSmear_=est.fPhantomSmear_;
 }
 
 ///
@@ -89,6 +97,10 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     std::copy(est.fDecayBranchProbability_.begin(), est.fDecayBranchProbability_.end(), fDecayBranchProbability_.begin());
     for(unsigned ii=0; ii<fGammaEnergy_.size(); ii++)
         fGammaEnergy_.push_back(est.fGammaEnergy_[ii]);
+    fPPhantom511_=est.fPPhantom511_;
+    fPPhantomPrompt_=est.fPPhantomPrompt_;
+    fUsePhantom_=est.fUsePhantom_;
+    fPhantomSmear_=est.fPhantomSmear_;
     return *this;
 }
 
@@ -103,7 +115,9 @@ bool ParamManager::operator==(const ParamManager &est) const
             (fEff_==est.fEff_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
             (fE_==est.fE_) && (fP_==est.fP_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
             (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && \
-            (fSmearHighLimit_==est.fSmearHighLimit_) && (f2nNdataImported_==est.f2nNdataImported_) && fSeed_==est.fSeed_;
+            (fSmearHighLimit_==est.fSmearHighLimit_) && (f2nNdataImported_==est.f2nNdataImported_) && fSeed_==est.fSeed_ && \
+            (fUsePhantom_==est.fUsePhantom_) && (fPPhantom511_==fPPhantom511_) && (fPhantomSmear_==est.fPhantomSmear_) &&\
+            (fPPhantomPrompt_==fPPhantomPrompt_);
     return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin())\
             && std::equal(fDecayBranchProbability_.begin(), fDecayBranchProbability_.end(), est.fDecayBranchProbability_.begin())\
             && std::equal(fGammaEnergy_.begin(), fGammaEnergy_.end(), est.fGammaEnergy_.begin());
@@ -211,6 +225,14 @@ void ParamManager::ImportParams(const std::string& inFile)
                 fSmearHighLimit_=atof(token[2].c_str());
               else if (token[0]=="silent")
                 fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
+              else if(token[0]=="pPhantom511")
+                fPPhantom511_ = atof(token[2].c_str());
+              else if(token[0]=="pPhantomPrompt")
+                fPPhantomPrompt_ = atof(token[2].c_str());
+              else if(token[0]=="usePhantom")
+                fUsePhantom_ = atoi(token[2].c_str()) == 0 ? false :true;
+              else if(token[0]=="phantomSmear")
+                fPhantomSmear_ = atoi(token[2].c_str()) == 0 ? false :true;
               else if (token[0]=="output")
               {
                   if(token[2]=="tree")
@@ -314,7 +336,24 @@ void ParamManager::PrintParams()
     if(fNoOfGammas_==4)
     {
         std::cout<<"[INFO] Energy of single gamma: "<<fE_<<" [keV]"<<std::endl;
-        std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fP_<<std::endl;
+        std::cout<<"[INFO] Probability of emitting a prompt gamma: "<<fP_<<std::endl;
+    }
+    std::cout<<"[INFO] Phantom: ";
+    if(fUsePhantom_)
+    {
+        std::cout<<"ENABLED"<<std::endl;
+        std::cout<<"[INFO] Probability to naively scatter inside the phantom: "<<
+                   "\n\t* 511 keV: "<<fPPhantom511_<<
+                   "\n\t* prompt : "<<fPPhantomPrompt_<<std::endl;
+        std::cout<<"[INFO] Energy smearing inside phantom: ";
+        if(fPhantomSmear_)
+            std::cout<<"ENABLED"<<std::endl;
+        else
+            std::cout<<"DISABLED"<<std::endl;
+    }
+    else
+    {
+        std::cout<<"DISABLED"<<std::endl;
     }
     std::string seedToShow = fSeed_==0 ? "random" : std::to_string(fSeed_);
     std::cout<<"[INFO] Seed: "<<seedToShow<<std::endl;

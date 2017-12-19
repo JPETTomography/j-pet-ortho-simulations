@@ -5,7 +5,7 @@ LDFLAGS= `root-config --ldflags --glibs`
 OBJDIR=./obj
 SRCDIR=src
 H_FILES := $(wildcard $(SRCDIR)/*.h) 
-CPP_FILES := $(wildcard $(SRCDIR)/*.cpp)
+CPP_FILES := $(wildcard $(SRCDIR)/*.cpp) $(SRCDIR)/EventDict.cpp
 OBJ_FILES := $(addprefix $(OBJDIR)/,$(notdir $(CPP_FILES:.cpp=.o)))
 
 EVPATH = "$(shell pwd)/$(SRCDIR)/"
@@ -16,14 +16,9 @@ all: sim
 	@echo "COMPILATION COMPLETE!!!"
 
 sim: $(OBJ_FILES) $(OBJDIR)/EventDict.o
-ifeq ($(DICT_EXISTS), 1)
 	@echo "Creating executable: $@"
-	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $(OBJ_FILES) $(LDFLAGS))
-else
-	@echo "Creating executable: $@"
-	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $(OBJ_FILES) $(OBJDIR)/EventDict.o $(LDFLAGS))
-endif
-		
+	@(cp $(SRCDIR)/*.pcm . &&  $(CC) -o sim $^ $(LDFLAGS))
+
 $(SRCDIR)/EventDict.cpp: $(SRCDIR)/event.*
 	@echo "Compiling $@"
 	@(cd src && rootcint -f EventDict.cpp -c $(CXXFLAGS) -p  event.h event_linkdef.h)
@@ -32,11 +27,10 @@ $(OBJDIR)/EventDict.o: $(SRCDIR)/EventDict.cpp
 	@echo "Compiling $@"
 	@$(CC) $(SRCDIR)/EventDict.cpp -o $(OBJDIR)/EventDict.o -c $(CXXFLAGS)
 
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(SRCDIR)/particlegenerator.h
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@echo "Compiling $@"
 	@$(CC) $(CXXFLAGS) -c -o $@ $<
 
 clean:
 	@echo "Cleaning..."
-	@rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/*.so $(SRCDIR)/Auto* $(OBJDIR)/*.o $(SRCDIR)/EventDict* EventDict* sim 
-
+	@rm -f $(SRCDIR)/*.gch $(SRCDIR)/*.d $(SRCDIR)/EventDict.cpp $(SRCDIR)/*.so $(SRCDIR)/Auto* $(OBJDIR)/*.o $(SRCDIR)/EventDict* EventDict* sim 

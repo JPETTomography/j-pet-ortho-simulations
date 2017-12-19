@@ -1,2 +1,2 @@
 built:
-	g++ -o analysis analysis.cpp MyEventHits.C EventHits.C `root-config --cflags --glibs`
+	g++ -o analysis src/analysis.cpp src/MyEventHits.C src/EventHits.C `root-config --cflags --glibs`

@@ -23,8 +23,7 @@ Event::Event()
     {
         fFourMomentum_.push_back(TLorentzVector(0.0, 0.0, 1.022, 1.022)); //scale from GeV to MeV
         fCutPassing_.push_back(false);
-//        fPhi_.push_back(0.0);
-//        fTheta_.push_back(0.0);
+        fPrimaryPhoton_.push_back(true);
     }
     std::cerr<<"[WARNING] Default constructor used for Event class!"<<std::endl;
 }
@@ -51,9 +50,8 @@ Event::Event(std::vector<TLorentzVector*>* emissionCoordinates, std::vector<TLor
         if(fourMomentum->at(ii))
         {
             fFourMomentum_.push_back(*fourMomentum->at(ii)*1000); //scale from GeV to MeV
-//            fPhi_.push_back(fourMomentum[ii]->Phi());
-//            fTheta_.push_back(fourMomentum[ii]->Theta());
             fCutPassing_.push_back(true);
+            fPrimaryPhoton_.push_back(true);
             fEdep_.push_back(0.0);
             fEdepSmear_.push_back(0.0);
         }
@@ -79,6 +77,8 @@ Event::Event(const Event& est) : TObject(est)
     std::copy(est.fHitPhi_.begin(), est.fHitPhi_.end(), fHitPhi_.begin());
     fHitTheta_.resize(est.fHitTheta_.size());
     std::copy(est.fHitTheta_.begin(), est.fHitTheta_.end(), fHitTheta_.begin());
+    fPrimaryPhoton_.resize(est.fPrimaryPhoton_.size());
+    std::copy(est.fPrimaryPhoton_.begin(), est.fPrimaryPhoton_.end(), fPrimaryPhoton_.begin());
 }
 
 ///
@@ -100,6 +100,8 @@ Event& Event::operator=(const Event& est)
     std::copy(est.fHitPhi_.begin(), est.fHitPhi_.end(), fHitPhi_.begin());
     fHitTheta_.resize(est.fHitTheta_.size());
     std::copy(est.fHitTheta_.begin(), est.fHitTheta_.end(), fHitTheta_.begin());
+    fPrimaryPhoton_.resize(est.fPrimaryPhoton_.size());
+    std::copy(est.fPrimaryPhoton_.begin(), est.fPrimaryPhoton_.end(), fPrimaryPhoton_.begin());
     return *this;
 }
 

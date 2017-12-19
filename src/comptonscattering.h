@@ -26,7 +26,7 @@ class ComptonScattering
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
         void DrawComptonHistograms(std::string filePrefix, OutputOptions output=PNG);
-        void Scatter(Event* event) const; //perfors scattering
+        void Scatter(Event* event, int index=-1) const; //perfors scattering
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
         inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
@@ -37,7 +37,7 @@ class ComptonScattering
         TF1* fPDF_Theta;  //root function wrapper, dN/d theta
 
     private:
-        bool fSilentMode_;
+        bool fSilentMode_; //if true then less output is generated
         DecayType fDecayType_;
         std::string fTypeString_;
         TH1F* fH_electron_E_;   //energy distribution for electrons
