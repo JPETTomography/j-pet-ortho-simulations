@@ -22,10 +22,11 @@ class ComptonScattering
         ComptonScattering(DecayType type, float low=0.0, float high=2.0);
         ComptonScattering(const ComptonScattering& est);
         ComptonScattering& operator=(const ComptonScattering& est);
+        bool operator==(const ComptonScattering &cs) const;
         ~ComptonScattering();
         void DrawPDF(std::string filePrefix="", double crossSectionE=0.511);
         void DrawComptonHistograms(std::string filePrefix, OutputOptions output=PNG);
-        void Scatter(Event* event) const; //perfors scattering
+        void Scatter(Event* event, int index=-1) const; //perfors scattering
         inline void EnableSilentMode() {fSilentMode_=true;}
         inline void DisableSilentMode() {fSilentMode_=false;}
         inline float GetSmearLowLimit() const {return fSmearLowLimit_;}
@@ -36,10 +37,9 @@ class ComptonScattering
         TF1* fPDF_Theta;  //root function wrapper, dN/d theta
 
     private:
-        bool fSilentMode_;
+        bool fSilentMode_; //if true then less output is generated
         DecayType fDecayType_;
         std::string fTypeString_;
-        TRandom3* fRand_; //set seed
         TH1F* fH_electron_E_;   //energy distribution for electrons
         TH1F* fH_electron_E_blur_;   //energy distribution for electrons blurred by detector effects
         TH1F* fH_photon_E_depos_; //distribution of energy deposited by incident photons
@@ -53,6 +53,8 @@ class ComptonScattering
         static long double KleinNishina_(double* angle, double* energy); //Klein-Nishina function
         static long double KleinNishinaTheta_(double* angle, double* energy); //Klein-Nishina based theta PDF
         double sigmaE(double E, double coeff=0.0444) const; //calculate std dev for the smearing effevt
+
+        static unsigned objectID_;
 
 };
 

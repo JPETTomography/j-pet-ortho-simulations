@@ -23,8 +23,7 @@ Event::Event()
     {
         fFourMomentum_.push_back(TLorentzVector(0.0, 0.0, 1.022, 1.022)); //scale from GeV to MeV
         fCutPassing_.push_back(false);
-//        fPhi_.push_back(0.0);
-//        fTheta_.push_back(0.0);
+        fPrimaryPhoton_.push_back(true);
     }
     std::cerr<<"[WARNING] Default constructor used for Event class!"<<std::endl;
 }
@@ -36,24 +35,23 @@ Event::Event()
 /// \param weights Weight of the event.
 /// \param type Type of the event.
 ///
-Event::Event(TLorentzVector** emissionCoordinates, TLorentzVector** fourMomentum, double weight, DecayType type) :
+Event::Event(std::vector<TLorentzVector*>* emissionCoordinates, std::vector<TLorentzVector*>* fourMomentum, double weight, DecayType type) :
     fWeight_(weight),
     fDecayType_(type),
     fPassFlag_(true)
 {
     fCounter_++;
     fId = fCounter_;
-    int totalGammaNo = type ==TWO ? 2 : 3;
+    int totalGammaNo = emissionCoordinates->size();
     for(int ii=0; ii<totalGammaNo; ii++)
     {
-        if(emissionCoordinates[ii])
-            fEmissionPoint_.push_back(*emissionCoordinates[ii]);
-        if(fourMomentum[ii])
+        if(emissionCoordinates->at(ii))
+            fEmissionPoint_.push_back(*emissionCoordinates->at(ii));
+        if(fourMomentum->at(ii))
         {
-            fFourMomentum_.push_back(*fourMomentum[ii]*1000); //scale from GeV to MeV
-//            fPhi_.push_back(fourMomentum[ii]->Phi());
-//            fTheta_.push_back(fourMomentum[ii]->Theta());
+            fFourMomentum_.push_back(*fourMomentum->at(ii)*1000); //scale from GeV to MeV
             fCutPassing_.push_back(true);
+            fPrimaryPhoton_.push_back(true);
             fEdep_.push_back(0.0);
             fEdepSmear_.push_back(0.0);
         }
@@ -79,6 +77,8 @@ Event::Event(const Event& est) : TObject(est)
     std::copy(est.fHitPhi_.begin(), est.fHitPhi_.end(), fHitPhi_.begin());
     fHitTheta_.resize(est.fHitTheta_.size());
     std::copy(est.fHitTheta_.begin(), est.fHitTheta_.end(), fHitTheta_.begin());
+    fPrimaryPhoton_.resize(est.fPrimaryPhoton_.size());
+    std::copy(est.fPrimaryPhoton_.begin(), est.fPrimaryPhoton_.end(), fPrimaryPhoton_.begin());
 }
 
 ///
@@ -100,6 +100,8 @@ Event& Event::operator=(const Event& est)
     std::copy(est.fHitPhi_.begin(), est.fHitPhi_.end(), fHitPhi_.begin());
     fHitTheta_.resize(est.fHitTheta_.size());
     std::copy(est.fHitTheta_.begin(), est.fHitTheta_.end(), fHitTheta_.begin());
+    fPrimaryPhoton_.resize(est.fPrimaryPhoton_.size());
+    std::copy(est.fPrimaryPhoton_.begin(), est.fPrimaryPhoton_.end(), fPrimaryPhoton_.begin());
     return *this;
 }
 
@@ -111,9 +113,12 @@ Event::~Event()
 
 }
 
-void Event::CalculateHitPoints(double R)
+///
+/// \brief Event::CalculateHitPoints Calculates hit points on the detector's surface
+/// \param R Radius of the detector.
+///
+void Event::CalculateHitPoints(double R, double L)
 {
-    double L = 500;
     for(auto it = fFourMomentum_.begin(); it != fFourMomentum_.end(); ++it)
     {
         if(it->Pt() > TMath::Power(10, -10))

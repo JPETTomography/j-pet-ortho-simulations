@@ -16,7 +16,7 @@
 class InitialCuts
 {
     public:
-        InitialCuts(DecayType type=TWO, float R=500, float L=700, float p=1.0);
+        InitialCuts(DecayType type=TWO, float R=437.3, float L=500, float p=1.0);
         InitialCuts(const InitialCuts&);
         InitialCuts& operator=(const InitialCuts& est);
         ~InitialCuts();
@@ -57,7 +57,6 @@ class InitialCuts
         int fNumberOfEvents_; //total number of events
         int fNumberOfGammas_; //total number of gammas
 
-        TRandom3* fRand_; //set random seed
         // histograms with relative angles for events that passed cuts
         TH1F* fH_12_pass_;
         TH1F* fH_23_pass_;
@@ -94,7 +93,6 @@ class InitialCuts
         TH1F* fH_gamma_cuts_;
         TH1F* fH_event_cuts_;
 
-        bool GeometricalAcceptance_(const TLorentzVector *source, const TLorentzVector* gamma);
         bool DetectionCut_();
         void FillValidEventHistograms_(const Event* event);
         void FillInvalidEventHistograms_(const Event* event);

@@ -8,7 +8,9 @@
 #include <iterator>
 #include <cstring>
 #include <algorithm>
+#include <TMath.h>
 #include "parammanager.h"
+
 ///
 /// \brief ParamManager::ParamManager Basic constructor.
 ///
@@ -16,14 +18,20 @@ ParamManager::ParamManager() :
     fSimEvents_(0),
     fSimRuns_(0),
     fNoOfGammas_(0),
-    fP_(0),
+    fEff_(0),
     fL_(700),
     fR_(500),
-    fESc_(1157),
-    fPSc_(0.98),
+    fE_(1157),
+    fP_(0.98),
     fSmearLowLimit_(0.0),
     fSmearHighLimit_(2.0),
+    fSeed_(0),
     fSilentMode_(false),
+    f2nNdataImported_(false),
+    fUsePhantom_(false),
+    fPPhantom511_(0.0),
+    fPPhantomPrompt_(0.0),
+    fPhantomSmear_(false),
     fOutput_(PNG),
     fEventTypeToSave_(ALL)
     {}
@@ -37,18 +45,28 @@ ParamManager::ParamManager(const ParamManager &est)
     fSimEvents_=est.fSimEvents_;
     fSimRuns_=est.fSimRuns_;
     fNoOfGammas_=est.fNoOfGammas_;
-    fP_=est.fP_;
+    fEff_=est.fEff_;
     fR_=est.fP_;
     fL_=est.fL_;
-    fESc_=est.fESc_;
-    fPSc_=est.fPSc_;
+    fE_=est.fE_;
+    fP_=est.fP_;
     fSmearLowLimit_=est.fSmearLowLimit_;
     fSmearHighLimit_=est.fSmearHighLimit_;
+    fSeed_=est.fSeed_;
     fSilentMode_=est.fSilentMode_;
+    f2nNdataImported_=est.f2nNdataImported_;
     fOutput_=est.fOutput_;
     fEventTypeToSave_=est.fEventTypeToSave_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
+    fDecayBranchProbability_.resize(est.fDecayBranchProbability_.size());
+    std::copy(est.fDecayBranchProbability_.begin(), est.fDecayBranchProbability_.end(), fDecayBranchProbability_.begin());
+    for(unsigned ii=0; ii<fGammaEnergy_.size(); ii++)
+        fGammaEnergy_.push_back(est.fGammaEnergy_[ii]);
+    fPPhantom511_=est.fPPhantom511_;
+    fPPhantomPrompt_=est.fPPhantomPrompt_;
+    fUsePhantom_=est.fUsePhantom_;
+    fPhantomSmear_=est.fPhantomSmear_;
 }
 
 ///
@@ -61,18 +79,28 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
     fSimEvents_=est.fSimEvents_;
     fSimRuns_=est.fSimRuns_;
     fNoOfGammas_=est.fNoOfGammas_;
-    fP_=est.fP_;
+    fEff_=est.fEff_;
     fR_=est.fP_;
     fL_=est.fL_;
-    fESc_=est.fESc_;
-    fPSc_=est.fPSc_;
+    fE_=est.fE_;
+    fP_=est.fP_;
     fSmearLowLimit_=est.fSmearLowLimit_;
     fSmearHighLimit_=est.fSmearHighLimit_;
+    fSeed_=est.fSeed_;
     fSilentMode_=est.fSilentMode_;
+    f2nNdataImported_=est.f2nNdataImported_;
     fOutput_=est.fOutput_;
     fEventTypeToSave_=est.fEventTypeToSave_;
     fData_.resize(est.fData_.size());
     std::copy(est.fData_.begin(), est.fData_.end(), fData_.begin());
+    fDecayBranchProbability_.resize(est.fDecayBranchProbability_.size());
+    std::copy(est.fDecayBranchProbability_.begin(), est.fDecayBranchProbability_.end(), fDecayBranchProbability_.begin());
+    for(unsigned ii=0; ii<fGammaEnergy_.size(); ii++)
+        fGammaEnergy_.push_back(est.fGammaEnergy_[ii]);
+    fPPhantom511_=est.fPPhantom511_;
+    fPPhantomPrompt_=est.fPPhantomPrompt_;
+    fUsePhantom_=est.fUsePhantom_;
+    fPhantomSmear_=est.fPhantomSmear_;
     return *this;
 }
 
@@ -84,10 +112,15 @@ ParamManager & ParamManager::operator= (const ParamManager &est) {
 bool ParamManager::operator==(const ParamManager &est) const
 {
     bool params = ((est.fData_ == fData_) && (fSimEvents_==est.fSimEvents_) && (fSimRuns_==est.fSimRuns_) && \
-            (fP_==est.fP_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
-            (fESc_==est.fESc_) && (fPSc_==est.fPSc_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
-            (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && (fSmearHighLimit_==est.fSmearHighLimit_);
-    return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin());
+            (fEff_==est.fEff_) && (fL_==est.fL_) && (fR_==est.fR_) && (fNoOfGammas_==est.fNoOfGammas_) && \
+            (fE_==est.fE_) && (fP_==est.fP_) && (fSilentMode_==est.fSilentMode_) && fOutput_==est.fOutput_)&&\
+            (fEventTypeToSave_==est.fEventTypeToSave_) && (fSmearLowLimit_==est.fSmearLowLimit_) && \
+            (fSmearHighLimit_==est.fSmearHighLimit_) && (f2nNdataImported_==est.f2nNdataImported_) && fSeed_==est.fSeed_ && \
+            (fUsePhantom_==est.fUsePhantom_) && (fPPhantom511_==fPPhantom511_) && (fPhantomSmear_==est.fPhantomSmear_) &&\
+            (fPPhantomPrompt_==fPPhantomPrompt_);
+    return params && std::equal(fData_.begin(), fData_.end(), est.fData_.begin())\
+            && std::equal(fDecayBranchProbability_.begin(), fDecayBranchProbability_.end(), est.fDecayBranchProbability_.begin())\
+            && std::equal(fGammaEnergy_.begin(), fGammaEnergy_.end(), est.fGammaEnergy_.begin());
 }
 
 
@@ -168,8 +201,8 @@ void ParamManager::ImportParams(const std::string& inFile)
               {
                  token.push_back(segment);
               }
-              if(token[0]=="p")
-                fP_ = atof(token[2].c_str());
+              if(token[0]=="eff")
+                fEff_ = atof(token[2].c_str());
               else if (token[0]=="events")
                 fSimEvents_ = atoi(token[2].c_str());
               else if (token[0]=="R")
@@ -177,17 +210,29 @@ void ParamManager::ImportParams(const std::string& inFile)
               else if (token[0]=="L")
                 fL_ = atof((token[2].c_str()));
               else if (token[0]=="gammas")
-                fNoOfGammas_=atoi(token[2].c_str());
-              else if (token[0]=="ESc")
-                fESc_=atof(token[2].c_str());
-              else if (token[0]=="pSc")
-                fPSc_=atof(token[2].c_str());
+                {
+                  fNoOfGammas_=atoi(token[2].c_str());
+                }
+              else if (token[0]=="E")
+                fE_=atof(token[2].c_str());
+              else if (token[0]=="p")
+                fP_=atof(token[2].c_str());
+              else if (token[0]=="seed")
+                fSeed_=atof(token[2].c_str());
               else if(token[0]=="smearLow")
                 fSmearLowLimit_=atof(token[2].c_str());
               else if(token[0]=="smearHigh")
                 fSmearHighLimit_=atof(token[2].c_str());
               else if (token[0]=="silent")
                 fSilentMode_= atoi(token[2].c_str()) == 0 ? false : true;
+              else if(token[0]=="pPhantom511")
+                fPPhantom511_ = atof(token[2].c_str());
+              else if(token[0]=="pPhantomPrompt")
+                fPPhantomPrompt_ = atof(token[2].c_str());
+              else if(token[0]=="usePhantom")
+                fUsePhantom_ = atoi(token[2].c_str()) == 0 ? false :true;
+              else if(token[0]=="phantomSmear")
+                fPhantomSmear_ = atoi(token[2].c_str()) == 0 ? false :true;
               else if (token[0]=="output")
               {
                   if(token[2]=="tree")
@@ -224,7 +269,7 @@ void ParamManager::ImportParams(const std::string& inFile)
               fData_.push_back(std::vector<double>(std::istream_iterator<double>(is), std::istream_iterator<double>()));
           }
     }
-    //The number of simulation runs is determined basing on the number of data sets with source's parameters.
+    //The number of simulation runs is dete#include <algorithm>rmined basing on the number of data sets with source's parameters.
     fSimRuns_=fData_.size();
     if(!fSilentMode_)
         PrintParams();
@@ -234,11 +279,50 @@ void ParamManager::ImportParams(const std::string& inFile)
 }
 
 ///
+/// \brief ParamManager::Import2nNdata Imports data for 2&N decays from a file.
+/// \param inFile Text file containing data.
+///
+void ParamManager::Import2nNdata(const std::string& inFile)
+{
+    if(!fSilentMode_) std::cout<<"[INFO] Importing 2&Ndata from file: "<<inFile<<std::endl;
+    std::ifstream param_file(inFile.c_str());
+    std::string row;
+
+    //read line by line
+    while (getline(param_file, row))
+    {
+          if(!row.length() || row[0]=='#') //lines that start with "#" are treated as comments
+          {
+              continue; //ignore lines starting with '#'
+          }
+          row = reduce(row); //get rid of white spaces
+          std::istringstream is(row);
+          double pB; //probability of choosing a particular decay branch
+          double eG; //energy of emitted gamma
+          is >> pB;
+          if(pB > 0.0)
+          {
+            fDecayBranchProbability_.push_back(pB);
+            fGammaEnergy_.push_back(std::vector<double>()); //making space for gamma energies
+          }
+          int index = fGammaEnergy_.size()-1;
+          while(is>> eG)
+          {
+              (fGammaEnergy_.at(index)).push_back(eG); //pushing gamma energies
+          }
+    f2nNdataImported_=true;
+    }
+    ValidatePromptData_(); //checking if data is OK
+}
+
+///
 /// \brief PrintParams Prints parameters values to the standard output.
 ///
 void ParamManager::PrintParams()
 {
     if(fNoOfGammas_==1)
+        std::cout<<"[INFO] No of decay products: 1"<<std::endl;
+    else if(fNoOfGammas_==4)
         std::cout<<"[INFO] No of decay products: 2+1"<<std::endl;
     else if(fNoOfGammas_!=2 && fNoOfGammas_!=3)
         std::cout<<"[INFO] No of decay products: 2 and 3"<<std::endl;
@@ -248,12 +332,31 @@ void ParamManager::PrintParams()
     std::cout<<"[INFO] Runs to simulate: "<<fSimRuns_<<std::endl;
     std::cout<<"[INFO] Detector radius: "<<fR_<<" [mm]"<<std::endl;
     std::cout<<"[INFO] Detector length: "<<fL_<<" [mm]"<<std::endl;
-    std::cout<<"[INFO] Probability to interact with detector: "<<fP_<<std::endl;
-    if(fNoOfGammas_==1)
+    std::cout<<"[INFO] Scintillator's efficiency: "<<fEff_<<std::endl;
+    if(fNoOfGammas_==4)
     {
-        std::cout<<"[INFO] Energy of additional gamma: "<<fESc_<<" [keV]"<<std::endl;
-        std::cout<<"[INFO] Probability of emitting an additional gamma: "<<fPSc_<<std::endl;
+        std::cout<<"[INFO] Energy of single gamma: "<<fE_<<" [keV]"<<std::endl;
+        std::cout<<"[INFO] Probability of emitting a prompt gamma: "<<fP_<<std::endl;
     }
+    std::cout<<"[INFO] Phantom: ";
+    if(fUsePhantom_)
+    {
+        std::cout<<"ENABLED"<<std::endl;
+        std::cout<<"[INFO] Probability to naively scatter inside the phantom: "<<
+                   "\n\t* 511 keV: "<<fPPhantom511_<<
+                   "\n\t* prompt : "<<fPPhantomPrompt_<<std::endl;
+        std::cout<<"[INFO] Energy smearing inside phantom: ";
+        if(fPhantomSmear_)
+            std::cout<<"ENABLED"<<std::endl;
+        else
+            std::cout<<"DISABLED"<<std::endl;
+    }
+    else
+    {
+        std::cout<<"DISABLED"<<std::endl;
+    }
+    std::string seedToShow = fSeed_==0 ? "random" : std::to_string(fSeed_);
+    std::cout<<"[INFO] Seed: "<<seedToShow<<std::endl;
     std::cout<<"[INFO] Smearing lower limit: "<<fSmearLowLimit_<<" [MeV]"<<std::endl;
     std::cout<<"[INFO] Smearing higher limit: "<<fSmearHighLimit_<<" [MeV]"<<std::endl;
     std::cout<<"[INFO] Silent mode: ";
@@ -266,7 +369,7 @@ void ParamManager::PrintParams()
             std::cout<<"ROOT TREE"<<std::endl;
             break;
         case PNG:
-            std::cout<<"PNG IMAGES"<<std::endl;
+            std::cout<<"PNG IPromptMAGES"<<std::endl;
             break;
         case BOTH:
             std::cout<<"ROOT TREE & PNG IMAGES"<<std::endl;
@@ -292,16 +395,53 @@ void ParamManager::PrintParams()
 }
 
 ///
+/// \brief ParamManager::Print2nNdata Prints data from 2&N data file to the standard output
+///
+///
+void ParamManager::Print2nNdata()
+{
+    std::cout<<"[INFO] Printing decay branches:"<<std::endl;
+    for(unsigned ii = 0; ii< fDecayBranchProbability_.size(); ii++)
+    {
+        std::cout<<fDecayBranchProbability_.at(ii)<<" ";
+        for(unsigned jj = 0; jj < fGammaEnergy_.at(ii).size(); jj++)
+        {
+            double eG = (fGammaEnergy_.at(ii)).at(jj);
+            std::cout<<eG<<" ";
+        }
+        std::cout<<std::endl;
+    }
+}
+
+
+///
 /// \brief ParamManager::getDataAt Used to get source's position and momentum and radius.
 /// \param index Number of the run, used to access apropriate data.
 /// \return An array with a set of source's parameters: x, y, z, px, py, pz, r;
 ///
-std::vector<double> ParamManager::GetDataAt(int index)
+std::vector<double> ParamManager::GetDataAt(const int index) const
 {
     if(index >= fSimRuns_)
         throw ("[ERROR] Invalid index to get from ParamManger!");
 
     std::vector<double> data=fData_.at(index);
-//    std::cout<<data[0]<<" "<<data[1]<<" "<<data[2]<<" "<<data[3]<<" "<<data[4]<<" "<<data[5]<<std::endl;
     return data;
+}
+
+///
+/// \brief ParamManager::ValidatePromptData_ Cheks if decay branch probabilities sum to 1. If not, then it renormalizes it.
+///
+void ParamManager::ValidatePromptData_()
+{
+    double sum = 0;
+    for(std::vector<double>::iterator it = fDecayBranchProbability_.begin(); it!=fDecayBranchProbability_.end(); ++it)
+    {
+        sum+=*it;
+    }
+    if(TMath::Abs(sum - 1.00) > 1e-6)
+    {
+        std::cout<<"[WARNING] Decay branch probabilities don\'t sum to 1! Renormalizing."<<std::endl;
+        std::for_each(fDecayBranchProbability_.begin(), fDecayBranchProbability_.end(), [sum](double &p){ p/=sum; });
+    }
+
 }

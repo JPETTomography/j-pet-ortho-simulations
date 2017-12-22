@@ -1,0 +1,1 @@
+This folder contains marcos, which were used for different analyses. They are providied without support from the author. They are not intended to work separately from the j-pet-ortho-simulation framework and are devoted to advanced users. 

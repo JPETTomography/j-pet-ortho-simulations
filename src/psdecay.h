@@ -15,6 +15,9 @@
 #include "event.h"
 #include "comptonscattering.h"
 #include "parammanager.h"
+
+class TwoAndNTestFixture; //for testing
+
 ///
 /// \brief The PsDecay class Contains histograms with gammas' characteristics at the beginning of simulation.
 ///
@@ -54,6 +57,11 @@ class PsDecay
         TH1F* fH_p_;
         TH1F* fH_phi_;
         TH1F* fH_cosTheta_;
+
+        friend class TwoAndNTestFixture; // for testing
+
+        static unsigned objectID_;
+
 };
 
 #endif // PSDECAY_H
