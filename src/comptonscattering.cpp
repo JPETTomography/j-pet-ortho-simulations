@@ -322,7 +322,7 @@ void ComptonScattering::Scatter(Event* event, int index) const
             //if new_E is within limit -- smear, otherwise fill histogram with new_E
             if((new_E >= fSmearLowLimit_) && (new_E <= fSmearHighLimit_))
             {
-                double Esmear = gRandom->Gaus(new_E, sigmaE(E));
+                double Esmear = gRandom->Gaus(new_E, sigmaE(new_E));
                 fH_electron_E_blur_->Fill(Esmear);
                 event->SetEdepSmearOf(ii, Esmear);
             }
