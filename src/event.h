@@ -29,6 +29,9 @@ class Event : public TObject
     public:
         Event();
         Event(std::vector<TLorentzVector*>* emissionCoordinates, std::vector<TLorentzVector*>* fourMomentum, double weight, DecayType type);
+        Event(std::vector<TLorentzVector> &sourcePos, std::vector<TLorentzVector> &pos, std::vector<TLorentzVector> &momentum,\
+        std::vector<double> &phi, std::vector<double> &theta, std::vector<bool> &cutPassing, std::vector<bool> &primary,\
+        std::vector<double> &edep, std::vector<double> &edepSmear, long Id, int decayType);
         Event(const Event& est);
         Event& operator=(const Event &est);
         virtual ~Event();
@@ -67,7 +70,7 @@ class Event : public TObject
         //number of event
         long fId;
         //ROOT stuff
-        ClassDef(Event, 17)
+        ClassDef(Event, 18)
 
     private:
         static long fCounter_; //static variable incremented with every call of a constructor (but not copy constructor)
