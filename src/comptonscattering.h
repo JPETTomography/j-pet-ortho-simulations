@@ -52,7 +52,7 @@ class ComptonScattering
         float fSmearHighLimit_; //higher limit for phenomenologicly derived smearing effect
         static long double KleinNishina_(double* angle, double* energy); //Klein-Nishina function
         static long double KleinNishinaTheta_(double* angle, double* energy); //Klein-Nishina based theta PDF
-        double sigmaE(double E, double coeff=0.0444) const; //calculate std dev for the smearing effevt
+        double sigmaE(double E, double coeff=0.044) const; //calculate std dev for the smearing effevt
 
         static unsigned objectID_;
 

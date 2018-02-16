@@ -60,6 +60,50 @@ Event::Event(std::vector<TLorentzVector*>* emissionCoordinates, std::vector<TLor
 }
 
 ///
+/// \brief Event::Event Developed constructor allowing to create a complete Event.
+/// \param sourcePos Vector of TLorentzVector with entries corresponsing to X,Y,Z,T coordinates of emission point for a given particle.
+/// \param pos Vector of TLorentzVector with entries corresponsing to X,Y,Z,T coordinates of hit point for a given particle.
+/// \param momentum Vector of TLorentzVector with entries corresponsing to pX,pY,pZ,E coordinates of four-momentum for a given particle.
+/// \param phi Vector of azimuthal angles corresponding to given hit points positions.
+/// \param theta Vector of angular angles corresponding to given hit points positions.
+/// \param cutPassing Vector of bool values corresponding, true if particle left a signal in the detector.
+/// \param primary Vector of bool values corresponding, false if particle was scattered in a phantom.
+/// \param edep Vector of deposited energy by particles.
+/// \param edepSmear Vector of deposited energy by particles, smeared according to experimental formula.
+/// \param Id Particle ids.
+/// \param decayType Type of decay.
+///
+Event::Event(std::vector<TLorentzVector> &sourcePos, std::vector<TLorentzVector> &pos, std::vector<TLorentzVector> &momentum,\
+    std::vector<double> &phi, std::vector<double> &theta, std::vector<bool> &cutPassing, std::vector<bool> &primary,\
+    std::vector<double> &edep, std::vector<double> &edepSmear, long Id, int decayType)
+{
+    fCounter_++;
+    fId = Id;
+    fWeight_ = 1.0;
+    fDecayType_ = (DecayType)decayType;
+    fPassFlag_ = true;
+    fEmissionPoint_.resize(sourcePos.size());
+    std::copy(sourcePos.begin(), sourcePos.end(), fEmissionPoint_.begin());
+    fHitPoint_.resize(pos.size());
+    std::copy(pos.begin(), pos.end(), fHitPoint_.begin());
+    fFourMomentum_.resize(momentum.size());
+    std::copy(momentum.begin(), momentum.end(), fFourMomentum_.begin());
+    fCutPassing_.resize(cutPassing.size());
+    std::copy(cutPassing.begin(), cutPassing.end(), fCutPassing_.begin());
+    fHitPhi_.resize(phi.size());
+    std::copy(phi.begin(), phi.end(), fHitPhi_.begin());
+    fHitTheta_.resize(theta.size());
+    std::copy(theta.begin(), theta.end(), fHitTheta_.begin());
+    fPrimaryPhoton_.resize(primary.size());
+    std::copy(primary.begin(), primary.end(), fPrimaryPhoton_.begin());
+    fEdep_.resize(edep.size());
+    std::copy(edep.begin(), edep.end(), fEdep_.begin());
+    fEdepSmear_.resize(edepSmear.size());
+    std::copy(edepSmear.begin(), edepSmear.end(), fEdepSmear_.begin());
+}
+
+
+///
 /// \brief Event::Event Copy constructor.
 /// \param est An instance of Event class to be copied.
 ///
